@@ -118,4 +118,14 @@ public abstract class VirtualDefinedElement implements IJavaElement {
 		return getElementName();
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof VirtualDefinedElement) {
+			if (represent.equals(((VirtualDefinedElement)obj).represent)) {
+				return true;
+			}
+		}
+		return super.equals(obj);
+	}
+	
 }

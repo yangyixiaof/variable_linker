@@ -242,4 +242,15 @@ public class UnSourceResolvedLambdaUniqueElement extends VirtualDefinedElement i
 		return getElementName();
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof UnSourceResolvedLambdaUniqueElement) {
+			UnSourceResolvedLambdaUniqueElement usrlue = (UnSourceResolvedLambdaUniqueElement)obj;
+			if ((parent_im == null && usrlue.parent_im == null) || (parent_im.equals(usrlue.parent_im))) {
+				return super.equals(obj);
+			}
+		}
+		return false;
+	}
+	
 }
