@@ -27,17 +27,26 @@ import org.eclipse.jdt.core.dom.WhileStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jface.text.Document;
 
-import cn.yyx.research.program.analysis.prepare.ParameterizedTypeEliminator;
 import cn.yyx.research.program.ir.generation.traversal.task.IRASTNodeTask;
+import cn.yyx.research.program.ir.storage.IRElementPool;
 import cn.yyx.research.program.ir.storage.IRGraph;
+import cn.yyx.research.program.ir.storage.IRGraphManager;
+import cn.yyx.research.program.ir.storage.node.IIRNode;
+import cn.yyx.research.program.ir.storage.node.IRJavaElement;
 
 public class IRGeneratorForStatements extends ASTVisitor {
 	
+	protected IRGraphManager graph_manager = null;
+	protected IRElementPool pool = null;
+	protected IRJavaElement super_class_element = null;
 	protected IRASTNodeTask post_visit_task = new IRASTNodeTask();
 	protected IRASTNodeTask pre_visit_task = new IRASTNodeTask();
 	protected IRGraph graph = new IRGraph();
 	
-	public IRGeneratorForStatements() {
+	public IRGeneratorForStatements(IRGraphManager graph_manager, IRElementPool pool, IRJavaElement super_class_element) {
+		this.graph_manager = graph_manager;
+		this.pool = pool;
+		this.super_class_element = super_class_element;
 	}
 	
 	@Override
@@ -54,11 +63,14 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	
 	@Override
 	public boolean visit(AssertStatement node) {
+		IIRNode iirn = new IIRNode("");
+		graph.GoForwardAStep(iirn);
 		Document doc = new Document(node.toString());
-		final ASTRewrite rewrite = ASTRewrite.create(node.getAST());
-		node.accept(new ParameterizedTypeEliminator(rewrite));
+		ASTRewrite rewrite = ASTRewrite.create(node.getAST());
+		node.accept(new IRGeneratorForOneExpression(graph_manager, node, rewrite, pool, graph, super_class_element, 0));
 		// TextEdit edits = ;
 		rewrite.rewriteAST(doc, null);
+		iirn.SetContent(doc.toString());
 		return super.visit(node);
 	}
 	

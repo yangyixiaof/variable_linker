@@ -1,11 +1,16 @@
 package cn.yyx.research.program.ir.storage.connection;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import cn.yyx.research.program.ir.storage.node.IIRNode;
 
 public class IIRConnection {
 	
 	private IIRNode source = null;
 	private IIRNode target = null;
+	
+	Set<Connect> conns = new HashSet<Connect>();
 	
 	public IIRConnection(IIRNode source, IIRNode target) {
 		this.setSource(source);
@@ -26,6 +31,14 @@ public class IIRConnection {
 
 	public void setTarget(IIRNode target) {
 		this.target = target;
+	}
+	
+	public void AddConnect(Connect vc) {
+		conns.add(vc);
+	}
+	
+	public Set<Connect> GetAllConnects() {
+		return conns;
 	}
 	
 }

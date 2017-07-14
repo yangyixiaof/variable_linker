@@ -6,7 +6,6 @@ import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ILocalVariable;
-import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMemberValuePair;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ISourceRange;
@@ -17,13 +16,23 @@ import org.eclipse.jdt.core.JavaModelException;
 
 import cn.yyx.research.program.ir.IRElementMeta;
 
-public class UnSourceResolvedLambdaUniqueElement extends VirtualDefinedElement implements IMethod {
+public class UnSourceResolvedMethodReferenceElement extends VirtualDefinedElement implements IMethod {
 	
-	IMember parent_im = null;
-	
-	public UnSourceResolvedLambdaUniqueElement(String represent, IMember parent_im) {
+	public UnSourceResolvedMethodReferenceElement(String represent) {
 		super(represent);
-		this.parent_im = parent_im;
+	}
+	
+	@Override
+	public boolean isSimilar(IMethod method) {
+//		if (method instanceof UnSourceResolvedLambdaUniqueElement)
+//		{
+//			UnSourceResolvedLambdaUniqueElement ulue = (UnSourceResolvedLambdaUniqueElement)method;
+//			if (represent.equals(ulue.represent))
+//			{
+//				return true;
+//			}
+//		}
+		return false;
 	}
 	
 	@Override
@@ -35,7 +44,7 @@ public class UnSourceResolvedLambdaUniqueElement extends VirtualDefinedElement i
 	public String getHandleIdentifier() {
 		return IRElementMeta.UnresolvedLambdaUniqueElement + "#" + represent;
 	}
-	
+
 	@Override
 	public String[] getCategories() throws JavaModelException {
 		return null;
@@ -88,7 +97,7 @@ public class UnSourceResolvedLambdaUniqueElement extends VirtualDefinedElement i
 
 	@Override
 	public String getSource() throws JavaModelException {
-		return represent;
+		return null;
 	}
 
 	@Override
@@ -161,7 +170,7 @@ public class UnSourceResolvedLambdaUniqueElement extends VirtualDefinedElement i
 
 	@Override
 	public int getNumberOfParameters() {
-		return -1;
+		return 0;
 	}
 
 	@Override
@@ -216,40 +225,11 @@ public class UnSourceResolvedLambdaUniqueElement extends VirtualDefinedElement i
 
 	@Override
 	public boolean isLambdaMethod() {
-		return true;
+		return false;
 	}
 
 	@Override
 	public boolean isResolved() {
-		return false;
-	}
-
-	@Override
-	public boolean isSimilar(IMethod method) {
-		if (method instanceof UnSourceResolvedLambdaUniqueElement)
-		{
-			UnSourceResolvedLambdaUniqueElement ulue = (UnSourceResolvedLambdaUniqueElement)method;
-			if (represent.equals(ulue.represent))
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public String toString() {
-		return getElementName();
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof UnSourceResolvedLambdaUniqueElement) {
-			UnSourceResolvedLambdaUniqueElement usrlue = (UnSourceResolvedLambdaUniqueElement)obj;
-			if ((parent_im == null && usrlue.parent_im == null) || (parent_im.equals(usrlue.parent_im))) {
-				return super.equals(obj);
-			}
-		}
 		return false;
 	}
 	

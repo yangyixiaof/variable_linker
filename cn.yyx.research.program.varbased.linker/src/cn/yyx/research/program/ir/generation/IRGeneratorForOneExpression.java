@@ -1,105 +1,188 @@
 package cn.yyx.research.program.ir.generation;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CharacterLiteral;
-import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.IBinding;
+import org.eclipse.jdt.core.dom.IMethodBinding;
+import org.eclipse.jdt.core.dom.LambdaExpression;
+import org.eclipse.jdt.core.dom.MethodReference;
+import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.NullLiteral;
 import org.eclipse.jdt.core.dom.NumberLiteral;
+import org.eclipse.jdt.core.dom.QualifiedName;
+import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.StringLiteral;
-import org.eclipse.jdt.core.dom.Type;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 import cn.yyx.research.program.ir.IRConstantMeta;
-import cn.yyx.research.program.ir.ast.ASTSearch;
+import cn.yyx.research.program.ir.bind.BindingManager;
 import cn.yyx.research.program.ir.element.ConstantUniqueElement;
+import cn.yyx.research.program.ir.element.UnSourceResolvedLambdaElement;
+import cn.yyx.research.program.ir.element.UnSourceResolvedMethodReferenceElement;
+import cn.yyx.research.program.ir.element.UnSourceResolvedNameOrFieldAccessElement;
 import cn.yyx.research.program.ir.element.UnSourceResolvedTypeElement;
+import cn.yyx.research.program.ir.generation.state.IJavaElementState;
+import cn.yyx.research.program.ir.storage.IRElementPool;
+import cn.yyx.research.program.ir.storage.IRGraph;
+import cn.yyx.research.program.ir.storage.IRGraphManager;
+import cn.yyx.research.program.ir.storage.connection.SuperConnect;
+import cn.yyx.research.program.ir.storage.connection.VariableConnect;
 import cn.yyx.research.program.ir.storage.node.IRJavaElement;
 
 public class IRGeneratorForOneExpression extends ASTVisitor {
 	
-	List<IRJavaElement> elements = new LinkedList<IRJavaElement>();
+	IRGraphManager graph_manager = null;
+	ASTNode node = null;
+	AST ast = null;
+	ASTRewrite rewrite = null;
+	IRElementPool pool = null;
+	IRGraph graph = null;
+	IRJavaElement super_class_element = null;
+	int ele_index = 0;
+	
+	public IRGeneratorForOneExpression(IRGraphManager graph_manager, ASTNode node, ASTRewrite rewrite, IRElementPool pool, IRGraph graph, IRJavaElement super_class_element, int base_index) {
+		this.graph_manager = graph_manager;
+		this.node = node;
+		this.ast = node.getAST();
+		this.rewrite = rewrite;
+		this.pool = pool;
+		this.graph = graph;
+		this.super_class_element = super_class_element;
+		this.ele_index = base_index;
+	}
 	
 	@Override
 	public boolean visit(NumberLiteral node) {
 		String content = node.toString();
-		IRJavaElement irje = new IRJavaElement(content, new ConstantUniqueElement(IRConstantMeta.NumberConstant + "$" + content));
-		elements.add(irje);
+		HandleIJavaElement(content, new ConstantUniqueElement(IRConstantMeta.NumberConstant + "$" + content), node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(NullLiteral node) {
 		String content = node.toString();
-		IRJavaElement irje = new IRJavaElement(content, new ConstantUniqueElement(IRConstantMeta.NullConstant + "$" + content));
-		elements.add(irje);
+		HandleIJavaElement(content, new ConstantUniqueElement(IRConstantMeta.NullConstant + "$" + content), node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(CharacterLiteral node) {
 		String content = node.toString();
-		IRJavaElement irje = new IRJavaElement(content, new ConstantUniqueElement(IRConstantMeta.CharConstant + "$" + content));
-		elements.add(irje);
+		HandleIJavaElement(content, new ConstantUniqueElement(IRConstantMeta.CharConstant + "$" + content), node);
 		return super.visit(node);
 	}
 
 	@Override
 	public boolean visit(BooleanLiteral node) {
 		String content = node.toString();
-		IRJavaElement irje = new IRJavaElement(content, new ConstantUniqueElement(IRConstantMeta.BooleanConstant + "$" + content));
-		elements.add(irje);
+		HandleIJavaElement(content, new ConstantUniqueElement(IRConstantMeta.BooleanConstant + "$" + content), node);
 		return super.visit(node);
 	}
 	
 	@Override
 	public boolean visit(StringLiteral node) {
 		String content = node.toString();
-		IRJavaElement irje = new IRJavaElement(content, new ConstantUniqueElement(IRConstantMeta.StringConstant + "$" + content));
-		elements.add(irje);
+		HandleIJavaElement(content, new ConstantUniqueElement(IRConstantMeta.StringConstant + "$" + content), node);
 		return super.visit(node);
 	}
 	
-	protected void TreatSuperClassElement(ASTNode node) {
-		ASTNode temp_node = ASTSearch.FindMostCloseAbstractTypeDeclaration(node);
-		if (temp_node instanceof TypeDeclaration) {
-			boolean source_kind = false;
-			TypeDeclaration td = (TypeDeclaration) temp_node;
-			Type tp = td.getSuperclassType();
-			ITypeBinding itb = tp.resolveBinding();
-			IType it = null;
-			if (itb != null) {
-				IJavaElement ijele = itb.getJavaElement();
-				if (ijele != null && ijele instanceof IType) {
-					it = (IType) ijele;
-					if (!it.isBinary()) {
-						source_kind = true;
-					}
-				}
-			}
-			if (!source_kind) {
-				if (itb == null) {
-					String content = tp.toString();
-					HandleIJavaElement(content, new UnSourceResolvedTypeElement(content));
-				} else {
-					String content = itb.getQualifiedName();
-					HandleIJavaElement(content, new UnSourceResolvedTypeElement(content));
-				}
-			} else {
-				HandleIJavaElement(it.getFullyQualifiedName(), it);
-			}
+	protected void HandleType(IBinding ib, String represent, ASTNode happen) {
+		IJavaElementState source_resolved = HandleBinding(ib, happen);
+		if (source_resolved == IJavaElementState.HandledWrong) {
+			UnSourceResolvedTypeElement ele = new UnSourceResolvedTypeElement(represent);
+			HandleIJavaElement(represent, ele, happen);
 		}
 	}
-
-	protected void HandleIJavaElement(String content, IJavaElement ije) {
+	
+	@Override
+	public boolean visit(LambdaExpression node) {
+		boolean handled = false;
+		IMethodBinding imb = node.resolveMethodBinding();
+		if (imb != null) {
+			IJavaElement jele = imb.getJavaElement();
+			if (jele != null && jele instanceof IMethod) {
+				IMethod im = (IMethod) jele;
+				HandleIJavaElement(im.toString(), im, node);
+				handled = true;
+				
+				IRGeneratorForStatements irgfocb = new IRGeneratorForStatements(graph_manager, pool, super_class_element);
+				node.getBody().accept(irgfocb);
+			}
+		}
+		if (!handled) {
+			String content = node.toString();
+			HandleIJavaElement(content, new UnSourceResolvedLambdaElement(content), node);
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean visit(QualifiedName node) {
+		TreatName(node);
+		super.visit(node);
+		return false;
+	}
+	
+	@Override
+	public boolean visit(SimpleName node) {
+		TreatName(node);
+		super.visit(node);
+		return false;
+	}
+	
+	protected void TreatName(Name node) {
+		IBinding ib = node.resolveBinding();
+		// IJavaElementState state = null;
+		IJavaElementState bind_state = HandleBinding(ib, node);
+		if (bind_state == IJavaElementState.HandledWrong) {
+			String content = node.toString();
+			HandleIJavaElement(content, new UnSourceResolvedNameOrFieldAccessElement(content), node);
+		}
+	}
+	
+	protected IJavaElementState HandleBinding(IBinding ib, ASTNode node) {
+		if (!BindingManager.QualifiedBinding(ib)) {
+			return IJavaElementState.HandledWrong;
+		}
+		IJavaElement jele = ib.getJavaElement();
+		HandleIJavaElement(jele.getElementName(), jele, node);
+		return IJavaElementState.HandledSuccessful;
+	}
+	
+	protected void HandleMethodReference(IMethodBinding imb, MethodReference node) {
+		IMethod im = null;
+		if (imb != null) {
+			IJavaElement jele = imb.getJavaElement();
+			if (jele != null && jele instanceof IMethod) {
+				im = (IMethod) jele;
+				if (im.getDeclaringType().isBinary()) {
+					im = null;
+				}
+			}
+		}
+		if (im != null) {
+			HandleIJavaElement(im.toString(), im, node);
+		} else {
+			String content = node.toString();
+			UnSourceResolvedMethodReferenceElement ele = new UnSourceResolvedMethodReferenceElement(content);
+			IRJavaElement irje = pool.UniversalElement(new IRJavaElement(content, ele));
+			if (super_class_element != null) {
+				graph.RegistConnection(irje, super_class_element, new SuperConnect());
+			}
+			HandleIJavaElement(content, ele, node);
+		}
+	}
+	
+	protected void HandleIJavaElement(String content, IJavaElement ije, ASTNode node) {
 		IRJavaElement irje = new IRJavaElement(content, ije);
-		elements.add(irje);
+		IRJavaElement uni_ele = pool.UniversalElement(irje);
+		graph.RegistConnection(uni_ele, graph.getActive(), new VariableConnect(++ele_index));
+		rewrite.replace(node, ast.newSimpleName("V"), null);
 	}
 	
 }
