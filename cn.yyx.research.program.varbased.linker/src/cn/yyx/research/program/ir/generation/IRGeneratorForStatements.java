@@ -47,6 +47,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		this.graph_manager = graph_manager;
 		this.pool = pool;
 		this.super_class_element = super_class_element;
+		this.graph_manager.AddIRGraph(graph);
 	}
 	
 	@Override
