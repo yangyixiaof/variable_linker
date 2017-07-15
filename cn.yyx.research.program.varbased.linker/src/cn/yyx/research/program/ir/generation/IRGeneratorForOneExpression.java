@@ -7,8 +7,10 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CharacterLiteral;
+import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.IMethodBinding;
+import org.eclipse.jdt.core.dom.IVariableBinding;
 import org.eclipse.jdt.core.dom.LambdaExpression;
 import org.eclipse.jdt.core.dom.MethodReference;
 import org.eclipse.jdt.core.dom.Name;
@@ -17,6 +19,7 @@ import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.StringLiteral;
+import org.eclipse.jdt.core.dom.SuperFieldAccess;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 import cn.yyx.research.program.ir.IRConstantMeta;
@@ -109,7 +112,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 				IMethod im = (IMethod) jele;
 				HandleIJavaElement(im.toString(), im, node);
 				handled = true;
-				
+				// take it as a method.
 				IRGeneratorForStatements irgfocb = new IRGeneratorForStatements(graph_manager, pool, super_class_element);
 				node.getBody().accept(irgfocb);
 			}
@@ -145,6 +148,32 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		}
 	}
 	
+	@Override
+	public boolean visit(FieldAccess node) {
+		IVariableBinding ib = node.resolveFieldBinding();
+		IJavaElementState state = HandleBinding(ib, node);
+		if (state == IJavaElementState.HandledWrong) {
+			String content = node.toString();
+			HandleIJavaElement(content, new UnSourceResolvedNameOrFieldAccessElement(content), node);
+		}
+		super.visit(node);
+		return false;
+	}
+	
+	@Override
+	public boolean visit(SuperFieldAccess node) {
+		IVariableBinding ib = node.resolveFieldBinding();
+		IJavaElementState state = HandleBinding(ib, node);
+		if (state == IJavaElementState.HandledWrong) {
+			String content = node.toString();
+			UnSourceResolvedNameOrFieldAccessElement usrnofae = new UnSourceResolvedNameOrFieldAccessElement(content);
+			HandleSuperConnect(content, usrnofae);
+			HandleIJavaElement(content, usrnofae, node);
+		}
+		super.visit(node);
+		return false;
+	}
+	
 	protected IJavaElementState HandleBinding(IBinding ib, ASTNode node) {
 		if (!BindingManager.QualifiedBinding(ib)) {
 			return IJavaElementState.HandledWrong;
@@ -170,11 +199,15 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		} else {
 			String content = node.toString();
 			UnSourceResolvedMethodReferenceElement ele = new UnSourceResolvedMethodReferenceElement(content);
-			IRJavaElement irje = pool.UniversalElement(new IRJavaElement(content, ele));
-			if (super_class_element != null) {
-				graph.RegistConnection(irje, super_class_element, new SuperConnect());
-			}
+			HandleSuperConnect(content, ele);
 			HandleIJavaElement(content, ele, node);
+		}
+	}
+	
+	protected void HandleSuperConnect(String content, IJavaElement ele) {
+		IRJavaElement irje = pool.UniversalElement(new IRJavaElement(content, ele));
+		if (super_class_element != null) {
+			graph.RegistConnection(irje, super_class_element, new SuperConnect());
 		}
 	}
 	
