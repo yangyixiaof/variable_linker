@@ -46,7 +46,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	IRElementPool pool = null;
 	IRGraph graph = null;
 	IRJavaElement super_class_element = null;
-	int ele_index = 0;
+	int element_index = 0;
 	
 	public IRGeneratorForOneExpression(IRGraphManager graph_manager, ASTNode node, ASTRewrite rewrite, IRElementPool pool, IRGraph graph, IRJavaElement super_class_element, int base_index) {
 		this.graph_manager = graph_manager;
@@ -56,7 +56,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		this.pool = pool;
 		this.graph = graph;
 		this.super_class_element = super_class_element;
-		this.ele_index = base_index;
+		this.element_index = base_index;
 	}
 	
 	@Override
@@ -214,8 +214,12 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	protected void HandleIJavaElement(String content, IJavaElement ije, ASTNode node) {
 		IRJavaElement irje = new IRJavaElement(content, ije);
 		IRJavaElement uni_ele = pool.UniversalElement(irje);
-		graph.RegistConnection(uni_ele, graph.getActive(), new VariableConnect(++ele_index));
+		graph.RegistConnection(uni_ele, graph.getActive(), new VariableConnect(++element_index));
 		rewrite.replace(node, ast.newSimpleName("V"), null);
+	}
+	
+	public int GetElementIndex() {
+		return element_index;
 	}
 	
 }

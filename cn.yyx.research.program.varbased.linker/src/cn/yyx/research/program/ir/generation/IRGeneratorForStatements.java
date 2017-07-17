@@ -27,6 +27,7 @@ import org.eclipse.jdt.core.dom.WhileStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jface.text.Document;
 
+import cn.yyx.research.program.ir.generation.structure.ASTNodeHandledInfo;
 import cn.yyx.research.program.ir.generation.traversal.task.IRASTNodeTask;
 import cn.yyx.research.program.ir.storage.IRElementPool;
 import cn.yyx.research.program.ir.storage.IRGraph;
@@ -62,16 +63,22 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		super.postVisit(node);
 	}
 	
-	@Override
-	public boolean visit(AssertStatement node) {
+	protected ASTNodeHandledInfo HandleOneASTNode(ASTNode node, int element_idx) {
 		IIRNode iirn = new IIRNode("");
 		graph.GoForwardAStep(iirn);
 		Document doc = new Document(node.toString());
 		ASTRewrite rewrite = ASTRewrite.create(node.getAST());
-		node.accept(new IRGeneratorForOneExpression(graph_manager, node, rewrite, pool, graph, super_class_element, 0));
+		IRGeneratorForOneExpression irfoe = new IRGeneratorForOneExpression(graph_manager, node, rewrite, pool, graph, super_class_element, element_idx);
+		node.accept(irfoe);
 		// TextEdit edits = ;
 		rewrite.rewriteAST(doc, null);
 		iirn.SetContent(doc.toString());
+		return new ASTNodeHandledInfo(irfoe.GetElementIndex(), iirn);
+	}
+	
+	@Override
+	public boolean visit(AssertStatement node) {
+		HandleOneASTNode(node, 0);
 		return super.visit(node);
 	}
 	
@@ -88,12 +95,6 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	}
 	
 	@Override
-	public boolean visit(ConstructorInvocation node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-	
-	@Override
 	public boolean visit(ContinueStatement node) {
 		// TODO Auto-generated method stub
 		return super.visit(node);
@@ -101,7 +102,14 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	
 	@Override
 	public boolean visit(DoStatement node) {
-		// TODO Auto-generated method stub
+		ASTNodeHandledInfo info = HandleOneASTNode(node.getExpression(), 0);
+		
+		return super.visit(node);
+	}
+	
+	@Override
+	public void endVisit(DoStatement node) {
+		
 		return super.visit(node);
 	}
 	
@@ -143,12 +151,6 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	
 	@Override
 	public boolean visit(ReturnStatement node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-	
-	@Override
-	public boolean visit(SuperConstructorInvocation node) {
 		// TODO Auto-generated method stub
 		return super.visit(node);
 	}
@@ -198,6 +200,20 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	@Override
 	public boolean visit(WhileStatement node) {
 		// TODO Auto-generated method stub
+		return super.visit(node);
+	}
+	
+	@Override
+	public boolean visit(ConstructorInvocation node) {
+		// TODO Auto-generated method stub
+		
+		return super.visit(node);
+	}
+	
+	@Override
+	public boolean visit(SuperConstructorInvocation node) {
+		// TODO Auto-generated method stub
+		
 		return super.visit(node);
 	}
 	
