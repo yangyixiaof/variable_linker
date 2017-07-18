@@ -224,7 +224,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		return element_index;
 	}
 	
-	
+	// method_invocation should be handled.
 
 	@Override
 	public boolean visit(ConstructorInvocation node) {

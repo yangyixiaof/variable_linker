@@ -144,8 +144,16 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	
 	@Override
 	public boolean visit(ExpressionStatement node) {
-		// TODO Auto-generated method stub
+		IIRNode iirn = new IIRNode("");
+		graph.GoForwardAStep(iirn);
+		ASTNodeHandledInfo info = PreHandleOneASTNode(node, 0);
+		iirn.SetContent(info.GetNodeHandledDoc());
 		return super.visit(node);
+	}
+	
+	@Override
+	public void endVisit(ExpressionStatement node) {
+		PostHandleOneASTNode(node);
 	}
 	
 	@Override
