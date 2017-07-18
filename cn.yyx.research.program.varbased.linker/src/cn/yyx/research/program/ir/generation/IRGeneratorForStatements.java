@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AssertStatement;
@@ -44,13 +43,9 @@ import cn.yyx.research.program.ir.generation.traversal.task.IRASTNodeTask;
 import cn.yyx.research.program.ir.storage.IRElementPool;
 import cn.yyx.research.program.ir.storage.IRGraph;
 import cn.yyx.research.program.ir.storage.IRGraphManager;
-import cn.yyx.research.program.ir.storage.connection.ConnectionInfo;
-import cn.yyx.research.program.ir.storage.connection.EdgeBaseType;
-import cn.yyx.research.program.ir.storage.connection.StaticConnection;
 import cn.yyx.research.program.ir.storage.node.IIRNode;
 import cn.yyx.research.program.ir.storage.node.IRJavaElement;
 import cn.yyx.research.program.ir.storage.node.IRNoneSucceedNode;
-import cn.yyx.research.program.ir.storage.node.lowlevel.IRForOneInstruction;
 
 public class IRGeneratorForStatements extends ASTVisitor {
 	
@@ -231,20 +226,37 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	
 	protected Map<ASTNode, StatementBranchInfo> statement_branch_map = new HashMap<ASTNode, StatementBranchInfo>();
 	
-	private void PostHandleMustTwoBranches(ASTNode node) {
+	protected void PostHandleMustTwoBranches(ASTNode node) {
+		// TODO handle situation that there are no branches. in which branch_root should directly connect to block_over node.
 		
 	}
 	
-	private void PostHandleMultiBranches(ASTNode node) {
+	protected void PostHandleMultiBranches(ASTNode node) {
+		// TODO handle situation that there are no branches. in which branch_root should directly connect to block_over node.
 		
 	}
+	
+	protected Map<ASTNode, IIRNode> semantic_block_control = new HashMap<ASTNode, IIRNode>();
 	
 	@Override
 	public boolean visit(DoStatement node) {
 		ASTNodeHandledInfo info = PreHandleOneASTNode(node.getExpression(), 0);
-		IIRNode iirn = info.GetIIRNode();
-		
+		String hdoc = info.GetNodeHandledDoc();
+		IIRNode branch_root = new IIRNode(hdoc);
+		semantic_block_control.put(node, branch_root);
+		graph.GoForwardAStep(branch_root);
+		StatementBranchInfo sbi = new StatementBranchInfo(branch_root);
+		statement_branch_map.put(node, sbi);
 		return super.visit(node);
+	}
+	
+	@Override
+	public void endVisit(DoStatement node) {
+		IIRNode branch_root = semantic_block_control.remove(node);
+		IIRNode active = graph.getActive();
+		if (!active.equals(branch_root)) {
+			statement_branch_map.get(node).AddBranch(active);
+		}
 	}
 	
 	@Override
