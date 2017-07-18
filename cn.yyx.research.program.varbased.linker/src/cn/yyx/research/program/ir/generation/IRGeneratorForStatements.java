@@ -1,9 +1,15 @@
 package cn.yyx.research.program.ir.generation;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AssertStatement;
@@ -18,6 +24,7 @@ import org.eclipse.jdt.core.dom.ForStatement;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.LabeledStatement;
 import org.eclipse.jdt.core.dom.ReturnStatement;
+import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SwitchCase;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.SynchronizedStatement;
@@ -30,13 +37,19 @@ import org.eclipse.jdt.core.dom.WhileStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jface.text.Document;
 
+import cn.yyx.research.program.ir.ast.ASTSearch;
 import cn.yyx.research.program.ir.generation.structure.ASTNodeHandledInfo;
 import cn.yyx.research.program.ir.generation.traversal.task.IRASTNodeTask;
 import cn.yyx.research.program.ir.storage.IRElementPool;
 import cn.yyx.research.program.ir.storage.IRGraph;
 import cn.yyx.research.program.ir.storage.IRGraphManager;
+import cn.yyx.research.program.ir.storage.connection.ConnectionInfo;
+import cn.yyx.research.program.ir.storage.connection.EdgeBaseType;
+import cn.yyx.research.program.ir.storage.connection.StaticConnection;
 import cn.yyx.research.program.ir.storage.node.IIRNode;
 import cn.yyx.research.program.ir.storage.node.IRJavaElement;
+import cn.yyx.research.program.ir.storage.node.IRNoneSucceedNode;
+import cn.yyx.research.program.ir.storage.node.lowlevel.IRForOneInstruction;
 
 public class IRGeneratorForStatements extends ASTVisitor {
 	
@@ -156,22 +169,57 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		PostHandleOneASTNode(node);
 	}
 	
+	protected Map<String, ASTNode> label_scope = new TreeMap<String, ASTNode>();
+	protected Map<ASTNode, Set<IRNoneSucceedNode>> break_continue_wait_handle = new HashMap<ASTNode, Set<IRNoneSucceedNode>>();
+
 	@Override
 	public boolean visit(LabeledStatement node) {
-		// TODO Auto-generated method stub
+		// minor but close relation.
+		SimpleName label = node.getLabel();
+		if (label != null) {
+			label_scope.put(label.toString(), node.getBody());
+		}
 		return super.visit(node);
+	}
+
+	@Override
+	public void endVisit(LabeledStatement node) {
+		SimpleName label = node.getLabel();
+		if (label != null) {
+			label_scope.remove(label.toString());
+		}
+		super.endVisit(node);
 	}
 	
 	@Override
 	public boolean visit(BreakStatement node) {
-		// TODO Auto-generated method stub
+		HandleBreakContinueStatement(node, node.getLabel(), "break");
 		return super.visit(node);
 	}
 	
 	@Override
 	public boolean visit(ContinueStatement node) {
-		// TODO Auto-generated method stub
+		HandleBreakContinueStatement(node, node.getLabel(), "continue");
 		return super.visit(node);
+	}
+	
+	protected void HandleBreakContinueStatement(ASTNode node, SimpleName label, String code) {
+		ASTNode break_scope = null;
+		if (label != null) {
+			break_scope = label_scope.get(label.toString());
+		} else {
+			break_scope = ASTSearch.FindMostCloseLoopNode(node);
+		}
+		if (break_scope != null) {
+			Set<IRNoneSucceedNode> none_succeed_nodes = break_continue_wait_handle.get(break_scope);
+			if (none_succeed_nodes == null) {
+				none_succeed_nodes = new HashSet<IRNoneSucceedNode>();
+				break_continue_wait_handle.put(break_scope, none_succeed_nodes);
+			}
+			IRNoneSucceedNode iirn = new IRNoneSucceedNode(code);
+			graph.GoForwardAStep(iirn);
+			none_succeed_nodes.add(iirn);
+		}
 	}
 	
 	@Override
@@ -237,6 +285,8 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		// TODO Auto-generated method stub
 		return super.visit(node);
 	}
+	
+	// nothing need to be done.
 	
 	@Override
 	public boolean visit(ThrowStatement node) {
