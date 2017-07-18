@@ -39,6 +39,7 @@ import org.eclipse.jface.text.Document;
 
 import cn.yyx.research.program.ir.ast.ASTSearch;
 import cn.yyx.research.program.ir.generation.structure.ASTNodeHandledInfo;
+import cn.yyx.research.program.ir.generation.structure.StatementBranchInfo;
 import cn.yyx.research.program.ir.generation.traversal.task.IRASTNodeTask;
 import cn.yyx.research.program.ir.storage.IRElementPool;
 import cn.yyx.research.program.ir.storage.IRGraph;
@@ -228,11 +229,13 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		return super.visit(node);
 	}
 	
-	private void HandleMustTwoBranches(IIRNode branch_root, List<IIRNode> branches) {
+	protected Map<ASTNode, StatementBranchInfo> statement_branch_map = new HashMap<ASTNode, StatementBranchInfo>();
+	
+	private void PostHandleMustTwoBranches(ASTNode node) {
 		
 	}
 	
-	private void HandleMultiBranches(IIRNode branch_root, List<IIRNode> branches) {
+	private void PostHandleMultiBranches(ASTNode node) {
 		
 	}
 	

@@ -1,7 +1,5 @@
 package cn.yyx.research.program.ir.generation.structure;
 
-import cn.yyx.research.program.ir.storage.node.IIRNode;
-
 public class ASTNodeHandledInfo {
 	
 	int element_idx = -1;
