@@ -5,19 +5,19 @@ import cn.yyx.research.program.ir.storage.node.IIRNode;
 public class ASTNodeHandledInfo {
 	
 	int element_idx = -1;
-	IIRNode iirn = null;
+	String hdoc = null;
 	
-	public ASTNodeHandledInfo(int element_idx, IIRNode iirn) {
+	public ASTNodeHandledInfo(int element_idx, String hdoc) {
 		this.element_idx = element_idx;
-		this.iirn = iirn;
+		this.hdoc = hdoc;
 	}
 	
 	public int GetElementIndex() {
 		return element_idx;
 	}
 	
-	public IIRNode GetIIRNode() {
-		return iirn;
+	public String GetNodeHandledDoc() {
+		return hdoc;
 	}
 	
 }

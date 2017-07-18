@@ -7,6 +7,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CharacterLiteral;
+import org.eclipse.jdt.core.dom.ConstructorInvocation;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.IMethodBinding;
@@ -19,6 +20,7 @@ import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.StringLiteral;
+import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
 import org.eclipse.jdt.core.dom.SuperFieldAccess;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
@@ -220,6 +222,22 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	
 	public int GetElementIndex() {
 		return element_index;
+	}
+	
+	
+
+	@Override
+	public boolean visit(ConstructorInvocation node) {
+		// TODO Auto-generated method stub
+		
+		return super.visit(node);
+	}
+	
+	@Override
+	public boolean visit(SuperConstructorInvocation node) {
+		// TODO Auto-generated method stub
+		
+		return super.visit(node);
 	}
 	
 }
