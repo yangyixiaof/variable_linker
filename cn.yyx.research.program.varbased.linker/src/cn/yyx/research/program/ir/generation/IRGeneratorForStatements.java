@@ -18,12 +18,15 @@ import org.eclipse.jdt.core.dom.ContinueStatement;
 import org.eclipse.jdt.core.dom.DoStatement;
 import org.eclipse.jdt.core.dom.EmptyStatement;
 import org.eclipse.jdt.core.dom.EnhancedForStatement;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.ForStatement;
+import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.LabeledStatement;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.SwitchCase;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.SynchronizedStatement;
@@ -37,19 +40,24 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jface.text.Document;
 
 import cn.yyx.research.program.ir.ast.ASTSearch;
+import cn.yyx.research.program.ir.element.VirtualMethodReturnElement;
+import cn.yyx.research.program.ir.generation.IRGeneratorForOneLogicBlock.TwoPairList;
 import cn.yyx.research.program.ir.generation.structure.ASTNodeHandledInfo;
 import cn.yyx.research.program.ir.generation.structure.StatementBranchInfo;
+import cn.yyx.research.program.ir.generation.structure.SwitchCaseBlockList;
 import cn.yyx.research.program.ir.generation.traversal.task.IRASTNodeTask;
 import cn.yyx.research.program.ir.storage.IRElementPool;
 import cn.yyx.research.program.ir.storage.IRGraph;
 import cn.yyx.research.program.ir.storage.IRGraphManager;
 import cn.yyx.research.program.ir.storage.connection.Connect;
+import cn.yyx.research.program.ir.storage.connection.VariableConnect;
 import cn.yyx.research.program.ir.storage.node.IIRNode;
 import cn.yyx.research.program.ir.storage.node.IRJavaElement;
 import cn.yyx.research.program.ir.storage.node.IRNoneSucceedNode;
 
 public class IRGeneratorForStatements extends ASTVisitor {
 	
+	protected IBinding bind = null;
 	protected IRGraphManager graph_manager = null;
 	protected IRElementPool pool = null;
 	protected IRJavaElement super_class_element = null;
@@ -58,7 +66,8 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	protected IRGraph graph = new IRGraph();
 	protected List<ASTNode> forbid_visit = new LinkedList<ASTNode>();
 	
-	public IRGeneratorForStatements(IRGraphManager graph_manager, IRElementPool pool, IRJavaElement super_class_element) {
+	public IRGeneratorForStatements(IBinding bind, IRGraphManager graph_manager, IRElementPool pool, IRJavaElement super_class_element) {
+		this.bind = bind;
 		this.graph_manager = graph_manager;
 		this.pool = pool;
 		this.super_class_element = super_class_element;
@@ -221,8 +230,23 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	
 	@Override
 	public boolean visit(ReturnStatement node) {
-		// TODO Auto-generated method stub
+		Expression expr = node.getExpression();
+		if (expr == null) {
+			graph.AddControlOutNodes(graph.getActive());
+		} else {
+			IRJavaElement f_return = pool.UniversalElement(bind.getKey(), new VirtualMethodReturnElement(bind.getKey()));
+			IIRNode iirn = new IIRNode("");
+			graph.GoForwardAStep(iirn);
+			ASTNodeHandledInfo info = PreHandleOneASTNode(node, 1);
+			iirn.SetContent("V=" + info.GetNodeHandledDoc());
+			graph.RegistConnection(f_return, iirn, new VariableConnect(1));
+		}
 		return super.visit(node);
+	}
+	
+	@Override
+	public void endVisit(ReturnStatement node) {
+		PostHandleOneASTNode(node);
 	}
 	
 	protected Map<ASTNode, StatementBranchInfo> statement_branch_map = new HashMap<ASTNode, StatementBranchInfo>();
@@ -297,10 +321,39 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		return super.visit(node);
 	}
 	
-	@Override
-	public boolean visit(SwitchCase node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
+	// @Override
+	// public boolean visit(SwitchCase node) {
+		// do nothing.
+	//	return super.visit(node);
+	// }
+	
+	protected TwoPairList SearchForBranchBlocks(SwitchStatement node) {
+		SwitchCaseBlockList tpl = new SwitchCaseBlockList();
+		@SuppressWarnings("unchecked")
+		List<Statement> stmts = node.statements();
+		Iterator<Statement> sitr = stmts.iterator();
+		Statement previous = null;
+		while (sitr.hasNext()) {
+			Statement stmt = sitr.next();
+			if (stmt instanceof SwitchCase) {
+				tpl.branch_first_stats.add(stmt);
+				tpl.branch_first_to_last.add(new LinkedList<ASTNode>());
+				if (previous != null) {
+					tpl.branch_last_stats.add(previous);
+				}
+			}
+			tpl.branch_first_to_last.getLast().add(stmt);
+			previous = stmt;
+		}
+		if (previous != null) {
+			tpl.branch_last_stats.add(previous);
+		}
+		if (tpl.branch_first_stats.size() != tpl.branch_last_stats.size()
+				|| tpl.branch_first_stats.size() != tpl.branch_first_to_last.size()) {
+			System.err.println("What the fuck! size is different.");
+			System.exit(1);
+		}
+		return tpl;
 	}
 	
 	@Override

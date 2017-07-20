@@ -14,6 +14,7 @@ public class IRGraph {
 	private IIRNode root = null;
 	private IIRNode active = null;
 	Set<IRSourceMethodInvocation> source_method_invokes = new HashSet<IRSourceMethodInvocation>();
+	private Set<IIRNode> control_out_nodes = new HashSet<IIRNode>();
 	
 	public IRGraph() {
 	}
@@ -21,7 +22,11 @@ public class IRGraph {
 	public void setActive(IIRNode active) {
 		this.active = active;
 	}
-
+	
+	public void AddControlOutNodes(IIRNode iirn) {
+		control_out_nodes.add(iirn);
+	}
+	
 	public IIRNode getActive() {
 		return active;
 	}

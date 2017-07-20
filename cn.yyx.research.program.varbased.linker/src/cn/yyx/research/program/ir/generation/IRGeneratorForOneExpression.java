@@ -115,7 +115,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 				HandleIJavaElement(im.toString(), im, node);
 				handled = true;
 				// take it as a method.
-				IRGeneratorForStatements irgfocb = new IRGeneratorForStatements(graph_manager, pool, super_class_element);
+				IRGeneratorForStatements irgfocb = new IRGeneratorForStatements(imb, graph_manager, pool, super_class_element);
 				node.getBody().accept(irgfocb);
 			}
 		}
@@ -207,15 +207,15 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	}
 	
 	protected void HandleSuperConnect(String content, IJavaElement ele) {
-		IRJavaElement irje = pool.UniversalElement(new IRJavaElement(content, ele));
+		IRJavaElement irje = pool.UniversalElement(content, ele);
 		if (super_class_element != null) {
 			graph.RegistConnection(irje, super_class_element, new SuperConnect());
 		}
 	}
 	
 	protected void HandleIJavaElement(String content, IJavaElement ije, ASTNode node) {
-		IRJavaElement irje = new IRJavaElement(content, ije);
-		IRJavaElement uni_ele = pool.UniversalElement(irje);
+		// IRJavaElement irje = new IRJavaElement(content, ije);
+		IRJavaElement uni_ele = pool.UniversalElement(content, ije); // irje
 		graph.RegistConnection(uni_ele, graph.getActive(), new VariableConnect(++element_index));
 		rewrite.replace(node, ast.newSimpleName("V"), null);
 	}
