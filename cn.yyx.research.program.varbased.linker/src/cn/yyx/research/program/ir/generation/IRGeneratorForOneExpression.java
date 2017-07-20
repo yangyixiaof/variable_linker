@@ -208,6 +208,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	
 	protected void HandleSuperConnect(String content, IJavaElement ele) {
 		IRJavaElement irje = pool.UniversalElement(content, ele);
+		graph.AddVariableNode(irje);
 		if (super_class_element != null) {
 			graph.RegistConnection(irje, super_class_element, new SuperConnect());
 		}
@@ -216,6 +217,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	protected void HandleIJavaElement(String content, IJavaElement ije, ASTNode node) {
 		// IRJavaElement irje = new IRJavaElement(content, ije);
 		IRJavaElement uni_ele = pool.UniversalElement(content, ije); // irje
+		graph.AddVariableNode(uni_ele);
 		graph.RegistConnection(uni_ele, graph.getActive(), new VariableConnect(++element_index));
 		rewrite.replace(node, ast.newSimpleName("V"), null);
 	}
