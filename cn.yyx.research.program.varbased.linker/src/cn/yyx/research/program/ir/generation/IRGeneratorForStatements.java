@@ -43,6 +43,7 @@ import cn.yyx.research.program.ir.generation.traversal.task.IRASTNodeTask;
 import cn.yyx.research.program.ir.storage.IRElementPool;
 import cn.yyx.research.program.ir.storage.IRGraph;
 import cn.yyx.research.program.ir.storage.IRGraphManager;
+import cn.yyx.research.program.ir.storage.connection.Connect;
 import cn.yyx.research.program.ir.storage.node.IIRNode;
 import cn.yyx.research.program.ir.storage.node.IRJavaElement;
 import cn.yyx.research.program.ir.storage.node.IRNoneSucceedNode;
@@ -227,8 +228,20 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	protected Map<ASTNode, StatementBranchInfo> statement_branch_map = new HashMap<ASTNode, StatementBranchInfo>();
 	
 	protected void PostHandleMustTwoBranches(ASTNode node) {
-		// TODO handle situation that there are no branches. in which branch_root should directly connect to block_over node.
-		
+		// Solved. handle situation that there are no branches. in which branch_root should directly connect to block_over node.
+		IIRNode over = new IIRNode("Virtual_Branch_Over");
+		StatementBranchInfo sbi = statement_branch_map.get(node);
+		List<IIRNode> branches = sbi.GetBranches();
+		Iterator<IIRNode> bitr = branches.iterator();
+		while (bitr.hasNext()) {
+			IIRNode iirn = bitr.next();
+			graph.RegistConnection(iirn, over, new Connect());
+		}
+		if (branches.size() < 2) {
+			IIRNode branch_root = sbi.GetBranchRoot();
+			graph.RegistConnection(branch_root, over, new Connect());
+		}
+		graph.setActive(over);
 	}
 	
 	protected void PostHandleMultiBranches(ASTNode node) {
@@ -257,6 +270,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		if (!active.equals(branch_root)) {
 			statement_branch_map.get(node).AddBranch(active);
 		}
+		PostHandleMustTwoBranches(node);
 	}
 	
 	@Override
@@ -267,6 +281,12 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	
 	@Override
 	public boolean visit(ForStatement node) {
+		// TODO Auto-generated method stub
+		return super.visit(node);
+	}
+	
+	@Override
+	public boolean visit(WhileStatement node) {
 		// TODO Auto-generated method stub
 		return super.visit(node);
 	}
@@ -291,12 +311,6 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	
 	@Override
 	public boolean visit(SynchronizedStatement node) {
-		// TODO Auto-generated method stub
-		return super.visit(node);
-	}
-	
-	@Override
-	public boolean visit(WhileStatement node) {
 		// TODO Auto-generated method stub
 		return super.visit(node);
 	}

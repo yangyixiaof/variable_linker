@@ -17,6 +17,10 @@ public class IRGraph {
 	
 	public IRGraph() {
 	}
+	
+	public void setActive(IIRNode active) {
+		this.active = active;
+	}
 
 	public IIRNode getActive() {
 		return active;
