@@ -5,23 +5,33 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.ArrayType;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CharacterLiteral;
 import org.eclipse.jdt.core.dom.ConstructorInvocation;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.IMethodBinding;
+import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.IVariableBinding;
+import org.eclipse.jdt.core.dom.IntersectionType;
 import org.eclipse.jdt.core.dom.LambdaExpression;
 import org.eclipse.jdt.core.dom.MethodReference;
 import org.eclipse.jdt.core.dom.Name;
+import org.eclipse.jdt.core.dom.NameQualifiedType;
 import org.eclipse.jdt.core.dom.NullLiteral;
 import org.eclipse.jdt.core.dom.NumberLiteral;
+import org.eclipse.jdt.core.dom.ParameterizedType;
+import org.eclipse.jdt.core.dom.PrimitiveType;
 import org.eclipse.jdt.core.dom.QualifiedName;
+import org.eclipse.jdt.core.dom.QualifiedType;
 import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.SimpleType;
 import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
 import org.eclipse.jdt.core.dom.SuperFieldAccess;
+import org.eclipse.jdt.core.dom.UnionType;
+import org.eclipse.jdt.core.dom.WildcardType;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 import cn.yyx.research.program.ir.IRConstantMeta;
@@ -96,13 +106,13 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		return super.visit(node);
 	}
 	
-	protected void HandleType(IBinding ib, String represent, ASTNode happen) {
-		IJavaElementState source_resolved = HandleBinding(ib, happen);
-		if (source_resolved == IJavaElementState.HandledWrong) {
-			UnSourceResolvedTypeElement ele = new UnSourceResolvedTypeElement(represent);
-			HandleIJavaElement(represent, ele, happen);
-		}
-	}
+//	protected void HandleType(IBinding ib, String represent, ASTNode happen) {
+//		IJavaElementState source_resolved = HandleBinding(ib, happen);
+//		if (source_resolved == IJavaElementState.HandledWrong) {
+//			UnSourceResolvedTypeElement ele = new UnSourceResolvedTypeElement(represent);
+//			HandleIJavaElement(represent, ele, happen);
+//		}
+//	}
 	
 	@Override
 	public boolean visit(LambdaExpression node) {
@@ -172,6 +182,123 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 			HandleSuperConnect(content, usrnofae);
 			HandleIJavaElement(content, usrnofae, node);
 		}
+		super.visit(node);
+		return false;
+	}
+	
+//	AnnotatableType:
+//	       PrimitiveType
+//	       SimpleType
+//	       QualifiedType
+//	       NameQualifiedType
+//	       WildcardType
+//	    ArrayType
+//	    ParameterizedType
+//	    UnionType
+//	    IntersectionType
+//	    
+//	 PrimitiveType:
+//	    { Annotation } byte
+//	    { Annotation } short
+//	    { Annotation } char
+//	    { Annotation } int
+//	    { Annotation } long
+//	    { Annotation } float
+//	    { Annotation } double
+//	    { Annotation } boolean
+//	    { Annotation } void
+//	 ArrayType:
+//	    Type Dimension { Dimension }
+//	 SimpleType:
+//	    { Annotation } TypeName
+//	 QualifiedType:
+//	    Type . {Annotation} SimpleName
+//	 NameQualifiedType:
+//	    Name . { Annotation } SimpleName
+//	 WildcardType:
+//	    { Annotation } ? [ ( extends | super) Type ]
+//	 ParameterizedType:
+//	    Type < Type { , Type } >
+//	 UnionType:
+//	    Type | Type { | Type }
+//	 IntersectionType:
+//	    Type & Type { & Type }
+	
+	@Override
+	public boolean visit(PrimitiveType node) {
+		HandleBinding(node.resolveBinding(), node);
+		super.visit(node);
+		return false;
+	}
+	
+	protected void HandleType(ITypeBinding ib, ASTNode node) {
+		IJavaElementState state = HandleBinding(ib, node);
+		if (state == IJavaElementState.HandledWrong) {
+			String content = node.toString();
+			HandleIJavaElement(content, new UnSourceResolvedTypeElement(content), node);
+		}
+	}
+	
+	@Override
+	public boolean visit(SimpleType node) {
+		ITypeBinding ib = node.resolveBinding();
+		HandleType(ib, node);
+		super.visit(node);
+		return false;
+	}
+	
+	@Override
+	public boolean visit(QualifiedType node) {
+		ITypeBinding ib = node.resolveBinding();
+		HandleType(ib, node);
+		super.visit(node);
+		return false;
+	}
+	
+	@Override
+	public boolean visit(NameQualifiedType node) {
+		ITypeBinding ib = node.resolveBinding();
+		HandleType(ib, node);
+		super.visit(node);
+		return false;
+	}
+	
+	@Override
+	public boolean visit(WildcardType node) {
+		ITypeBinding ib = node.resolveBinding();
+		HandleType(ib, node);
+		super.visit(node);
+		return false;
+	}
+	
+	@Override
+	public boolean visit(ArrayType node) {
+		ITypeBinding ib = node.resolveBinding();
+		HandleType(ib, node);
+		super.visit(node);
+		return false;
+	}
+	
+	@Override
+	public boolean visit(ParameterizedType node) {
+		ITypeBinding ib = node.getType().resolveBinding();
+		HandleType(ib, node);
+		super.visit(node);
+		return false;
+	}
+	
+	@Override
+	public boolean visit(UnionType node) {
+		ITypeBinding ib = node.resolveBinding();
+		HandleType(ib, node);
+		super.visit(node);
+		return false;
+	}
+	
+	@Override
+	public boolean visit(IntersectionType node) {
+		ITypeBinding ib = node.resolveBinding();
+		HandleType(ib, node);
 		super.visit(node);
 		return false;
 	}

@@ -34,6 +34,7 @@ import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.SynchronizedStatement;
 import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.core.dom.TryStatement;
+import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclarationStatement;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
@@ -340,18 +341,48 @@ public class IRGeneratorForStatements extends ASTVisitor {
 
 	@Override
 	public boolean visit(EnhancedForStatement node) {
-		// TODO Auto-generated method stub
+		ASTNodeHandledInfo info = null;
+		StringBuilder enh_for = new StringBuilder("for (");
 		SingleVariableDeclaration param = node.getParameter();
-		param.getType();
-		param.getName();
-		param.getInitializer();
+		Type t = param.getType();
+		info = PreHandleOneASTNode(t, 0);
+		enh_for.append(info.GetNodeHandledDoc());
+		SimpleName name = param.getName();
+		info = PreHandleOneASTNode(name, info.GetElementIndex());
+		enh_for.append(" " + info.GetNodeHandledDoc() + ":");
+		Expression expr = node.getExpression();
+		info = PreHandleOneASTNode(expr, info.GetElementIndex());
+		enh_for.append(info.GetNodeHandledDoc() + ") {}");
+		
+		IIRNode branch_root = new IIRNode(enh_for.toString());
+		semantic_block_control.put(node, branch_root);
+		graph.GoForwardAStep(branch_root);
+		StatementBranchInfo sbi = new StatementBranchInfo(branch_root);
+		statement_branch_map.put(node, sbi);
 		return super.visit(node);
+	}
+	
+	@Override
+	public void endVisit(EnhancedForStatement node) {
+		IIRNode branch_root = semantic_block_control.remove(node);
+		IIRNode active = graph.getActive();
+		if (!active.equals(branch_root)) {
+			statement_branch_map.get(node).AddBranch(active);
+		}
+		IIRNode over = PostHandleMustTwoBranches(node);
+		SingleVariableDeclaration param = node.getParameter();
+		Type t = param.getType();
+		PostHandleOneASTNode(t);
+		SimpleName name = param.getName();
+		PostHandleOneASTNode(name);
+		Expression expr = node.getExpression();
+		PostHandleOneASTNode(expr);
+		HandleBreakContinueInLoopOver(node, over);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean visit(ForStatement node) {
-		// TODO Auto-generated method stub
 		StringBuilder for_builder = new StringBuilder("for (");
 		int element_index = 0;
 		List<Expression> inis = node.initializers();
