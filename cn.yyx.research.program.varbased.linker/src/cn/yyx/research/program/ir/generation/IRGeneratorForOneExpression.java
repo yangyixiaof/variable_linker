@@ -1,6 +1,7 @@
 package cn.yyx.research.program.ir.generation;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaElement;
@@ -14,6 +15,7 @@ import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CharacterLiteral;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.ConstructorInvocation;
+import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.IMethodBinding;
@@ -56,7 +58,7 @@ import cn.yyx.research.program.ir.storage.IRGraph;
 import cn.yyx.research.program.ir.storage.IRGraphManager;
 import cn.yyx.research.program.ir.storage.connection.SuperConnect;
 import cn.yyx.research.program.ir.storage.connection.VariableConnect;
-import cn.yyx.research.program.ir.storage.node.IRJavaElement;
+import cn.yyx.research.program.ir.storage.node.IRJavaElementNode;
 
 public class IRGeneratorForOneExpression extends ASTVisitor {
 	
@@ -67,10 +69,10 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	protected ASTRewrite rewrite = null;
 	protected IRElementPool pool = null;
 	protected IRGraph graph = null;
-	protected IRJavaElement super_class_element = null;
+	protected IRJavaElementNode super_class_element = null;
 	protected int element_index = 0;
 	
-	public IRGeneratorForOneExpression(IJavaProject java_project, IRGraphManager graph_manager, ASTNode node, ASTRewrite rewrite, IRElementPool pool, IRGraph graph, IRJavaElement super_class_element, int base_index) {
+	public IRGeneratorForOneExpression(IJavaProject java_project, IRGraphManager graph_manager, ASTNode node, ASTRewrite rewrite, IRElementPool pool, IRGraph graph, IRJavaElementNode super_class_element, int base_index) {
 		this.java_project = java_project;
 		this.graph_manager = graph_manager;
 		this.node = node;
@@ -345,7 +347,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	}
 	
 	protected void HandleSuperConnect(String content, IJavaElement ele) {
-		IRJavaElement irje = pool.UniversalElement(content, ele);
+		IRJavaElementNode irje = pool.UniversalElement(content, ele);
 		graph.AddVariableNode(irje);
 		if (super_class_element != null) {
 			graph.RegistConnection(irje, super_class_element, new SuperConnect());
@@ -354,7 +356,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	
 	protected void HandleIJavaElement(String content, IJavaElement ije, ASTNode node) {
 		// IRJavaElement irje = new IRJavaElement(content, ije);
-		IRJavaElement uni_ele = pool.UniversalElement(content, ije); // irje
+		IRJavaElementNode uni_ele = pool.UniversalElement(content, ije); // irje
 		graph.AddVariableNode(uni_ele);
 		graph.RegistConnection(uni_ele, graph.getActive(), new VariableConnect(++element_index));
 		rewrite.replace(node, ast.newSimpleName("V"), null);
@@ -364,7 +366,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		return element_index;
 	}
 	
-	protected void HandleMethodInvocation(IMethodBinding imb, ASTNode node) {
+	protected void HandleMethodInvocation(IMethodBinding imb, ASTNode node, List<Expression> arg_list) {
 		boolean handle_source = false;
 		if (imb != null) {
 			IJavaElement ije = imb.getJavaElement();
@@ -382,6 +384,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 				}
 				if (methods != null && methods.size() > 0) {
 					handle_source = true;
+					// TODO
 					
 				}
 			}
@@ -396,7 +399,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	@Override
 	public boolean visit(MethodInvocation node) {
 		// TODO Auto-generated method stub
-		
+		List<Expression> nlist = node.arguments();
 		return super.visit(node);
 	}
 	

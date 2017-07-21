@@ -7,25 +7,25 @@ import cn.yyx.research.program.ir.storage.connection.Connect;
 import cn.yyx.research.program.ir.storage.connection.FlowConnect;
 import cn.yyx.research.program.ir.storage.connection.IIRConnection;
 import cn.yyx.research.program.ir.storage.node.IIRNode;
-import cn.yyx.research.program.ir.storage.node.IRJavaElement;
-import cn.yyx.research.program.ir.storage.node.IRSourceMethodInvocation;
+import cn.yyx.research.program.ir.storage.node.IRJavaElementNode;
+import cn.yyx.research.program.ir.storage.node.IRSourceMethodInvocationNode;
 
 public class IRGraph {
 	
 	private IIRNode root = null;
 	private IIRNode active = null;
-	private Set<IRSourceMethodInvocation> source_method_invokes = new HashSet<IRSourceMethodInvocation>();
+	private Set<IRSourceMethodInvocationNode> source_method_invokes = new HashSet<IRSourceMethodInvocationNode>();
 	private Set<IIRNode> control_out_nodes = new HashSet<IIRNode>();
-	private Set<IRJavaElement> variable_nodes = new HashSet<IRJavaElement>();
+	private Set<IRJavaElementNode> variable_nodes = new HashSet<IRJavaElementNode>();
 	
 	public IRGraph() {
 	}
 	
-	public Set<IRJavaElement> GetAddVariableNodes() {
+	public Set<IRJavaElementNode> GetAddVariableNodes() {
 		return variable_nodes;
 	}
 	
-	public void AddVariableNode(IRJavaElement var) {
+	public void AddVariableNode(IRJavaElementNode var) {
 		variable_nodes.add(var);
 	}
 	

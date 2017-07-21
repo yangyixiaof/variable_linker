@@ -2,11 +2,11 @@ package cn.yyx.research.program.ir.storage.node;
 
 import org.eclipse.jdt.core.IJavaElement;
 
-public class IRJavaElement extends IIRNode {
+public class IRJavaElementNode extends IIRNode {
 	
 	private IJavaElement ele = null;
 	
-	public IRJavaElement(String content, IJavaElement ele) {
+	public IRJavaElementNode(String content, IJavaElement ele) {
 		super(content);
 		this.ele = ele;
 	}
@@ -17,8 +17,8 @@ public class IRJavaElement extends IIRNode {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof IRJavaElement) {
-			IRJavaElement irje = (IRJavaElement)obj;
+		if (obj instanceof IRJavaElementNode) {
+			IRJavaElementNode irje = (IRJavaElementNode)obj;
 			if (ele.equals(irje.ele)) {
 				return true;
 			}

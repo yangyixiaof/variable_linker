@@ -4,21 +4,21 @@ import java.util.TreeMap;
 
 import org.eclipse.jdt.core.IJavaElement;
 
-import cn.yyx.research.program.ir.storage.node.IRJavaElement;
+import cn.yyx.research.program.ir.storage.node.IRJavaElementNode;
 
 public class IRElementPool {
 	
-	TreeMap<String, IRJavaElement> pool = new TreeMap<String, IRJavaElement>();
+	TreeMap<String, IRJavaElementNode> pool = new TreeMap<String, IRJavaElementNode>();
 	
 	public IRElementPool() {
 	}
 	
-	public IRJavaElement UniversalElement(String content, IJavaElement ije) {
+	public IRJavaElementNode UniversalElement(String content, IJavaElement ije) {
 		// IRJavaElement irje
 		// String content = irje.getElement().toString();
-		IRJavaElement ele = pool.get(content);
+		IRJavaElementNode ele = pool.get(content);
 		if (ele == null) {
-			ele = new IRJavaElement(content, ije);
+			ele = new IRJavaElementNode(content, ije);
 			pool.put(content, ele);
 		}
 		return ele;

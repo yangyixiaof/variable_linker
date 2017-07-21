@@ -58,7 +58,7 @@ import cn.yyx.research.program.ir.storage.connection.VariableConnect;
 import cn.yyx.research.program.ir.storage.node.IIRBlockOverNode;
 import cn.yyx.research.program.ir.storage.node.IIRBranchOverNode;
 import cn.yyx.research.program.ir.storage.node.IIRNode;
-import cn.yyx.research.program.ir.storage.node.IRJavaElement;
+import cn.yyx.research.program.ir.storage.node.IRJavaElementNode;
 import cn.yyx.research.program.ir.storage.node.IRNoneSucceedNode;
 
 public class IRGeneratorForStatements extends ASTVisitor {
@@ -67,14 +67,14 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	protected IBinding bind = null;
 	protected IRGraphManager graph_manager = null;
 	protected IRElementPool pool = null;
-	protected IRJavaElement super_class_element = null;
+	protected IRJavaElementNode super_class_element = null;
 	protected IRASTNodeTask post_visit_task = new IRASTNodeTask();
 	protected IRASTNodeTask pre_visit_task = new IRASTNodeTask();
 	protected IRGraph graph = new IRGraph();
 	protected List<ASTNode> forbid_visit = new LinkedList<ASTNode>();
 
 	public IRGeneratorForStatements(IJavaProject java_project, IBinding bind, IRGraphManager graph_manager, IRElementPool pool,
-			IRJavaElement super_class_element) {
+			IRJavaElementNode super_class_element) {
 		this.bind = bind;
 		this.graph_manager = graph_manager;
 		this.pool = pool;
@@ -255,7 +255,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 			graph.AddControlOutNodes(graph.getActive());
 		} else {
 			IJavaElement ije = new VirtualMethodReturnElement(bind.getKey());
-			IRJavaElement f_return = pool.UniversalElement(bind.getKey(), ije);
+			IRJavaElementNode f_return = pool.UniversalElement(bind.getKey(), ije);
 			graph.AddVariableNode(f_return);
 			IIRNode iirn = new IIRNode("");
 			graph.GoForwardAStep(iirn);
