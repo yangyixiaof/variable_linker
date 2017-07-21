@@ -343,8 +343,8 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		// TODO Auto-generated method stub
 		SingleVariableDeclaration param = node.getParameter();
 		param.getType();
-		
-		
+		param.getName();
+		param.getInitializer();
 		return super.visit(node);
 	}
 
