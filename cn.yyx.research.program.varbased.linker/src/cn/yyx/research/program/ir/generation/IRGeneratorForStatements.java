@@ -27,6 +27,7 @@ import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.LabeledStatement;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.SwitchCase;
 import org.eclipse.jdt.core.dom.SwitchStatement;
@@ -106,8 +107,8 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		ASTRewrite rewrite = ASTRewrite.create(node.getAST());
 		IRGeneratorForOneExpression irfoe = new IRGeneratorForOneExpression(graph_manager, node, rewrite, pool, graph,
 				super_class_element, element_idx);
-		forbid_visit.add(node);
 		node.accept(irfoe);
+		forbid_visit.add(node);
 		// TextEdit edits = ;
 		rewrite.rewriteAST(doc, null);
 		return new ASTNodeHandledInfo(irfoe.GetElementIndex(), doc.toString());
@@ -213,7 +214,18 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		HandleBreakContinueStatement(node, node.getLabel(), "continue");
 		return super.visit(node);
 	}
-
+	
+	protected void HandleBreakContinueInLoopOver(ASTNode node, IIRNode over) {
+		Set<IRNoneSucceedNode> none_succeed_nodes = break_continue_wait_handle.remove(node);
+		if (none_succeed_nodes != null && none_succeed_nodes.size() > 0) {
+			Iterator<IRNoneSucceedNode> nitr = none_succeed_nodes.iterator();
+			while (nitr.hasNext()) {
+				IRNoneSucceedNode irnsn = nitr.next();
+				graph.RegistConnection(irnsn, over, new Connect());
+			}
+		}
+	}
+	
 	protected void HandleBreakContinueStatement(ASTNode node, SimpleName label, String code) {
 		ASTNode break_scope = null;
 		if (label != null) {
@@ -262,7 +274,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 
 	protected Map<ASTNode, StatementBranchInfo> statement_branch_map = new HashMap<ASTNode, StatementBranchInfo>();
 
-	protected void PostHandleMustTwoBranches(ASTNode node) {
+	protected IIRNode PostHandleMustTwoBranches(ASTNode node) {
 		// Solved. handle situation that there are no branches. in which branch_root
 		// should directly connect to block_over node.
 		IIRNode over = new IIRBranchOverNode("Virtual_Branch_Over");
@@ -278,9 +290,10 @@ public class IRGeneratorForStatements extends ASTVisitor {
 			graph.RegistConnection(branch_root, over, new Connect());
 		}
 		graph.setActive(over);
+		return over;
 	}
 
-	protected void PostHandleMultiBranches(ASTNode node) {
+	protected IIRNode PostHandleMultiBranches(ASTNode node) {
 		// Solved. handle situation that there are no branches. in which branch_root should
 		// directly connect to block_over node.
 		IIRNode over = new IIRBranchOverNode("Virtual_Branch_Over");
@@ -296,6 +309,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 			graph.RegistConnection(branch_root, over, new Connect());
 		}
 		graph.setActive(over);
+		return over;
 	}
 
 	protected Map<ASTNode, IIRNode> semantic_block_control = new HashMap<ASTNode, IIRNode>();
@@ -319,29 +333,92 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		if (!active.equals(branch_root)) {
 			statement_branch_map.get(node).AddBranch(active);
 		}
-		PostHandleMustTwoBranches(node);
-		PostHandleOneASTNode(node);
+		IIRNode over = PostHandleMustTwoBranches(node);
+		PostHandleOneASTNode(node.getExpression());
+		HandleBreakContinueInLoopOver(node, over);
 	}
 
 	@Override
 	public boolean visit(EnhancedForStatement node) {
 		// TODO Auto-generated method stub
+		SingleVariableDeclaration param = node.getParameter();
+		param.getType();
+		
 		
 		return super.visit(node);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean visit(ForStatement node) {
 		// TODO Auto-generated method stub
+		StringBuilder for_builder = new StringBuilder("for (");
+		int element_index = 0;
+		List<Expression> inis = node.initializers();
+		if (inis != null && inis.size() > 0) {
+			Iterator<Expression> expr_itr = inis.iterator();
+			while (expr_itr.hasNext()) {
+				Expression expr = expr_itr.next();
+				ASTNodeHandledInfo info = PreHandleOneASTNode(expr, element_index);
+				for_builder.append(info.GetNodeHandledDoc());
+				if (expr_itr.hasNext()) {
+					for_builder.append(",");
+				} else {
+					for_builder.append(";");
+				}
+				element_index = info.GetElementIndex();
+			}
+		}
+		
+		Expression judge_expr = node.getExpression();
+		{
+			ASTNodeHandledInfo info = PreHandleOneASTNode(judge_expr, element_index);
+			for_builder.append(info.GetNodeHandledDoc());
+			for_builder.append(";");
+			element_index = info.GetElementIndex();
+		}
+		
+		List<Expression> upds = node.updaters();
+		if (upds != null && upds.size() > 0) {
+			Iterator<Expression> expr_itr = upds.iterator();
+			while (expr_itr.hasNext()) {
+				Expression expr = expr_itr.next();
+				ASTNodeHandledInfo info = PreHandleOneASTNode(expr, element_index);
+				for_builder.append(info.GetNodeHandledDoc());
+				if (expr_itr.hasNext()) {
+					for_builder.append(",");
+				}
+				element_index = info.GetElementIndex();
+			}
+		}
+		for_builder.append(") {}");
+		
+		IIRNode branch_root = new IIRNode(for_builder.toString());
+		semantic_block_control.put(node, branch_root);
+		graph.GoForwardAStep(branch_root);
+		StatementBranchInfo sbi = new StatementBranchInfo(branch_root);
+		statement_branch_map.put(node, sbi);
 		
 		return super.visit(node);
+	}
+	
+	@Override
+	public void endVisit(ForStatement node) {
+		IIRNode branch_root = semantic_block_control.remove(node);
+		IIRNode active = graph.getActive();
+		if (!active.equals(branch_root)) {
+			statement_branch_map.get(node).AddBranch(active);
+		}
+		IIRNode over = PostHandleMustTwoBranches(node);
+		PostHandleOneASTNode(node.getExpression());
+		HandleBreakContinueInLoopOver(node, over);
 	}
 
 	@Override
 	public boolean visit(WhileStatement node) {
 		ASTNodeHandledInfo info = PreHandleOneASTNode(node.getExpression(), 0);
 		String hdoc = info.GetNodeHandledDoc();
-		IIRNode branch_root = new IIRNode("while(" + hdoc + ");");
+		IIRNode branch_root = new IIRNode("while (" + hdoc + ") {}");
 		semantic_block_control.put(node, branch_root);
 		graph.GoForwardAStep(branch_root);
 		StatementBranchInfo sbi = new StatementBranchInfo(branch_root);
@@ -356,14 +433,56 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		if (!active.equals(branch_root)) {
 			statement_branch_map.get(node).AddBranch(active);
 		}
-		PostHandleMustTwoBranches(node);
-		PostHandleOneASTNode(node);
+		IIRNode over = PostHandleMustTwoBranches(node);
+		PostHandleOneASTNode(node.getExpression());
+		HandleBreakContinueInLoopOver(node, over);
 	}
 
 	@Override
 	public boolean visit(IfStatement node) {
-		// TODO Auto-generated method stub
+		ASTNodeHandledInfo info = PreHandleOneASTNode(node.getExpression(), 0);
+		String hdoc = info.GetNodeHandledDoc();
+		IIRNode branch_root = new IIRNode("if (" + hdoc + ") {}");
+		semantic_block_control.put(node, branch_root);
+		graph.GoForwardAStep(branch_root);
+		StatementBranchInfo sbi = new StatementBranchInfo(branch_root);
+		statement_branch_map.put(node, sbi);
+		
+		graph.setActive(branch_root);
+		Statement then_stmt = node.getThenStatement();
+		if (then_stmt != null) {
+			then_stmt.accept(this);
+			forbid_visit.add(then_stmt);
+			IIRNode active = graph.getActive();
+			if (!branch_root.equals(active)) {
+				sbi.AddBranch(active);
+			}
+		}
+		
+		graph.setActive(branch_root);
+		Statement else_stmt = node.getElseStatement();
+		if (else_stmt != null) {
+			else_stmt.accept(this);
+			forbid_visit.add(else_stmt);
+			IIRNode active = graph.getActive();
+			if (!branch_root.equals(active)) {
+				sbi.AddBranch(active);
+			}
+		}
 		return super.visit(node);
+	}
+	
+	@Override
+	public void endVisit(IfStatement node) {
+		PostHandleMustTwoBranches(node);
+		Statement then_stmt = node.getThenStatement();
+		if (then_stmt != null) {
+			forbid_visit.add(then_stmt);
+		}
+		Statement else_stmt = node.getElseStatement();
+		if (else_stmt != null) {
+			forbid_visit.add(else_stmt);
+		}
 	}
 
 	// @Override
@@ -420,23 +539,12 @@ public class IRGeneratorForStatements extends ASTVisitor {
 					while (stmt_itr.hasNext()) {
 						Statement stmt = stmt_itr.next();
 						stmt.accept(this);
+						forbid_visit.add(stmt);
 					}
 					IIRNode active = graph.getActive();
 					if (!branch_root.equals(active)) {
 						sbi.AddBranch(active);
 					}
-				}
-			}
-		}
-		{
-			Iterator<SwitchCaseBlock> sbitr = sbs.iterator();
-			while (sbitr.hasNext()) {
-				SwitchCaseBlock scb = sbitr.next();
-				LinkedList<Statement> stmts = scb.GetStatementList();
-				Iterator<Statement> stmt_itr = stmts.iterator();
-				while (stmt_itr.hasNext()) {
-					Statement stmt = stmt_itr.next();
-					forbid_visit.add(stmt);
 				}
 			}
 		}
