@@ -95,5 +95,17 @@ public class IRSearchMethodRequestor extends SearchRequestor {
 	public Set<IMethod> GetMethods() {
 		return methods;
 	}
+	
+	public Set<IMethod> GetSourceMethods() {
+		Set<IMethod> source_methods = new HashSet<IMethod>();
+		Iterator<IMethod> mitr = methods.iterator();
+		while (mitr.hasNext()) {
+			IMethod im = mitr.next();
+			if (!im.isBinary()) {
+				source_methods.add(im);
+			}
+		}
+		return source_methods;
+	}
 
 }

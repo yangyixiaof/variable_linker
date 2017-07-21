@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AssertStatement;
@@ -61,7 +62,8 @@ import cn.yyx.research.program.ir.storage.node.IRJavaElement;
 import cn.yyx.research.program.ir.storage.node.IRNoneSucceedNode;
 
 public class IRGeneratorForStatements extends ASTVisitor {
-
+	
+	protected IJavaProject java_project = null;
 	protected IBinding bind = null;
 	protected IRGraphManager graph_manager = null;
 	protected IRElementPool pool = null;
@@ -71,7 +73,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	protected IRGraph graph = new IRGraph();
 	protected List<ASTNode> forbid_visit = new LinkedList<ASTNode>();
 
-	public IRGeneratorForStatements(IBinding bind, IRGraphManager graph_manager, IRElementPool pool,
+	public IRGeneratorForStatements(IJavaProject java_project, IBinding bind, IRGraphManager graph_manager, IRElementPool pool,
 			IRJavaElement super_class_element) {
 		this.bind = bind;
 		this.graph_manager = graph_manager;
@@ -106,7 +108,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	protected ASTNodeHandledInfo PreHandleOneASTNode(ASTNode node, int element_idx) {
 		Document doc = new Document(node.toString());
 		ASTRewrite rewrite = ASTRewrite.create(node.getAST());
-		IRGeneratorForOneExpression irfoe = new IRGeneratorForOneExpression(graph_manager, node, rewrite, pool, graph,
+		IRGeneratorForOneExpression irfoe = new IRGeneratorForOneExpression(java_project, graph_manager, node, rewrite, pool, graph,
 				super_class_element, element_idx);
 		node.accept(irfoe);
 		forbid_visit.add(node);

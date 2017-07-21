@@ -1,6 +1,10 @@
 package cn.yyx.research.program.ir.generation;
 
+import java.util.Collection;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -37,6 +41,7 @@ import org.eclipse.jdt.core.dom.UnionType;
 import org.eclipse.jdt.core.dom.WildcardType;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
+import cn.yyx.research.program.eclipse.searchutil.EclipseSearchForIMember;
 import cn.yyx.research.program.ir.IRConstantMeta;
 import cn.yyx.research.program.ir.bind.BindingManager;
 import cn.yyx.research.program.ir.element.ConstantUniqueElement;
@@ -45,6 +50,7 @@ import cn.yyx.research.program.ir.element.UnSourceResolvedMethodReferenceElement
 import cn.yyx.research.program.ir.element.UnSourceResolvedNameOrFieldAccessElement;
 import cn.yyx.research.program.ir.element.UnSourceResolvedTypeElement;
 import cn.yyx.research.program.ir.generation.state.IJavaElementState;
+import cn.yyx.research.program.ir.search.IRSearchMethodRequestor;
 import cn.yyx.research.program.ir.storage.IRElementPool;
 import cn.yyx.research.program.ir.storage.IRGraph;
 import cn.yyx.research.program.ir.storage.IRGraphManager;
@@ -54,16 +60,18 @@ import cn.yyx.research.program.ir.storage.node.IRJavaElement;
 
 public class IRGeneratorForOneExpression extends ASTVisitor {
 	
-	IRGraphManager graph_manager = null;
-	ASTNode node = null;
-	AST ast = null;
-	ASTRewrite rewrite = null;
-	IRElementPool pool = null;
-	IRGraph graph = null;
-	IRJavaElement super_class_element = null;
-	int element_index = 0;
+	protected IJavaProject java_project = null;
+	protected IRGraphManager graph_manager = null;
+	protected ASTNode node = null;
+	protected AST ast = null;
+	protected ASTRewrite rewrite = null;
+	protected IRElementPool pool = null;
+	protected IRGraph graph = null;
+	protected IRJavaElement super_class_element = null;
+	protected int element_index = 0;
 	
-	public IRGeneratorForOneExpression(IRGraphManager graph_manager, ASTNode node, ASTRewrite rewrite, IRElementPool pool, IRGraph graph, IRJavaElement super_class_element, int base_index) {
+	public IRGeneratorForOneExpression(IJavaProject java_project, IRGraphManager graph_manager, ASTNode node, ASTRewrite rewrite, IRElementPool pool, IRGraph graph, IRJavaElement super_class_element, int base_index) {
+		this.java_project = java_project;
 		this.graph_manager = graph_manager;
 		this.node = node;
 		this.ast = node.getAST();
@@ -128,7 +136,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 				HandleIJavaElement(im.toString(), im, node);
 				handled = true;
 				// take it as a method.
-				IRGeneratorForStatements irgfocb = new IRGeneratorForStatements(imb, graph_manager, pool, super_class_element);
+				IRGeneratorForStatements irgfocb = new IRGeneratorForStatements(java_project, imb, graph_manager, pool, super_class_element);
 				node.getBody().accept(irgfocb);
 			}
 		}
@@ -356,23 +364,58 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		return element_index;
 	}
 	
+	protected void HandleMethodInvocation(IMethodBinding imb, ASTNode node) {
+		boolean handle_source = false;
+		if (imb != null) {
+			IJavaElement ije = imb.getJavaElement();
+			if (ije != null && ije instanceof IMethod) {
+				IMethod im = (IMethod)ije;
+				Collection<IMethod> methods = null;
+				try {
+					IRSearchMethodRequestor sr = new IRSearchMethodRequestor(
+							java_project, im);
+					EclipseSearchForIMember search = new EclipseSearchForIMember();
+					search.SearchForWhereTheMethodIsConcreteImplementated(im, sr);
+					methods = sr.GetSourceMethods();
+				} catch (CoreException e) {
+					e.printStackTrace();
+				}
+				if (methods != null && methods.size() > 0) {
+					handle_source = true;
+					
+				}
+			}
+		}
+		if (!handle_source) {
+			// TODO
+		}
+	}
+	
 	// method_invocation should be handled.
 	// method_invocation expressions.
 	@Override
 	public boolean visit(MethodInvocation node) {
 		// TODO Auto-generated method stub
+		
 		return super.visit(node);
+	}
+	
+	@Override
+	public void endVisit(MethodInvocation node) {
+		
 	}
 	
 	@Override
 	public boolean visit(ClassInstanceCreation node) {
 		// TODO Auto-generated method stub
+		
 		return super.visit(node);
 	}
 	
 	@Override
 	public boolean visit(SuperMethodInvocation node) {
 		// TODO Auto-generated method stub
+		
 		return super.visit(node);
 	}
 	
