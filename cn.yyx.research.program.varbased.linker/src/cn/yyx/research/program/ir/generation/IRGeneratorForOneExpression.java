@@ -1,6 +1,7 @@
 package cn.yyx.research.program.ir.generation;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -366,7 +367,14 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		return element_index;
 	}
 	
-	protected void HandleMethodInvocation(IMethodBinding imb, ASTNode node, List<Expression> arg_list) {
+	protected void PreHandleMethodInvocation(IMethodBinding imb, ASTNode node, List<Expression> arg_list) {
+		
+		Iterator<Expression> aitr = arg_list.iterator();
+		while (aitr.hasNext()) {
+			Expression expr = aitr.next();
+			
+		}
+		
 		boolean handle_source = false;
 		if (imb != null) {
 			IJavaElement ije = imb.getJavaElement();
