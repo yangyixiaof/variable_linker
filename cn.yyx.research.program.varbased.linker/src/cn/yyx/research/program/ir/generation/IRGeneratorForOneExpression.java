@@ -59,6 +59,7 @@ import cn.yyx.research.program.ir.storage.IRGraph;
 import cn.yyx.research.program.ir.storage.IRGraphManager;
 import cn.yyx.research.program.ir.storage.connection.SuperConnect;
 import cn.yyx.research.program.ir.storage.connection.VariableConnect;
+import cn.yyx.research.program.ir.storage.node.IIRNode;
 import cn.yyx.research.program.ir.storage.node.IRJavaElementNode;
 
 public class IRGeneratorForOneExpression extends ASTVisitor {
@@ -70,10 +71,11 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	protected ASTRewrite rewrite = null;
 	protected IRElementPool pool = null;
 	protected IRGraph graph = null;
+	protected IIRNode future_node = null;
 	protected IRJavaElementNode super_class_element = null;
 	protected int element_index = 0;
 	
-	public IRGeneratorForOneExpression(IJavaProject java_project, IRGraphManager graph_manager, ASTNode node, ASTRewrite rewrite, IRElementPool pool, IRGraph graph, IRJavaElementNode super_class_element, int base_index) {
+	public IRGeneratorForOneExpression(IJavaProject java_project, IRGraphManager graph_manager, ASTNode node, ASTRewrite rewrite, IRElementPool pool, IRGraph graph, IIRNode future_node, IRJavaElementNode super_class_element, int base_index) {
 		this.java_project = java_project;
 		this.graph_manager = graph_manager;
 		this.node = node;
@@ -81,6 +83,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		this.rewrite = rewrite;
 		this.pool = pool;
 		this.graph = graph;
+		this.future_node = future_node;
 		this.super_class_element = super_class_element;
 		this.element_index = base_index;
 	}
@@ -372,7 +375,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		Iterator<Expression> aitr = arg_list.iterator();
 		while (aitr.hasNext()) {
 			Expression expr = aitr.next();
-			
+			// TODO
 		}
 		
 		boolean handle_source = false;

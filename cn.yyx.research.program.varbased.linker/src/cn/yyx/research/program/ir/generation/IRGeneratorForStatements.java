@@ -72,9 +72,10 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	protected IRASTNodeTask pre_visit_task = new IRASTNodeTask();
 	protected IRGraph graph = new IRGraph();
 	protected List<ASTNode> forbid_visit = new LinkedList<ASTNode>();
-
+	
 	public IRGeneratorForStatements(IJavaProject java_project, IBinding bind, IRGraphManager graph_manager, IRElementPool pool,
 			IRJavaElementNode super_class_element) {
+		this.java_project = java_project;
 		this.bind = bind;
 		this.graph_manager = graph_manager;
 		this.pool = pool;
@@ -121,6 +122,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		forbid_visit.remove(node);
 	}
 
+	// TODO all mechanisms are wrong.
 	@Override
 	public boolean visit(AssertStatement node) {
 		IIRNode iirn = new IIRNode("");
