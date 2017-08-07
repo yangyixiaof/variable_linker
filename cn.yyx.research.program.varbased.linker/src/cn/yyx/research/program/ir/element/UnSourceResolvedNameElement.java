@@ -2,9 +2,9 @@ package cn.yyx.research.program.ir.element;
 
 import cn.yyx.research.program.ir.IRElementMeta;
 
-public class UnSourceResolvedNameOrFieldAccessElement extends VirtualDefinedElement {
+public class UnSourceResolvedNameElement extends VirtualDefinedElement {
 	
-	public UnSourceResolvedNameOrFieldAccessElement(String reference) {
+	public UnSourceResolvedNameElement(String reference) {
 		super(reference);
 	}
 	
