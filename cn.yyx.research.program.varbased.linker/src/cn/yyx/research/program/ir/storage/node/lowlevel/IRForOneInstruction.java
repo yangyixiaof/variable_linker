@@ -2,8 +2,8 @@ package cn.yyx.research.program.ir.storage.node.lowlevel;
 
 import org.eclipse.jdt.core.IJavaElement;
 
-import cn.yyx.research.program.ir.storage.IIREnergyNode;
-import cn.yyx.research.program.ir.storage.IIRNodeTask;
+import cn.yyx.research.program.ir.meta.storage.IIREnergyNode;
+import cn.yyx.research.program.ir.meta.storage.IIRNodeTask;
 import cn.yyx.research.program.ir.storage.node.highlevel.IRCode;
 import cn.yyx.research.program.ir.visual.node.IVNode;
 import cn.yyx.research.program.systemutil.ReflectionInvoke;

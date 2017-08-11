@@ -1,6 +1,6 @@
 package cn.yyx.research.program.ir.storage.node.lowlevel;
 
-import cn.yyx.research.program.ir.IRMeta;
+import cn.yyx.research.program.ir.meta.IRMeta;
 
 public enum IRBranchControlType {
 	

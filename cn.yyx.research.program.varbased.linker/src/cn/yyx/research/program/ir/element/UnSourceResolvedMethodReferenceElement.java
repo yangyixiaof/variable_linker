@@ -14,7 +14,7 @@ import org.eclipse.jdt.core.ITypeParameter;
 import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.core.JavaModelException;
 
-import cn.yyx.research.program.ir.IRElementMeta;
+import cn.yyx.research.program.ir.meta.IRElementMeta;
 
 public class UnSourceResolvedMethodReferenceElement extends VirtualDefinedElement implements IMethod {
 	

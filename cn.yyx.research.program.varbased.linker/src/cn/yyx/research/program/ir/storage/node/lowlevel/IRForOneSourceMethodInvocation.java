@@ -9,7 +9,7 @@ import java.util.Map;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
 
-import cn.yyx.research.program.ir.storage.IIRNodeTask;
+import cn.yyx.research.program.ir.meta.storage.IIRNodeTask;
 import cn.yyx.research.program.ir.storage.node.highlevel.IRCode;
 
 public class IRForOneSourceMethodInvocation extends IRForOneInstruction {

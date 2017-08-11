@@ -3,7 +3,7 @@ package cn.yyx.research.program.ir.storage.node.execution;
 import cn.yyx.research.program.analysis.fulltrace.storage.FullTrace;
 import cn.yyx.research.program.analysis.fulltrace.storage.connection.DynamicConnection;
 import cn.yyx.research.program.analysis.fulltrace.storage.node.DynamicNode;
-import cn.yyx.research.program.ir.storage.IIRNodeTask;
+import cn.yyx.research.program.ir.meta.storage.IIRNodeTask;
 import cn.yyx.research.program.ir.storage.connection.ConnectionInfo;
 import cn.yyx.research.program.ir.storage.node.lowlevel.IRForOneInstruction;
 

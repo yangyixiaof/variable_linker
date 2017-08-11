@@ -10,6 +10,7 @@ public class BindingManager {
 	
 	public static boolean QualifiedBinding(IBinding ib)
 	{
+		// TODO some self-defined types are missing.
 		if (ib != null && (ib instanceof ITypeBinding || ib instanceof IVariableBinding || ib instanceof IMethodBinding))
 		{
 			IJavaElement ije = ib.getJavaElement();

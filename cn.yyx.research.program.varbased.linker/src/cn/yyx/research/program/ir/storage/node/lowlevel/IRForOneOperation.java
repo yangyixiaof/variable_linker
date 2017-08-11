@@ -2,7 +2,7 @@ package cn.yyx.research.program.ir.storage.node.lowlevel;
 
 import org.eclipse.jdt.core.IJavaElement;
 
-import cn.yyx.research.program.ir.storage.IIRNodeTask;
+import cn.yyx.research.program.ir.meta.storage.IIRNodeTask;
 import cn.yyx.research.program.ir.storage.node.highlevel.IRCode;
 
 public class IRForOneOperation extends IRForOneInstruction {

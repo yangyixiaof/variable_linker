@@ -10,7 +10,7 @@ import org.eclipse.jdt.core.IJavaElement;
 
 import cn.yyx.research.program.analysis.fulltrace.storage.connection.DynamicConnection;
 import cn.yyx.research.program.analysis.fulltrace.storage.node.DynamicNode;
-import cn.yyx.research.program.ir.IRMeta;
+import cn.yyx.research.program.ir.meta.IRMeta;
 import cn.yyx.research.program.ir.storage.connection.ConnectionInfo;
 import cn.yyx.research.program.ir.storage.connection.EdgeBaseType;
 import cn.yyx.research.program.ir.storage.connection.EdgeTypeUtil;

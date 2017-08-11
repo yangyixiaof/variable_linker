@@ -1,6 +1,6 @@
 package cn.yyx.research.program.ir.element;
 
-import cn.yyx.research.program.ir.IRElementMeta;
+import cn.yyx.research.program.ir.meta.IRElementMeta;
 
 public class UnSourceResolvedNameElement extends VirtualDefinedElement {
 	

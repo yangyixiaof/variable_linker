@@ -5,7 +5,7 @@ import java.lang.ProcessBuilder.Redirect;
 import java.util.Iterator;
 
 import cn.yyx.research.program.fileutil.FileIterator;
-import cn.yyx.research.program.ir.IRVisualMeta;
+import cn.yyx.research.program.ir.meta.IRVisualMeta;
 
 public class DotView {
 	

@@ -8,7 +8,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.search.SearchMatch;
 
 import cn.yyx.research.program.eclipse.jdtutil.JDTParser;
-import cn.yyx.research.program.ir.IRControlMeta;
+import cn.yyx.research.program.ir.meta.IRControlMeta;
 
 public class DebugLogger {
 

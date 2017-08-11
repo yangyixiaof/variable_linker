@@ -1,4 +1,4 @@
-package cn.yyx.research.program.ir;
+package cn.yyx.research.program.ir.meta;
 
 public class IRResourceMeta {
 	

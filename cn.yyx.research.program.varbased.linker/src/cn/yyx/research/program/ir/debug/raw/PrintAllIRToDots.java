@@ -7,8 +7,8 @@ import java.util.Set;
 import org.eclipse.jdt.core.IType;
 
 import cn.yyx.research.program.fileutil.FileUtil;
-import cn.yyx.research.program.ir.IRVisualMeta;
 import cn.yyx.research.program.ir.generation.IRGeneratorForOneProject;
+import cn.yyx.research.program.ir.meta.IRVisualMeta;
 import cn.yyx.research.program.ir.storage.node.highlevel.IRForOneClass;
 
 public class PrintAllIRToDots {

@@ -3,7 +3,7 @@ package cn.yyx.research.program.ir.storage.node.lowlevel;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
 
-import cn.yyx.research.program.ir.storage.IIRNodeTask;
+import cn.yyx.research.program.ir.meta.storage.IIRNodeTask;
 import cn.yyx.research.program.ir.storage.node.highlevel.IRCode;
 
 public class IRForOneEmptyConstructorInvocation extends IRForOneSourceMethodInvocation {

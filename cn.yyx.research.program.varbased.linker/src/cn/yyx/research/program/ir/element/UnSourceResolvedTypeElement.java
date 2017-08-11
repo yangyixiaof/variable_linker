@@ -23,7 +23,7 @@ import org.eclipse.jdt.core.IWorkingCopy;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.WorkingCopyOwner;
 
-import cn.yyx.research.program.ir.IRElementMeta;
+import cn.yyx.research.program.ir.meta.IRElementMeta;
 
 @SuppressWarnings("deprecation")
 public class UnSourceResolvedTypeElement extends VirtualDefinedElement implements IType {

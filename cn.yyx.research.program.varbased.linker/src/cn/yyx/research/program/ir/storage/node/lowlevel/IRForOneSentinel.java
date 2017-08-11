@@ -7,9 +7,9 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 
-import cn.yyx.research.program.ir.IRElementMeta;
-import cn.yyx.research.program.ir.IRMeta;
-import cn.yyx.research.program.ir.storage.IIRNodeTask;
+import cn.yyx.research.program.ir.meta.IRElementMeta;
+import cn.yyx.research.program.ir.meta.IRMeta;
+import cn.yyx.research.program.ir.meta.storage.IIRNodeTask;
 import cn.yyx.research.program.ir.storage.node.highlevel.IRCode;
 
 public class IRForOneSentinel extends IRForOneInstruction {
