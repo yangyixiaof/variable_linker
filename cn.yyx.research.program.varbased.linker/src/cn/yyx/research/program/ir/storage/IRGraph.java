@@ -31,7 +31,7 @@ public class IRGraph {
 		return variable_nodes;
 	}
 	
-	public void AddVariableNode(IRJavaElementNode var) {
+	public void AddNonVirtualVariableNode(IRJavaElementNode var) {
 		variable_nodes.add(var);
 	}
 	

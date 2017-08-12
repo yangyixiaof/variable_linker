@@ -258,7 +258,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		} else {
 			IJavaElement ije = new VirtualMethodReturnElement(bind.getKey());
 			IRJavaElementNode f_return = pool.UniversalElement(bind.getKey(), ije);
-			graph.AddVariableNode(f_return);
+			graph.AddNonVirtualVariableNode(f_return);
 			IIRNode iirn = new IIRNode("");
 			graph.GoForwardAStep(iirn);
 			ASTNodeHandledInfo info = PreHandleOneASTNode(node, 1);

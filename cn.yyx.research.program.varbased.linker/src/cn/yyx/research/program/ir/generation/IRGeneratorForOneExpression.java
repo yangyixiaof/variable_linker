@@ -372,7 +372,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	
 	protected void HandleSuperConnect(String content, IJavaElement ele) {
 		IRJavaElementNode irje = pool.UniversalElement(content, ele);
-		graph.AddVariableNode(irje);
+		graph.AddNonVirtualVariableNode(irje);
 		if (super_class_element != null) {
 			graph.RegistConnection(irje, super_class_element, new SuperConnect());
 		}
@@ -380,7 +380,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	
 	protected void HandleCommonIJavaElement(String content, IJavaElement ije, ASTNode node, String symbol) {
 		IRJavaElementNode uni_ele = pool.UniversalElement(content, ije);
-		graph.AddVariableNode(uni_ele);
+		graph.AddNonVirtualVariableNode(uni_ele);
 		graph.RegistConnection(uni_ele, iir_stmt_node, new VariableConnect(iir_stmt_node.IncreaseAndGetVariableIndex()));
 		rewrite.replace(node, ast.newSimpleName(symbol), null);
 	}
@@ -475,7 +475,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 					
 					// replace node with return element.
 					IRSourceMethodReturnElementNode ir_mi_return = new IRSourceMethodReturnElementNode(irsmsn, null, null);
-					graph.AddVariableNode(ir_mi_return);
+					graph.AddNonVirtualVariableNode(ir_mi_return);
 					graph.RegistConnection(ir_miren, expression_node, new VariableConnect(++element_index));
 					rewrite.replace(node, ast.newSimpleName("R"), null);
 				}
