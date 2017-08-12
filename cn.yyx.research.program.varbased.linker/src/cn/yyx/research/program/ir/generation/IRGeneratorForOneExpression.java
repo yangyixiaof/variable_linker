@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.net.ssl.HandshakeCompletedListener;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
@@ -411,10 +413,8 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		HandleCommonIJavaElement(content, ifd, node, "V");
 	}
 	
-	protected void CreateSourceMethodInvokeReturnVirtualHolderElement(String content, IRSourceMethodReturnElementNode ir_miren, ASTNode node) {
-		graph.AddVariableNode(ir_miren);
-		graph.RegistConnection(ir_miren, expression_node, new VariableConnect(++element_index));
-		rewrite.replace(node, ast.newSimpleName("R"), null);
+	private void CreateSourceMethodInvokeReturnVirtualHolderElement(String content, IRSourceMethodReturnElementNode ir_miren, ASTNode node) {
+		
 	}
 	
 	protected void PreHandleMethodInvocation(IMethodBinding imb, ASTNode node, List<Expression> arg_list) {
@@ -470,8 +470,14 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 						graph.RegistConnection(irsmpen, expr_iirn, new VariableConnect(1));
 						irsmsn.AddArgumentStatement(expr_iirn);
 					}
-					// go forward one step.
+					// method_node goes forward one step.
 					graph.GoForwardAStep(irsmsn);
+					
+					// replace node with return element.
+					IRSourceMethodReturnElementNode ir_mi_return = new IRSourceMethodReturnElementNode(irsmsn, null, null);
+					graph.AddVariableNode(ir_mi_return);
+					graph.RegistConnection(ir_miren, expression_node, new VariableConnect(++element_index));
+					rewrite.replace(node, ast.newSimpleName("R"), null);
 				}
 			}
 		}
