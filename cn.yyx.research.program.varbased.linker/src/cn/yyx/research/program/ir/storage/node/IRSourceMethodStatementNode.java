@@ -8,13 +8,14 @@ import org.eclipse.jdt.core.IMethod;
 
 import cn.yyx.research.program.ir.meta.IRStatementMeta;
 
-public class IRSourceMethodStatementNode extends IIRNode {
-	
+public class IRSourceMethodStatementNode extends IRStatementNode {
+
 	protected Collection<IMethod> methods = null;
 	protected List<IRStatementNode> argument_stmts = new LinkedList<IRStatementNode>();
 	
-	public IRSourceMethodStatementNode(Collection<IMethod> methods) {
-		super(IRStatementMeta.SourceMethodInvoke);
+	public IRSourceMethodStatementNode(int variable_index, Collection<IMethod> methods) {
+		super(variable_index);
+		this.SetContent(IRStatementMeta.SourceMethodInvoke);
 		this.methods = methods;
 	}
 	

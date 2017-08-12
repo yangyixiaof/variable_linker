@@ -397,9 +397,9 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		HandleCommonIJavaElement(content, usrne, node, "N");
 	}
 
-	protected void HandleISuperElement(String content, IType it, ASTNode node) {
-		HandleCommonIJavaElement(content, it, node, "S");
-	}
+//	protected void HandleISuperElement(String content, IType it, ASTNode node) {
+//		HandleCommonIJavaElement(content, it, node, "S");
+//	}
 	
 	protected void HandleITypeElement(String content, IType it, ASTNode node) {
 		HandleCommonIJavaElement(content, it, node, "T");
@@ -413,23 +413,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		HandleCommonIJavaElement(content, ifd, node, "V");
 	}
 	
-	private void CreateSourceMethodInvokeReturnVirtualHolderElement(String content, IRSourceMethodReturnElementNode ir_miren, ASTNode node) {
-		
-	}
-	
-	protected void PreHandleMethodInvocation(IMethodBinding imb, ASTNode node, List<Expression> arg_list) {
-//		IRMethodInvokeReturnElementNode ir_miren = null;
-//		if (imb != null) {
-//			IJavaElement ije = imb.getJavaElement();
-//			if (ije != null && ije instanceof IMethod) {
-//				IMethod im = (IMethod)ije;
-//				ir_miren = new IRMethodInvokeReturnElementNode(node.toString(), im);
-//				
-//			}
-//		} else {
-//			
-//		}
-		
+	protected boolean PreHandleMethodInvocation(IMethodBinding imb, ASTNode node, List<Expression> arg_list) {
 		boolean is_source_resolved = false;
 		if (imb != null) {
 			IJavaElement ije = imb.getJavaElement();
@@ -450,7 +434,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 					// method invocation is source.
 					
 					// create the special node for source_method_invocation.
-					IRSourceMethodStatementNode irsmsn = new IRSourceMethodStatementNode(methods);
+					IRSourceMethodStatementNode irsmsn = new IRSourceMethodStatementNode(0, methods);
 					graph.AddSourceMethodStatement(irsmsn);
 					// handle argument expressions.
 					int index = 0;
@@ -475,31 +459,31 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 					
 					// replace node with return element.
 					IRSourceMethodReturnElementNode ir_mi_return = new IRSourceMethodReturnElementNode(irsmsn, null, null);
-					graph.AddNonVirtualVariableNode(ir_mi_return);
-					graph.RegistConnection(ir_miren, expression_node, new VariableConnect(++element_index));
+					graph.AddSourceMethodReturn(ir_mi_return);
+					graph.RegistConnection(ir_mi_return, iir_stmt_node, new VariableConnect(iir_stmt_node.IncreaseAndGetVariableIndex()));
 					rewrite.replace(node, ast.newSimpleName("R"), null);
 				}
 			}
 		}
 		if (!is_source_resolved) {
-			// TODO method invocation is not source.
-			
-			
+			return true;
 		}
+		return false;
 	}
 	
 	// method_invocation should be handled.
 	// method_invocation expressions.
 	@Override
 	public boolean visit(MethodInvocation node) {
-		// TODO Auto-generated method stub
+		@SuppressWarnings("unchecked")
 		List<Expression> nlist = node.arguments();
-		return super.visit(node);
+		super.visit(node);
+		return PreHandleMethodInvocation(node.resolveMethodBinding(), node, nlist);
 	}
 	
 	@Override
 	public void endVisit(MethodInvocation node) {
-		
+		// do nothing.
 	}
 	
 	@Override
