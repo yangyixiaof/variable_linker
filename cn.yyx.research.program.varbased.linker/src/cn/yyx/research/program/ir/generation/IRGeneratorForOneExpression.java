@@ -56,7 +56,6 @@ import cn.yyx.research.program.eclipse.searchutil.EclipseSearchForIMember;
 import cn.yyx.research.program.ir.bind.BindingManager;
 import cn.yyx.research.program.ir.element.ConstantUniqueElement;
 import cn.yyx.research.program.ir.element.UnSourceResolvedLambdaElement;
-import cn.yyx.research.program.ir.element.UnSourceResolvedMethodReferenceElement;
 import cn.yyx.research.program.ir.element.UnSourceResolvedNameElement;
 import cn.yyx.research.program.ir.element.UnSourceResolvedTypeElement;
 import cn.yyx.research.program.ir.search.IRSearchMethodRequestor;
@@ -504,63 +503,44 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		return must_continue;
 	}
 	
-	// TODO handle method_reference.
+	// Solved. handle method_reference.
 	
 	@Override
 	public boolean visit(ExpressionMethodReference node) {
-		return HandleMethodReferenceStart(node.resolveMethodBinding(), node);
-	}
-
-	@Override
-	public void endVisit(ExpressionMethodReference node) {
-		HandleMethodReferenceEnd(node.resolveMethodBinding(), node, node.toString());
-		super.endVisit(node);
+		return HandleMethodReference(node.resolveMethodBinding(), node);
 	}
 
 	@Override
 	public boolean visit(CreationReference node) {
-		return HandleMethodReferenceStart(node.resolveMethodBinding(), node);
-	}
-
-	@Override
-	public void endVisit(CreationReference node) {
-		HandleMethodReferenceEnd(node.resolveMethodBinding(), node, node.toString());
-		super.endVisit(node);
+		return HandleMethodReference(node.resolveMethodBinding(), node);
 	}
 
 	@Override
 	public boolean visit(TypeMethodReference node) {
-		return HandleMethodReferenceStart(node.resolveMethodBinding(), node);
-	}
-
-	@Override
-	public void endVisit(TypeMethodReference node) {
-		HandleMethodReferenceEnd(node.resolveMethodBinding(), node, node.toString());
-		super.endVisit(node);
+		return HandleMethodReference(node.resolveMethodBinding(), node);
 	}
 
 	@Override
 	public boolean visit(SuperMethodReference node) {
-		boolean continue_visit = HandleMethodReferenceStart(node.resolveMethodBinding(), node);
-		return continue_visit;
-	}
-
-	@Override
-	public void endVisit(SuperMethodReference node) {
-		TreatSuperClassElement(node);
-		HandleMethodReferenceEnd(node.resolveMethodBinding(), node, node.getName().toString());
-		super.endVisit(node);
+		boolean is_not_source_resolved = HandleMethodReference(node.resolveMethodBinding(), node);
+		if (is_not_source_resolved) {
+			HandleSuperConnect();
+		}
+		return is_not_source_resolved;
 	}
 	
-	protected void HandleMethodReference(IMethodBinding imb, MethodReference node) {
+	protected boolean HandleMethodReference(IMethodBinding imb, MethodReference node) {
 		if (BindingManager.SourceResolvedBinding(imb)) {
 			IMethod im = (IMethod)imb.getJavaElement();
 			HandleIMethodElement(im.toString(), im, node);
-		} else {
-			String content = node.toString();
-			UnSourceResolvedMethodReferenceElement ele = new UnSourceResolvedMethodReferenceElement(content);
-			HandleIMethodElement(content, ele, node);
+			return false;
 		}
+//		else {
+//			String content = node.toString();
+//			UnSourceResolvedMethodReferenceElement ele = new UnSourceResolvedMethodReferenceElement(content);
+//			HandleIMethodElement(content, ele, node);
+//		}
+		return true;
 	}
 	
 }
