@@ -8,12 +8,13 @@ import org.eclipse.jdt.core.dom.IVariableBinding;
 
 public class BindingManager {
 	
-	public static boolean QualifiedBinding(IBinding ib)
+	public static boolean SourceResolvedBinding(IBinding ib)
 	{
 		// TODO some self-defined types are missing.
 		if (ib != null && (ib instanceof ITypeBinding || ib instanceof IVariableBinding || ib instanceof IMethodBinding))
 		{
 			IJavaElement ije = ib.getJavaElement();
+			
 			if (ije != null) {
 				return true;
 			}

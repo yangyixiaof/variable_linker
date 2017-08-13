@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.net.ssl.HandshakeCompletedListener;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
@@ -57,7 +55,6 @@ import cn.yyx.research.program.ir.element.UnSourceResolvedLambdaElement;
 import cn.yyx.research.program.ir.element.UnSourceResolvedMethodReferenceElement;
 import cn.yyx.research.program.ir.element.UnSourceResolvedNameElement;
 import cn.yyx.research.program.ir.element.UnSourceResolvedTypeElement;
-import cn.yyx.research.program.ir.generation.state.IJavaElementState;
 import cn.yyx.research.program.ir.search.IRSearchMethodRequestor;
 import cn.yyx.research.program.ir.storage.IRElementPool;
 import cn.yyx.research.program.ir.storage.IRGraph;
@@ -167,58 +164,56 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	@Override
 	public boolean visit(QualifiedName node) {
 		TreatName(node);
-		super.visit(node);
-		return false;
+		return super.visit(node);
 	}
 	
 	@Override
 	public boolean visit(SimpleName node) {
 		TreatName(node);
-		super.visit(node);
-		return false;
+		return super.visit(node);
 	}
 	
 	protected void TreatName(Name node) {
 		IBinding ib = node.resolveBinding();
-		if (BindingManager.QualifiedBinding(ib)) {
-			IType it = (IType)ib.getJavaElement();
-			HandleINameElement(it.getElementName(), it, node);
+		if (BindingManager.SourceResolvedBinding(ib)) {
+			IJavaElement ije = ib.getJavaElement();
+			HandleCommonIJavaElement(ije.getElementName(), ije, node, "N");
 		} else {
 			String content = node.toString();
-			HandleITypeElement(content, new UnSourceResolvedTypeElement(content), node);
-		}
-		IJavaElementState bind_state = HandleBinding(ib, node);
-		if (bind_state == IJavaElementState.HandledWrong) {
-			String content = node.toString();
-			HandleINameElement(content, new UnSourceResolvedNameElement(content), node);
+			HandleCommonIJavaElement(content, new UnSourceResolvedNameElement(content), node, "N");
 		}
 	}
 	
 	@Override
 	public boolean visit(FieldAccess node) {
 		IVariableBinding ib = node.resolveFieldBinding();
-		IJavaElementState state = HandleBinding(ib, node);
-		if (state == IJavaElementState.HandledWrong) {
-			String content = node.toString();
-			HandleINameElement(content, new UnSourceResolvedNameElement(content), node);
+		if (BindingManager.SourceResolvedBinding(ib)) {
+			IJavaElement jele = ib.getJavaElement();
+			HandleCommonIJavaElement(jele.getElementName(), jele, node, "V");
+			return false;
 		}
-		super.visit(node);
-		return false;
+//		else {
+//			String content = node.toString();
+//			HandleINameElement(content, new UnSourceResolvedNameElement(content), node);
+//		}
+		return super.visit(node);
 	}
 	
 	@Override
 	public boolean visit(SuperFieldAccess node) {
-		// TODO just replace key word 'super'.
+		// do not replace the key-word 'super', just add connect to super_node.
 		IVariableBinding ib = node.resolveFieldBinding();
-		IJavaElementState state = HandleBinding(ib, node);
-		if (state == IJavaElementState.HandledWrong) {
-			String content = node.toString();
-			UnSourceResolvedNameElement usrnofae = new UnSourceResolvedNameElement(content);
-			HandleSuperConnect(content, usrnofae);
-			HandleINameElement(content, usrnofae, node);
+		if (BindingManager.SourceResolvedBinding(ib)) {
+			IJavaElement jele = ib.getJavaElement();
+			HandleCommonIJavaElement(jele.getElementName(), jele, node, "V");
+			return false;
+		} else {
+			// String content = node.toString();
+			// UnSourceResolvedNameElement usrnofae = new UnSourceResolvedNameElement(content);
+			// content, usrnofae
+			HandleSuperConnect();
 		}
-		super.visit(node);
-		return false;
+		return super.visit(node);
 	}
 	
 //	AnnotatableType:
@@ -267,7 +262,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	}
 	
 	protected void HandleType(ITypeBinding ib, ASTNode node) {
-		if (BindingManager.QualifiedBinding(ib)) {
+		if (BindingManager.SourceResolvedBinding(ib)) {
 			IType it = (IType)ib.getJavaElement();
 			HandleITypeElement(it.getElementName(), it, node);
 		} else {
@@ -340,41 +335,12 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		return false;
 	}
 	
-//	protected IJavaElementState HandleBinding(IBinding ib, ASTNode node) {
-//		if (!BindingManager.QualifiedBinding(ib)) {
-//			return IJavaElementState.HandledWrong;
-//		}
-//		IJavaElement jele = ib.getJavaElement();
-//		HandleIVariableElement(jele.getElementName(), jele, node);
-//		return IJavaElementState.HandledSuccessful;
-//	}
-	
-	protected void HandleMethodReference(IMethodBinding imb, MethodReference node) {
-		IMethod im = null;
-		if (imb != null) {
-			IJavaElement jele = imb.getJavaElement();
-			if (jele != null && jele instanceof IMethod) {
-				im = (IMethod) jele;
-				if (im.getDeclaringType().isBinary()) {
-					im = null;
-				}
-			}
-		}
-		if (im != null) {
-			HandleIMethodElement(im.toString(), im, node);
-		} else {
-			String content = node.toString();
-			UnSourceResolvedMethodReferenceElement ele = new UnSourceResolvedMethodReferenceElement(content);
-			HandleSuperConnect(content, ele);
-			HandleIMethodElement(content, ele, node);
-		}
-	}
-	
-	protected void HandleSuperConnect(String content, IJavaElement ele) {
-		IRJavaElementNode irje = pool.UniversalElement(content, ele);
-		graph.AddNonVirtualVariableNode(irje);
+	protected void HandleSuperConnect() {
+		// String content, IJavaElement ele
+		// IRJavaElementNode irje = pool.UniversalElement(content, ele);
+		// graph.AddNonVirtualVariableNode(irje);
 		if (super_class_element != null) {
-			graph.RegistConnection(irje, super_class_element, new SuperConnect());
+			graph.RegistConnection(super_class_element, iir_stmt_node, new SuperConnect());
 		}
 	}
 	
@@ -393,9 +359,9 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		HandleCommonIJavaElement(content, imd, node, "M");
 	}
 	
-	protected void HandleINameElement(String content, UnSourceResolvedNameElement usrne, ASTNode node) {
-		HandleCommonIJavaElement(content, usrne, node, "N");
-	}
+//	protected void HandleINameElement(String content, UnSourceResolvedNameElement usrne, ASTNode node) {
+//		HandleCommonIJavaElement(content, usrne, node, "N");
+//	}
 
 //	protected void HandleISuperElement(String content, IType it, ASTNode node) {
 //		HandleCommonIJavaElement(content, it, node, "S");
@@ -473,9 +439,9 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	
 	// method_invocation should be handled.
 	// method_invocation expressions.
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean visit(MethodInvocation node) {
-		@SuppressWarnings("unchecked")
 		List<Expression> nlist = node.arguments();
 		super.visit(node);
 		return PreHandleMethodInvocation(node.resolveMethodBinding(), node, nlist);
@@ -486,33 +452,76 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		// do nothing.
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean visit(ClassInstanceCreation node) {
-		// TODO Auto-generated method stub
-		
-		return super.visit(node);
+		List<Expression> nlist = node.arguments();
+		super.visit(node);
+		return PreHandleMethodInvocation(node.resolveConstructorBinding(), node, nlist);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean visit(SuperMethodInvocation node) {
-		// TODO Auto-generated method stub
-		
-		return super.visit(node);
+		List<Expression> nlist = node.arguments();
+		super.visit(node);
+		boolean is_not_source_resolved = PreHandleMethodInvocation(node.resolveMethodBinding(), node, nlist);
+		boolean must_continue = is_not_source_resolved;
+		if (must_continue) {
+			HandleSuperConnect();
+		}
+		return must_continue;
 	}
 	
 	// method_invocation statements.
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean visit(ConstructorInvocation node) {
-		// TODO Auto-generated method stub
-		
+		// if this(...); statement is not resolved, there are no other implementations so ignored it.
+		List<Expression> nlist = node.arguments();
+		super.visit(node);
+		boolean is_not_source_resolved = PreHandleMethodInvocation(node.resolveConstructorBinding(), node, nlist);
+		if (is_not_source_resolved) {
+			return false;
+		}
 		return super.visit(node);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean visit(SuperConstructorInvocation node) {
-		// TODO Auto-generated method stub
-		
-		return super.visit(node);
+		List<Expression> nlist = node.arguments();
+		super.visit(node);
+		boolean is_not_source_resolved = PreHandleMethodInvocation(node.resolveConstructorBinding(), node, nlist);
+		boolean must_continue = is_not_source_resolved;
+		if (must_continue) {
+			HandleSuperConnect();
+		}
+		return must_continue;
+	}
+	
+	// TODO method_reference is not handled.
+	
+	protected void HandleMethodReference(IMethodBinding imb, MethodReference node) {
+//		IMethod im = null;
+//		if (imb != null) {
+//			IJavaElement jele = imb.getJavaElement();
+//			if (jele != null && jele instanceof IMethod) {
+//				im = (IMethod) jele;
+//				if (im.getDeclaringType().isBinary()) {
+//					im = null;
+//				}
+//			}
+//		}
+		// im != null
+		if (BindingManager.SourceResolvedBinding(imb)) {
+			IMethod im = (IMethod)imb.getJavaElement();
+			HandleIMethodElement(im.toString(), im, node);
+		} else {
+			String content = node.toString();
+			UnSourceResolvedMethodReferenceElement ele = new UnSourceResolvedMethodReferenceElement(content);
+			HandleIMethodElement(content, ele, node);
+		}
 	}
 	
 }
