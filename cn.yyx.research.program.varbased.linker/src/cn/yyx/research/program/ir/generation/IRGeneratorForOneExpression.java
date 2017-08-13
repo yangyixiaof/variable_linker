@@ -19,7 +19,9 @@ import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CharacterLiteral;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.ConstructorInvocation;
+import org.eclipse.jdt.core.dom.CreationReference;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ExpressionMethodReference;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.IMethodBinding;
@@ -43,6 +45,8 @@ import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
 import org.eclipse.jdt.core.dom.SuperFieldAccess;
 import org.eclipse.jdt.core.dom.SuperMethodInvocation;
+import org.eclipse.jdt.core.dom.SuperMethodReference;
+import org.eclipse.jdt.core.dom.TypeMethodReference;
 import org.eclipse.jdt.core.dom.UnionType;
 import org.eclipse.jdt.core.dom.WildcardType;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
@@ -500,20 +504,55 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		return must_continue;
 	}
 	
-	// TODO method_reference is not handled.
+	// TODO handle method_reference.
+	
+	@Override
+	public boolean visit(ExpressionMethodReference node) {
+		return HandleMethodReferenceStart(node.resolveMethodBinding(), node);
+	}
+
+	@Override
+	public void endVisit(ExpressionMethodReference node) {
+		HandleMethodReferenceEnd(node.resolveMethodBinding(), node, node.toString());
+		super.endVisit(node);
+	}
+
+	@Override
+	public boolean visit(CreationReference node) {
+		return HandleMethodReferenceStart(node.resolveMethodBinding(), node);
+	}
+
+	@Override
+	public void endVisit(CreationReference node) {
+		HandleMethodReferenceEnd(node.resolveMethodBinding(), node, node.toString());
+		super.endVisit(node);
+	}
+
+	@Override
+	public boolean visit(TypeMethodReference node) {
+		return HandleMethodReferenceStart(node.resolveMethodBinding(), node);
+	}
+
+	@Override
+	public void endVisit(TypeMethodReference node) {
+		HandleMethodReferenceEnd(node.resolveMethodBinding(), node, node.toString());
+		super.endVisit(node);
+	}
+
+	@Override
+	public boolean visit(SuperMethodReference node) {
+		boolean continue_visit = HandleMethodReferenceStart(node.resolveMethodBinding(), node);
+		return continue_visit;
+	}
+
+	@Override
+	public void endVisit(SuperMethodReference node) {
+		TreatSuperClassElement(node);
+		HandleMethodReferenceEnd(node.resolveMethodBinding(), node, node.getName().toString());
+		super.endVisit(node);
+	}
 	
 	protected void HandleMethodReference(IMethodBinding imb, MethodReference node) {
-//		IMethod im = null;
-//		if (imb != null) {
-//			IJavaElement jele = imb.getJavaElement();
-//			if (jele != null && jele instanceof IMethod) {
-//				im = (IMethod) jele;
-//				if (im.getDeclaringType().isBinary()) {
-//					im = null;
-//				}
-//			}
-//		}
-		// im != null
 		if (BindingManager.SourceResolvedBinding(imb)) {
 			IMethod im = (IMethod)imb.getJavaElement();
 			HandleIMethodElement(im.toString(), im, node);
