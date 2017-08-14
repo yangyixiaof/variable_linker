@@ -60,6 +60,7 @@ import cn.yyx.research.program.ir.storage.node.IIRBranchOverNode;
 import cn.yyx.research.program.ir.storage.node.IIRNode;
 import cn.yyx.research.program.ir.storage.node.IRJavaElementNode;
 import cn.yyx.research.program.ir.storage.node.IRNoneSucceedNode;
+import cn.yyx.research.program.ir.storage.node.IRStatementNode;
 
 public class IRGeneratorForStatements extends ASTVisitor {
 	
@@ -109,13 +110,13 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	protected ASTNodeHandledInfo PreHandleOneASTNode(ASTNode node, int element_idx) {
 		Document doc = new Document(node.toString());
 		ASTRewrite rewrite = ASTRewrite.create(node.getAST());
-		IRGeneratorForOneExpression irfoe = new IRGeneratorForOneExpression(java_project, graph_manager, node, rewrite, pool, graph,
-				super_class_element, element_idx);
+		IRStatementNode irsn = new IRStatementNode(element_idx);
+		IRGeneratorForOneExpression irfoe = new IRGeneratorForOneExpression(java_project, graph_manager, node, rewrite, pool, graph, irsn, super_class_element);
 		node.accept(irfoe);
 		forbid_visit.add(node);
 		// TextEdit edits = ;
 		rewrite.rewriteAST(doc, null);
-		return new ASTNodeHandledInfo(irfoe.GetElementIndex(), doc.toString());
+		return new ASTNodeHandledInfo(irsn.GetVariableIndex(), irsn);// doc.toString()
 	}
 
 	protected void PostHandleOneASTNode(ASTNode node) {
