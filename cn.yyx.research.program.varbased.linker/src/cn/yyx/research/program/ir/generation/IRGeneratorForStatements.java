@@ -71,17 +71,18 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	protected IRJavaElementNode super_class_element = null;
 	protected IRASTNodeTask post_visit_task = new IRASTNodeTask();
 	protected IRASTNodeTask pre_visit_task = new IRASTNodeTask();
-	protected IRGraph graph = new IRGraph();
+	protected IRGraph graph = null;
 	protected List<ASTNode> forbid_visit = new LinkedList<ASTNode>();
 	
-	public IRGeneratorForStatements(IJavaProject java_project, IMethodBinding bind, IRGraphManager graph_manager, IRElementPool pool,
+	public IRGeneratorForStatements(IJavaProject java_project, IMethodBinding bind, IRGraph graph, IRGraphManager graph_manager, IRElementPool pool,
 			IRJavaElementNode super_class_element) {
 		this.java_project = java_project;
 		this.bind = bind;
+		this.graph = graph;
 		this.graph_manager = graph_manager;
 		this.pool = pool;
 		this.super_class_element = super_class_element;
-		this.graph_manager.AddIRGraph(graph);
+		// this.graph_manager.AddIRGraph(graph);
 	}
 
 	@Override

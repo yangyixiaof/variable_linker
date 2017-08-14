@@ -41,6 +41,7 @@ import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.QualifiedType;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SimpleType;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
 import org.eclipse.jdt.core.dom.SuperFieldAccess;
@@ -142,6 +143,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 //		}
 //	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean visit(LambdaExpression node) {
 		boolean handled = false;
@@ -153,8 +155,10 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 				HandleIMethodElement(im.toString(), im, node);
 				handled = true;
 				// take it as a method.
-				IRGeneratorForStatements irgfocb = new IRGeneratorForStatements(java_project, imb, graph_manager, pool, super_class_element);
-				node.getBody().accept(irgfocb);
+				List<SingleVariableDeclaration> para_list = node.parameters();
+				IRGeneratorHelper.HandleMethodDeclaration(java_project, graph_manager, node.getBody(), pool, imb, im, para_list, super_class_element);
+				// IRGeneratorForStatements irgfocb = new IRGeneratorForStatements(java_project, imb, graph_manager, pool, super_class_element);
+				// node.getBody().accept(irgfocb);
 			}
 		}
 		if (!handled) {
