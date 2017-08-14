@@ -1,28 +1,39 @@
 package cn.yyx.research.program.ir.generation;
 
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Initializer;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
+import cn.yyx.research.program.ir.storage.IRElementPool;
+import cn.yyx.research.program.ir.storage.IRGraphManager;
+import cn.yyx.research.program.ir.storage.node.IRJavaElementNode;
 import cn.yyx.research.program.ir.storage.node.highlevel.IRForOneField;
 import cn.yyx.research.program.ir.storage.node.highlevel.IRForOneMethod;
 
-public class IRGeneratorForOneClass extends IRGeneratorForOneLogicBlock {
-	
+public class IRGeneratorForOneClass extends IRGeneratorForStatements {
+
 	private Initializer initial_node = null;
 	private IType it = null;
 	
-	public IRGeneratorForOneClass(IType it) {
-		super(null, new IRForOneField(it));
+	public IRGeneratorForOneClass(IType it, IJavaProject java_project, IMethodBinding bind, IRGraphManager graph_manager,
+			IRElementPool pool, IRJavaElementNode super_class_element) {
+		super(java_project, bind, graph_manager, pool, super_class_element);
 		this.it = it;
 	}
+	
+//	public IRGeneratorForOneClass(IType it) {
+//		super(null, new IRForOneField(it));
+//		this.it = it;
+//	}
 		
 	@Override
 	public boolean visit(Initializer node) {
@@ -39,8 +50,7 @@ public class IRGeneratorForOneClass extends IRGeneratorForOneLogicBlock {
 	@Override
 	public boolean visit(MethodDeclaration node) {
 		IJavaElement ije = node.resolveBinding().getJavaElement();
-		if (ije instanceof IMethod)
-		{
+		if (ije instanceof IMethod) {
 			IMethod im = (IMethod)ije;
 			IRGeneratorForOneProject.GetInstance().AddCalleeCaller(im, null);
 			IRForOneMethod imb = null;
