@@ -123,7 +123,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		forbid_visit.remove(node);
 	}
 	
-	// TODO all mechanisms are wrong.
+	// Solved. all mechanisms are wrong.
 	// Solved. remember to merge expressions.
 	@Override
 	public boolean visit(AssertStatement node) {
