@@ -631,14 +631,8 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	
 	@Override
 	public boolean visit(EmptyStatement node) {
-		// TODO Auto-generated method stub
+		// do nothing.
 		return super.visit(node);
-	}
-	
-	@Override
-	public void endVisit(EmptyStatement node) {
-		// TODO Auto-generated method stub
-		super.endVisit(node);
 	}
 	
 	// nothing need to be done.
