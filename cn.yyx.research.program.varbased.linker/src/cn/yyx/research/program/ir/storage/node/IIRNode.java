@@ -1,5 +1,6 @@
 package cn.yyx.research.program.ir.storage.node;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +23,14 @@ public class IIRNode {
 		ins.put(in_conn.getSource(), in_conn);
 	}
 	
+	public void RemoveInConnection(IIRConnection in_conn) {
+		ins.remove(in_conn.getSource());
+	}
+	
+	public Collection<IIRConnection> GetAllInConnections() {
+		return ins.values();
+	}
+	
 	public IIRConnection GetInConnection(IIRNode source) {
 		return ins.get(source);
 	}
@@ -38,6 +47,14 @@ public class IIRNode {
 //			System.err.println("Strange! target of in_conn is not this.");
 //		}
 		outs.put(out_conn.getTarget(), out_conn);
+	}
+	
+	public void RemoveOutConnection(IIRConnection out_conn) {
+		outs.remove(out_conn.getTarget());
+	}
+	
+	public Collection<IIRConnection> GetAllOutConnections() {
+		return outs.values();
 	}
 	
 	public IIRConnection GetOutConnection(IIRNode target) {

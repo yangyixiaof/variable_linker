@@ -1,6 +1,8 @@
 package cn.yyx.research.program.ir.storage;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import cn.yyx.research.program.ir.storage.connection.Connect;
@@ -11,6 +13,7 @@ import cn.yyx.research.program.ir.storage.node.IRJavaElementNode;
 import cn.yyx.research.program.ir.storage.node.IRSourceMethodParamElementNode;
 import cn.yyx.research.program.ir.storage.node.IRSourceMethodReturnElementNode;
 import cn.yyx.research.program.ir.storage.node.IRSourceMethodStatementNode;
+import cn.yyx.research.program.ir.storage.node.IRStatementNode;
 
 public class IRGraph {
 	
@@ -83,6 +86,24 @@ public class IRGraph {
 	public void GoForwardAStep(IIRNode iirn) {
 		RegistConnection(active, iirn, new FlowConnect());
 		active = iirn;
+	}
+
+	public void MergeNodesToOne(Set<IRStatementNode> wait_merge_nodes, IIRNode new_node) {
+		Iterator<IRStatementNode> witr = wait_merge_nodes.iterator();
+		while (witr.hasNext()) {
+			IRStatementNode irsn = witr.next();
+			Collection<IIRConnection> in_conns = irsn.GetAllInConnections();
+			Iterator<IIRConnection> iitr = in_conns.iterator();
+			while (iitr.hasNext()) {
+				IIRConnection iir_conn = iitr.next();
+				iir_conn.getSource().RemoveOutConnection(iir_conn);
+				iir_conn.getTarget().RemoveInConnection(iir_conn);
+				IIRConnection new_iir_conn = new IIRConnection(iir_conn);
+				new_iir_conn.setTarget(new_node);
+				new_iir_conn.getSource().AddOutConnection(new_iir_conn);
+				new_iir_conn.getTarget().AddInConnection(new_iir_conn);
+			}
+		}
 	}
 	
 }

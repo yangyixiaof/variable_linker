@@ -24,6 +24,7 @@ import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.ForStatement;
 import org.eclipse.jdt.core.dom.IBinding;
+import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.LabeledStatement;
 import org.eclipse.jdt.core.dom.ReturnStatement;
@@ -65,7 +66,7 @@ import cn.yyx.research.program.ir.storage.node.IRStatementNode;
 public class IRGeneratorForStatements extends ASTVisitor {
 	
 	protected IJavaProject java_project = null;
-	protected IBinding bind = null;
+	protected IMethodBinding bind = null;
 	protected IRGraphManager graph_manager = null;
 	protected IRElementPool pool = null;
 	protected IRJavaElementNode super_class_element = null;
@@ -74,7 +75,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	protected IRGraph graph = new IRGraph();
 	protected List<ASTNode> forbid_visit = new LinkedList<ASTNode>();
 	
-	public IRGeneratorForStatements(IJavaProject java_project, IBinding bind, IRGraphManager graph_manager, IRElementPool pool,
+	public IRGeneratorForStatements(IJavaProject java_project, IMethodBinding bind, IRGraphManager graph_manager, IRElementPool pool,
 			IRJavaElementNode super_class_element) {
 		this.java_project = java_project;
 		this.bind = bind;
@@ -248,26 +249,24 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	@Override
 	public boolean visit(ReturnStatement node) {
 		Expression expr = node.getExpression();
-		if (expr == null) {
-			graph.AddControlOutNodes(graph.getActive());
-		} else {
+		if (expr != null && bind != null) {
 			IJavaElement ije = new VirtualMethodReturnElement(bind.getKey());
 			IRJavaElementNode f_return = pool.UniversalElement(bind.getKey(), ije);
 			graph.AddNonVirtualVariableNode(f_return);
-			IIRNode iirn = new IIRNode("");
+			ASTNodeHandledInfo info = PreHandleOneASTNode(expr, 1);
+			IRStatementNode iirn = info.GetIRStatementNode();
+			iirn.SetContent("V=" + iirn.GetContent());
 			graph.GoForwardAStep(iirn);
-			ASTNodeHandledInfo info = PreHandleOneASTNode(node, 1);
-			iirn.SetContent("V=" + info.GetNodeHandledDoc());
 			graph.RegistConnection(f_return, iirn, new VariableConnect(1));
 		}
-		return super.visit(node);
+		graph.AddControlOutNodes(graph.getActive());
+		return false;
 	}
 
 	@Override
 	public void endVisit(ReturnStatement node) {
 		Expression expr = node.getExpression();
-		if (expr == null) {
-		} else {
+		if (expr != null) {
 			PostHandleOneASTNode(node);
 		}
 	}
@@ -317,8 +316,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	@Override
 	public boolean visit(DoStatement node) {
 		ASTNodeHandledInfo info = PreHandleOneASTNode(node.getExpression(), 0);
-		String hdoc = info.GetNodeHandledDoc();
-		IIRNode branch_root = new IIRNode("do {} while(" + hdoc + ");");
+		IIRNode branch_root = info.GetIRStatementNode();
 		semantic_block_control.put(node, branch_root);
 		graph.GoForwardAStep(branch_root);
 		StatementBranchInfo sbi = new StatementBranchInfo(branch_root);
@@ -342,18 +340,24 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	public boolean visit(EnhancedForStatement node) {
 		ASTNodeHandledInfo info = null;
 		StringBuilder enh_for = new StringBuilder("for (");
+		Set<IRStatementNode> wait_merge_nodes = new HashSet<IRStatementNode>();
 		SingleVariableDeclaration param = node.getParameter();
 		Type t = param.getType();
 		info = PreHandleOneASTNode(t, 0);
-		enh_for.append(info.GetNodeHandledDoc());
+		wait_merge_nodes.add(info.GetIRStatementNode());
+		enh_for.append(info.GetIRStatementNode().GetContent());
 		SimpleName name = param.getName();
-		info = PreHandleOneASTNode(name, info.GetElementIndex());
-		enh_for.append(" " + info.GetNodeHandledDoc() + ":");
+		info = PreHandleOneASTNode(name, info.GetIRStatementNode().GetVariableIndex());
+		wait_merge_nodes.add(info.GetIRStatementNode());
+		enh_for.append(" " + info.GetIRStatementNode().GetContent() + ":");
 		Expression expr = node.getExpression();
-		info = PreHandleOneASTNode(expr, info.GetElementIndex());
-		enh_for.append(info.GetNodeHandledDoc() + ") {}");
+		info = PreHandleOneASTNode(expr, info.GetIRStatementNode().GetVariableIndex());
+		wait_merge_nodes.add(info.GetIRStatementNode());
+		enh_for.append(info.GetIRStatementNode().GetContent() + ") {}");
 		
-		IIRNode branch_root = new IIRNode(enh_for.toString());
+		IRStatementNode branch_root = new IRStatementNode(info.GetIRStatementNode().GetVariableIndex());
+		branch_root.SetContent(enh_for.toString());
+		graph.MergeNodesToOne(wait_merge_nodes, branch_root);
 		semantic_block_control.put(node, branch_root);
 		graph.GoForwardAStep(branch_root);
 		StatementBranchInfo sbi = new StatementBranchInfo(branch_root);
@@ -447,11 +451,13 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	@Override
 	public boolean visit(WhileStatement node) {
 		ASTNodeHandledInfo info = PreHandleOneASTNode(node.getExpression(), 0);
-		String hdoc = info.GetNodeHandledDoc();
-		IIRNode branch_root = new IIRNode("while (" + hdoc + ") {}");
-		semantic_block_control.put(node, branch_root);
-		graph.GoForwardAStep(branch_root);
-		StatementBranchInfo sbi = new StatementBranchInfo(branch_root);
+		// String hdoc = info.GetNodeHandledDoc();
+		// IIRNode branch_root = new IIRNode("while (" + hdoc + ") {}");
+		IRStatementNode iirn = info.GetIRStatementNode();
+		iirn.SetContent("while (" + iirn.GetContent() + ") {}");
+		semantic_block_control.put(node, iirn);
+		graph.GoForwardAStep(iirn);
+		StatementBranchInfo sbi = new StatementBranchInfo(iirn);
 		statement_branch_map.put(node, sbi);
 		return super.visit(node);
 	}
@@ -471,8 +477,10 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	@Override
 	public boolean visit(IfStatement node) {
 		ASTNodeHandledInfo info = PreHandleOneASTNode(node.getExpression(), 0);
-		String hdoc = info.GetNodeHandledDoc();
-		IIRNode branch_root = new IIRNode("if (" + hdoc + ") {}");
+		// String hdoc = info.GetNodeHandledDoc();
+		// IIRNode branch_root = new IIRNode("if (" + hdoc + ") {}");
+		IRStatementNode branch_root = info.GetIRStatementNode();
+		branch_root.SetContent("if (" + branch_root.GetContent() + ") {}");
 		semantic_block_control.put(node, branch_root);
 		graph.GoForwardAStep(branch_root);
 		StatementBranchInfo sbi = new StatementBranchInfo(branch_root);
@@ -549,8 +557,10 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	@Override
 	public boolean visit(SwitchStatement node) {
 		ASTNodeHandledInfo info = PreHandleOneASTNode(node.getExpression(), 0);
-		String hdoc = info.GetNodeHandledDoc();
-		IIRNode branch_root = new IIRNode("switch(" + hdoc + ")" + "{}");
+		// String hdoc = info.GetNodeHandledDoc();
+		// IIRNode branch_root = new IIRNode("switch(" + hdoc + ")" + "{}");
+		IRStatementNode branch_root = info.GetIRStatementNode();
+		branch_root.SetContent("switch(" + branch_root.GetContent() + ")" + "{}");
 		semantic_block_control.put(node, branch_root);
 		graph.GoForwardAStep(branch_root);
 		StatementBranchInfo sbi = new StatementBranchInfo(branch_root);
@@ -604,10 +614,11 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	@Override
 	public boolean visit(SynchronizedStatement node) {
 		ASTNodeHandledInfo info = PreHandleOneASTNode(node.getExpression(), 0);
-		String hdoc = info.GetNodeHandledDoc();
-		IIRNode branch_root = new IIRNode("synchronized(" + hdoc + ")" + "{}");
-		semantic_block_control.put(node, branch_root);
-		graph.GoForwardAStep(branch_root);
+		// String hdoc = info.GetNodeHandledDoc();
+		// IIRNode branch_root = new IIRNode("synchronized(" + hdoc + ")" + "{}");
+		IRStatementNode iirn = info.GetIRStatementNode();
+		semantic_block_control.put(node, iirn);
+		graph.GoForwardAStep(iirn);
 		return super.visit(node);
 	}
 	

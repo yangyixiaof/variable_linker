@@ -16,6 +16,12 @@ public class IIRConnection {
 		this.setSource(source);
 		this.setTarget(target);
 	}
+	
+	public IIRConnection(IIRConnection connect) {
+		this.source = connect.source;
+		this.target = connect.target;
+		this.conns.addAll(connect.conns);
+	}
 
 	public IIRNode getSource() {
 		return source;
