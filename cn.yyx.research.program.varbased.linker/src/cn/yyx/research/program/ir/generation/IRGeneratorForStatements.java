@@ -116,21 +116,20 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		forbid_visit.add(node);
 		// TextEdit edits = ;
 		rewrite.rewriteAST(doc, null);
-		return new ASTNodeHandledInfo(irsn.GetVariableIndex(), irsn);// doc.toString()
+		return new ASTNodeHandledInfo(irsn.GetVariableIndex(), irsn, false);// doc.toString()
 	}
 
 	protected void PostHandleOneASTNode(ASTNode node) {
 		forbid_visit.remove(node);
 	}
-
+	
 	// TODO all mechanisms are wrong.
 	@Override
 	public boolean visit(AssertStatement node) {
-		IIRNode iirn = new IIRNode("");
-		graph.GoForwardAStep(iirn);
+		super.visit(node);
 		ASTNodeHandledInfo info = PreHandleOneASTNode(node, 0);
-		iirn.SetContent(info.GetNodeHandledDoc());
-		return super.visit(node);
+		graph.GoForwardAStep(info.GetIRStatementNode());
+		return info.CouldContinue();
 	}
 
 	@Override
