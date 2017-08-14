@@ -116,7 +116,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		forbid_visit.add(node);
 		// TextEdit edits = ;
 		rewrite.rewriteAST(doc, null);
-		return new ASTNodeHandledInfo(irsn.GetVariableIndex(), irsn, false);// doc.toString()
+		return new ASTNodeHandledInfo(irsn, false);// doc.toString()
 	}
 
 	protected void PostHandleOneASTNode(ASTNode node) {
@@ -126,16 +126,14 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	// TODO all mechanisms are wrong.
 	@Override
 	public boolean visit(AssertStatement node) {
-		super.visit(node);
 		ASTNodeHandledInfo info = PreHandleOneASTNode(node, 0);
 		graph.GoForwardAStep(info.GetIRStatementNode());
-		return info.CouldContinue();
+		return false;
 	}
 
 	@Override
 	public void endVisit(AssertStatement node) {
 		PostHandleOneASTNode(node);
-		super.endVisit(node);
 	}
 
 	@Override
@@ -151,14 +149,13 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		Iterator<VariableDeclarationFragment> fitr = frags.iterator();
 		int element_idx = 0;
 		while (fitr.hasNext()) {
-			IIRNode iirn = new IIRNode("");
-			graph.GoForwardAStep(iirn);
 			VariableDeclarationFragment vd = fitr.next();
 			ASTNodeHandledInfo info = PreHandleOneASTNode(vd, element_idx);
-			element_idx = info.GetElementIndex();
-			iirn.SetContent(info.GetNodeHandledDoc());
+			IRStatementNode irsn = info.GetIRStatementNode();
+			element_idx = irsn.GetVariableIndex();
+			graph.GoForwardAStep(irsn);
 		}
-		return super.visit(node);
+		return false;
 	}
 
 	@Override
@@ -174,11 +171,9 @@ public class IRGeneratorForStatements extends ASTVisitor {
 
 	@Override
 	public boolean visit(ExpressionStatement node) {
-		IIRNode iirn = new IIRNode("");
-		graph.GoForwardAStep(iirn);
 		ASTNodeHandledInfo info = PreHandleOneASTNode(node, 0);
-		iirn.SetContent(info.GetNodeHandledDoc());
-		return super.visit(node);
+		graph.GoForwardAStep(info.GetIRStatementNode());
+		return false;
 	}
 
 	@Override
@@ -621,7 +616,19 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		IIRNode over = new IIRBlockOverNode("Virtual_Block_Over");
 		graph.GoForwardAStep(over);
 	}
-
+	
+	@Override
+	public boolean visit(EmptyStatement node) {
+		// TODO Auto-generated method stub
+		return super.visit(node);
+	}
+	
+	@Override
+	public void endVisit(EmptyStatement node) {
+		// TODO Auto-generated method stub
+		super.endVisit(node);
+	}
+	
 	// nothing need to be done.
 
 	@Override
@@ -638,12 +645,6 @@ public class IRGeneratorForStatements extends ASTVisitor {
 
 	@Override
 	public boolean visit(TypeDeclarationStatement node) {
-		// do nothing.
-		return super.visit(node);
-	}
-
-	@Override
-	public boolean visit(EmptyStatement node) {
 		// do nothing.
 		return super.visit(node);
 	}
