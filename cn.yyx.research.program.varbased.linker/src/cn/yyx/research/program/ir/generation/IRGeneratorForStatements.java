@@ -23,7 +23,6 @@ import org.eclipse.jdt.core.dom.EnhancedForStatement;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.ForStatement;
-import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.LabeledStatement;
@@ -125,7 +124,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	}
 	
 	// TODO all mechanisms are wrong.
-	// TODO remember to merge expressions.
+	// Solved. remember to merge expressions.
 	@Override
 	public boolean visit(AssertStatement node) {
 		ASTNodeHandledInfo info = PreHandleOneASTNode(node, 0);
@@ -358,8 +357,8 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		
 		IRStatementNode branch_root = new IRStatementNode(info.GetIRStatementNode().GetVariableIndex());
 		branch_root.SetContent(enh_for.toString());
-		graph.MergeNodesToOne(wait_merge_nodes, branch_root);
 		semantic_block_control.put(node, branch_root);
+		graph.MergeNodesToOne(wait_merge_nodes, branch_root);
 		graph.GoForwardAStep(branch_root);
 		StatementBranchInfo sbi = new StatementBranchInfo(branch_root);
 		statement_branch_map.put(node, sbi);
@@ -389,29 +388,31 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	public boolean visit(ForStatement node) {
 		StringBuilder for_builder = new StringBuilder("for (");
 		int element_index = 0;
+		Set<IRStatementNode> wait_merge_nodes = new HashSet<IRStatementNode>();
 		List<Expression> inis = node.initializers();
 		if (inis != null && inis.size() > 0) {
 			Iterator<Expression> expr_itr = inis.iterator();
 			while (expr_itr.hasNext()) {
 				Expression expr = expr_itr.next();
 				ASTNodeHandledInfo info = PreHandleOneASTNode(expr, element_index);
-				for_builder.append(info.GetNodeHandledDoc());
+				wait_merge_nodes.add(info.GetIRStatementNode());
+				for_builder.append(info.GetIRStatementNode().GetContent());
 				if (expr_itr.hasNext()) {
 					for_builder.append(",");
-				} else {
-					for_builder.append(";");
 				}
-				element_index = info.GetElementIndex();
+				element_index = info.GetIRStatementNode().GetVariableIndex();
 			}
 		}
+		for_builder.append(";");
 		
 		Expression judge_expr = node.getExpression();
-		{
+		if (judge_expr != null) {
 			ASTNodeHandledInfo info = PreHandleOneASTNode(judge_expr, element_index);
-			for_builder.append(info.GetNodeHandledDoc());
-			for_builder.append(";");
-			element_index = info.GetElementIndex();
+			wait_merge_nodes.add(info.GetIRStatementNode());
+			for_builder.append(info.GetIRStatementNode().GetContent());
+			element_index = info.GetIRStatementNode().GetVariableIndex();
 		}
+		for_builder.append(";");
 		
 		List<Expression> upds = node.updaters();
 		if (upds != null && upds.size() > 0) {
@@ -419,22 +420,24 @@ public class IRGeneratorForStatements extends ASTVisitor {
 			while (expr_itr.hasNext()) {
 				Expression expr = expr_itr.next();
 				ASTNodeHandledInfo info = PreHandleOneASTNode(expr, element_index);
-				for_builder.append(info.GetNodeHandledDoc());
+				wait_merge_nodes.add(info.GetIRStatementNode());
+				for_builder.append(info.GetIRStatementNode().GetContent());
 				if (expr_itr.hasNext()) {
 					for_builder.append(",");
 				}
-				element_index = info.GetElementIndex();
+				element_index = info.GetIRStatementNode().GetVariableIndex();
 			}
 		}
 		for_builder.append(") {}");
 		
 		IIRNode branch_root = new IIRNode(for_builder.toString());
 		semantic_block_control.put(node, branch_root);
+		graph.MergeNodesToOne(wait_merge_nodes, branch_root);
 		graph.GoForwardAStep(branch_root);
 		StatementBranchInfo sbi = new StatementBranchInfo(branch_root);
 		statement_branch_map.put(node, sbi);
 		
-		return super.visit(node);
+		return false;
 	}
 	
 	@Override
