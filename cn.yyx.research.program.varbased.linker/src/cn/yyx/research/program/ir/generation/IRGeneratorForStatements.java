@@ -125,6 +125,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	}
 	
 	// TODO all mechanisms are wrong.
+	// TODO remember to merge expressions.
 	@Override
 	public boolean visit(AssertStatement node) {
 		ASTNodeHandledInfo info = PreHandleOneASTNode(node, 0);
