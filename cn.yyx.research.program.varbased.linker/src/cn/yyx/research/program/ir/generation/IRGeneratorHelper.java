@@ -22,7 +22,6 @@ import cn.yyx.research.program.ir.storage.node.IRJavaElementNode;
 public class IRGeneratorHelper {
 
 	public static void HandleMethodDeclaration(IJavaProject java_project, IRGraphManager graph_manager, ASTNode node, IRElementPool pool, IMethodBinding imb, IMethod im, IType it, List<SingleVariableDeclaration> para_list, IRJavaElementNode super_class_element) {
-		// TODO method invokes (call-graph) need to be handled.
 		// IRGeneratorForOneProject.GetInstance().AddCalleeCaller(im, null);
 		// IRForOneMethod imb = null;
 		IRJavaElementNode return_element_node = pool.UniversalElement(im.getKey(),
@@ -42,7 +41,7 @@ public class IRGeneratorHelper {
 			}
 		}
 		IRGraphForMethod irgfm = new IRGraphForMethod(params, return_element_node);
-		IRGeneratorForStatements irgfs = new IRGeneratorForStatements(java_project, imb, irgfm, graph_manager, pool,
+		IRGeneratorForStatements irgfs = new IRGeneratorForStatements(java_project, im, irgfm, graph_manager, pool,
 				super_class_element, it);
 		graph_manager.AddIRGraph(im, irgfm);
 		graph_manager.AddMemberRelation(it, im);
