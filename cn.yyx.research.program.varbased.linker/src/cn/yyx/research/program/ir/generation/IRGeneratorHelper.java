@@ -43,7 +43,7 @@ public class IRGeneratorHelper {
 		}
 		IRGraphForMethod irgfm = new IRGraphForMethod(params, return_element_node);
 		IRGeneratorForStatements irgfs = new IRGeneratorForStatements(java_project, imb, irgfm, graph_manager, pool,
-				super_class_element);
+				super_class_element, it);
 		graph_manager.AddIRGraph(im, irgfm);
 		graph_manager.AddMemberRelation(it, im);
 		// if (node.isConstructor()) {
