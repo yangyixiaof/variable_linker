@@ -11,6 +11,7 @@ import java.util.TreeMap;
 
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
@@ -24,7 +25,6 @@ import org.eclipse.jdt.core.dom.EnhancedForStatement;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.eclipse.jdt.core.dom.ForStatement;
-import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.LabeledStatement;
 import org.eclipse.jdt.core.dom.ReturnStatement;
@@ -66,7 +66,7 @@ import cn.yyx.research.program.ir.storage.node.IRStatementNode;
 public class IRGeneratorForStatements extends ASTVisitor {
 	
 	protected IJavaProject java_project = null;
-	protected IMethodBinding bind = null;
+	protected IMethod im = null;
 	protected IRGraphManager graph_manager = null;
 	protected IRElementPool pool = null;
 	protected IRJavaElementNode super_class_element = null;
@@ -76,10 +76,10 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	protected List<ASTNode> forbid_visit = new LinkedList<ASTNode>();
 	protected IType it = null;
 	
-	public IRGeneratorForStatements(IJavaProject java_project, IMethodBinding bind, IRGraph graph, IRGraphManager graph_manager, IRElementPool pool,
+	public IRGeneratorForStatements(IJavaProject java_project, IMethod im, IRGraph graph, IRGraphManager graph_manager, IRElementPool pool,
 			IRJavaElementNode super_class_element, IType it) {
 		this.java_project = java_project;
-		this.bind = bind;
+		this.im = im;
 		this.graph = graph;
 		this.graph_manager = graph_manager;
 		this.pool = pool;
@@ -115,7 +115,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		Document doc = new Document(node.toString());
 		ASTRewrite rewrite = ASTRewrite.create(node.getAST());
 		IRStatementNode irsn = new IRStatementNode(element_idx);
-		IRGeneratorForOneExpression irfoe = new IRGeneratorForOneExpression(java_project, graph_manager, node, rewrite, pool, graph, irsn, super_class_element, it);
+		IRGeneratorForOneExpression irfoe = new IRGeneratorForOneExpression(java_project, graph_manager, node, rewrite, pool, graph, irsn, super_class_element, it, im);
 		node.accept(irfoe);
 		forbid_visit.add(node);
 		// TextEdit edits = ;
@@ -253,9 +253,9 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	@Override
 	public boolean visit(ReturnStatement node) {
 		Expression expr = node.getExpression();
-		if (expr != null && bind != null) {
-			IJavaElement ije = new VirtualMethodReturnElement(bind.getKey());
-			IRJavaElementNode f_return = pool.UniversalElement(bind.getKey(), ije);
+		if (expr != null && im != null) {
+			IJavaElement ije = new VirtualMethodReturnElement(im.getKey());
+			IRJavaElementNode f_return = pool.UniversalElement(im.getKey(), ije);
 			graph.AddNonVirtualVariableNode(f_return);
 			ASTNodeHandledInfo info = PreHandleOneASTNode(expr, 1);
 			IRStatementNode iirn = info.GetIRStatementNode();
