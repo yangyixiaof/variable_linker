@@ -29,7 +29,7 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 
 	public IRGeneratorForOneClass(IType it, IJavaProject java_project, IRGraph graph, IRGraphManager graph_manager,
 			IRElementPool pool) {
-		super(java_project, null, graph, graph_manager, pool, null, it);
+		super(java_project, graph, graph_manager, pool, null, it, null);
 		this.it = it;
 	}
 

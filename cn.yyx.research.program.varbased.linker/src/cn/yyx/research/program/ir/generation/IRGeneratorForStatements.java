@@ -66,7 +66,6 @@ import cn.yyx.research.program.ir.storage.node.IRStatementNode;
 public class IRGeneratorForStatements extends ASTVisitor {
 	
 	protected IJavaProject java_project = null;
-	protected IMethod im = null;
 	protected IRGraphManager graph_manager = null;
 	protected IRElementPool pool = null;
 	protected IRJavaElementNode super_class_element = null;
@@ -75,16 +74,17 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	protected IRGraph graph = null;
 	protected List<ASTNode> forbid_visit = new LinkedList<ASTNode>();
 	protected IType it = null;
+	protected IMethod im = null;
 	
-	public IRGeneratorForStatements(IJavaProject java_project, IMethod im, IRGraph graph, IRGraphManager graph_manager, IRElementPool pool,
-			IRJavaElementNode super_class_element, IType it) {
+	public IRGeneratorForStatements(IJavaProject java_project, IRGraph graph, IRGraphManager graph_manager, IRElementPool pool,
+			IRJavaElementNode super_class_element, IType it, IMethod im) {
 		this.java_project = java_project;
-		this.im = im;
 		this.graph = graph;
 		this.graph_manager = graph_manager;
 		this.pool = pool;
 		this.super_class_element = super_class_element;
 		this.it = it;
+		this.im = im;
 		// this.graph_manager.AddIRGraph(graph);
 	}
 
