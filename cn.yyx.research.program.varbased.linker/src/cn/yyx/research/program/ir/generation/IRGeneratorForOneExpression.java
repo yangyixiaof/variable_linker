@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.ArrayType;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CharacterLiteral;
@@ -142,6 +143,12 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 //			HandleIJavaElement(represent, ele, happen);
 //		}
 //	}
+	
+	@Override
+	public boolean visit(AnonymousClassDeclaration node) {
+		
+		return super.visit(node);
+	}
 	
 	@SuppressWarnings("unchecked")
 	@Override

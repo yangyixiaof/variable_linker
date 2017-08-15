@@ -8,6 +8,7 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
+import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.IMethodBinding;
@@ -15,6 +16,8 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Initializer;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import cn.yyx.research.program.ir.storage.IRElementPool;
 import cn.yyx.research.program.ir.storage.IRGraph;
@@ -70,7 +73,17 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 			boolean type_equals = resolved_type == null ? false : resolved_type.equals(it);
 			// boolean has_element = irc.IsHasElement();
 			if (type_equals) {// && has_element
-				
+				if (node instanceof TypeDeclaration || node instanceof AnnotationTypeDeclaration) {
+					Type super_type = ((TypeDeclaration)node).getSuperclassType();
+					ITypeBinding itb = super_type.resolveBinding();
+					if (itb != null) {
+						IJavaElement super_ije = itb.getJavaElement();
+						if (super_ije != null) {
+							IType super_it = (IType)super_ije;
+							this.super_class_element = pool.UniversalElement(super_it.getElementName(), super_it);
+						}
+					}
+				}
 				// IRGeneratorForOneProject.GetInstance().FetchITypeIR((it)).SetFieldLevel((IRForOneField)irc);
 			}
 		}
