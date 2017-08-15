@@ -148,8 +148,22 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	
 	@Override
 	public boolean visit(AnonymousClassDeclaration node) {
-		// TODO 
-		
+		boolean handled = false;
+		ITypeBinding itb = node.resolveBinding();
+		if (itb != null) {
+			IJavaElement ije = itb.getJavaElement();
+			if (ije != null) {
+				IType it = (IType)ije;
+				HandleITypeElement(it.getElementName(), it, node);
+				handled = true;
+				IRGeneratorForOneClass irgfoc = new IRGeneratorForOneClass(it, java_project, graph, graph_manager, pool);
+				node.accept(irgfoc);
+			}
+		}
+		if (!handled) {
+			String content = node.toString();
+			HandleITypeElement(content, new UnSourceResolvedTypeElement(content), node);
+		}
 		return super.visit(node);
 	}
 	
@@ -162,7 +176,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 			IJavaElement jele = imb.getJavaElement();
 			if (jele != null && jele instanceof IMethod) {
 				IMethod im = (IMethod) jele;
-				HandleIMethodElement(im.toString(), im, node);
+				HandleIMethodElement(im.getElementName(), im, node);
 				handled = true;
 				// take it as a method.
 				List<SingleVariableDeclaration> para_list = node.parameters();
