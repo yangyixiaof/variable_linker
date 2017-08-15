@@ -89,6 +89,8 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 		}
 	}
 	
+	// TODO type should be visited.
+	
 	@Override
 	public void postVisit(ASTNode node) {
 		if (node instanceof AbstractTypeDeclaration || node instanceof AnonymousClassDeclaration)
