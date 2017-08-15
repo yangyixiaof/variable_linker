@@ -5,8 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cn.yyx.research.program.ir.storage.connection.IIRConnection;
+import cn.yyx.research.program.ir.visual.node.IVNode;
 
-public class IIRNode {
+public class IIRNode implements IVNode {
 	
 	private String content = null;
 	private Map<IIRNode, IIRConnection> ins = new HashMap<IIRNode, IIRConnection>();
@@ -74,6 +75,11 @@ public class IIRNode {
 
 	public void SetContent(String content) {
 		this.content = content;
+	}
+
+	@Override
+	public String ToVisual() {
+		return content;
 	}
 	
 }

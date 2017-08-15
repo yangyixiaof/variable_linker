@@ -23,7 +23,7 @@ public class IRGraph {
 	private Set<IRSourceMethodStatementNode> source_method_statements = new HashSet<IRSourceMethodStatementNode>();
 	private Set<IRSourceMethodReturnElementNode> source_method_returns = new HashSet<IRSourceMethodReturnElementNode>();
 	private Set<IRSourceMethodParamElementNode> source_method_params = new HashSet<IRSourceMethodParamElementNode>();
-	
+	// TODO control_out_nodes is not set.
 	private Set<IIRNode> control_out_nodes = new HashSet<IIRNode>();
 	private Set<IRJavaElementNode> variable_nodes = new HashSet<IRJavaElementNode>();
 	
