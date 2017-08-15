@@ -26,9 +26,9 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 	private Initializer initial_node = null;
 	private IType it = null;
 	
-	public IRGeneratorForOneClass(IType it, IJavaProject java_project, IMethodBinding bind, IRGraph graph, IRGraphManager graph_manager,
+	public IRGeneratorForOneClass(IType it, IJavaProject java_project, IRGraph graph, IRGraphManager graph_manager,
 			IRElementPool pool, IRJavaElementNode super_class_element) {
-		super(java_project, bind, graph, graph_manager, pool, super_class_element);
+		super(java_project, null, graph, graph_manager, pool, super_class_element);
 		this.it = it;
 	}
 	
@@ -67,7 +67,7 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 		if (node instanceof AbstractTypeDeclaration || node instanceof AnonymousClassDeclaration)
 		{
 			IType resolved_type = NodeBinding(node);
-			boolean type_equals = resolved_type.equals(it);
+			boolean type_equals = resolved_type == null ? false : resolved_type.equals(it);
 			// boolean has_element = irc.IsHasElement();
 			if (type_equals) {// && has_element
 				if (this.initial_node != null) {
