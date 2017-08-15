@@ -63,6 +63,21 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 	}
 	
 	@Override
+	public void preVisit(ASTNode node) {
+		super.preVisit(node);
+		if (node instanceof AbstractTypeDeclaration || node instanceof AnonymousClassDeclaration)
+		{
+			IType resolved_type = NodeBinding(node);
+			boolean type_equals = resolved_type == null ? false : resolved_type.equals(it);
+			// boolean has_element = irc.IsHasElement();
+			if (type_equals) {// && has_element
+				
+				// IRGeneratorForOneProject.GetInstance().FetchITypeIR((it)).SetFieldLevel((IRForOneField)irc);
+			}
+		}
+	}
+	
+	@Override
 	public void postVisit(ASTNode node) {
 		if (node instanceof AbstractTypeDeclaration || node instanceof AnonymousClassDeclaration)
 		{
