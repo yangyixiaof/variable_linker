@@ -67,6 +67,7 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 
 	@Override
 	public boolean preVisit2(ASTNode node) {
+		// super.preVisit2(node)
 		if (node instanceof AbstractTypeDeclaration || node instanceof AnonymousClassDeclaration) {
 			IType resolved_type = NodeBinding(node);
 			if (resolved_type != null) {
@@ -93,11 +94,12 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 							graph_manager, pool);
 					node.accept(irgfoc);
 				}
-			} else {
-				return super.preVisit2(node) && false;
 			}
+//			else {
+//				return super.preVisit2(node) && false;
+//			}
 		}
-		return super.preVisit2(node);
+		return false;
 	}
 
 	// Solved. internal type should be visited.
