@@ -22,7 +22,7 @@ import cn.yyx.research.program.ir.storage.node.IRJavaElementNode;
 public class IRGeneratorHelper {
 
 	public static void HandleMethodDeclaration(IJavaProject java_project, IRGraphManager graph_manager, ASTNode node, IRElementPool pool, IMethodBinding imb, IMethod im, IType it, List<SingleVariableDeclaration> para_list, IRJavaElementNode super_class_element) {
-		// TODO method invokes need to be handled.
+		// TODO method invokes (call-graph) need to be handled.
 		// IRGeneratorForOneProject.GetInstance().AddCalleeCaller(im, null);
 		// IRForOneMethod imb = null;
 		IRJavaElementNode return_element_node = pool.UniversalElement(im.getKey(),
