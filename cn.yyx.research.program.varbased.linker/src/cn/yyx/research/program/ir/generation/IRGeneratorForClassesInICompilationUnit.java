@@ -44,7 +44,9 @@ public class IRGeneratorForClassesInICompilationUnit extends ASTVisitor {
 		if (node instanceof AbstractTypeDeclaration) {
 			IType it = ResolveAbstractType(((AbstractTypeDeclaration)node).resolveBinding());
 			if (it != null) {
-				IRGeneratorForOneClass irfoc = new IRGeneratorForOneClass(it, java_project, new IRGraph(), graph_manager, pool);
+				IRGraph graph = new IRGraph();
+				graph_manager.AddIRGraph(it, graph);
+				IRGeneratorForOneClass irfoc = new IRGeneratorForOneClass(it, java_project, graph, graph_manager, pool);
 				node.accept(irfoc);
 				// getClasses().add(irfoc.GetClassLevelGeneration());
 			}

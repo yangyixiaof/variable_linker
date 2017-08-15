@@ -7,6 +7,7 @@ import java.util.List;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.IMethodBinding;
@@ -20,7 +21,7 @@ import cn.yyx.research.program.ir.storage.node.IRJavaElementNode;
 
 public class IRGeneratorHelper {
 
-	public static void HandleMethodDeclaration(IJavaProject java_project, IRGraphManager graph_manager, ASTNode node, IRElementPool pool, IMethodBinding imb, IMethod im, List<SingleVariableDeclaration> para_list, IRJavaElementNode super_class_element) {
+	public static void HandleMethodDeclaration(IJavaProject java_project, IRGraphManager graph_manager, ASTNode node, IRElementPool pool, IMethodBinding imb, IMethod im, IType it, List<SingleVariableDeclaration> para_list, IRJavaElementNode super_class_element) {
 		// TODO method invokes need to be handled.
 		// IRGeneratorForOneProject.GetInstance().AddCalleeCaller(im, null);
 		// IRForOneMethod imb = null;
@@ -43,6 +44,8 @@ public class IRGeneratorHelper {
 		IRGraphForMethod irgfm = new IRGraphForMethod(params, return_element_node);
 		IRGeneratorForStatements irgfs = new IRGeneratorForStatements(java_project, imb, irgfm, graph_manager, pool,
 				super_class_element);
+		graph_manager.AddIRGraph(im, irgfm);
+		graph_manager.AddMemberRelation(it, im);
 		// if (node.isConstructor()) {
 		// imb = IRGeneratorForOneProject.GetInstance().FetchIConstructorIR(im, it);
 		// } else {

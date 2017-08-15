@@ -83,8 +83,9 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	protected IRGraph graph = null;
 	protected IRStatementNode iir_stmt_node = null;
 	protected IRJavaElementNode super_class_element = null;
+	protected IType it = null;
 	
-	public IRGeneratorForOneExpression(IJavaProject java_project, IRGraphManager graph_manager, ASTNode node, ASTRewrite rewrite, IRElementPool pool, IRGraph graph, IRStatementNode iir_stmt_node, IRJavaElementNode super_class_element) {
+	public IRGeneratorForOneExpression(IJavaProject java_project, IRGraphManager graph_manager, ASTNode node, ASTRewrite rewrite, IRElementPool pool, IRGraph graph, IRStatementNode iir_stmt_node, IRJavaElementNode super_class_element, IType it) {
 		this.java_project = java_project;
 		this.graph_manager = graph_manager;
 		this.node = node;
@@ -94,6 +95,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		this.graph = graph;
 		this.iir_stmt_node = iir_stmt_node;
 		this.super_class_element = super_class_element;
+		this.it = it;
 	}
 	
 	@Override
@@ -147,6 +149,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	@Override
 	public boolean visit(AnonymousClassDeclaration node) {
 		// TODO 
+		
 		return super.visit(node);
 	}
 	
@@ -163,7 +166,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 				handled = true;
 				// take it as a method.
 				List<SingleVariableDeclaration> para_list = node.parameters();
-				IRGeneratorHelper.HandleMethodDeclaration(java_project, graph_manager, node.getBody(), pool, imb, im, para_list, super_class_element);
+				IRGeneratorHelper.HandleMethodDeclaration(java_project, graph_manager, node.getBody(), pool, imb, im, it, para_list, super_class_element);
 				// IRGeneratorForStatements irgfocb = new IRGeneratorForStatements(java_project, imb, graph_manager, pool, super_class_element);
 				// node.getBody().accept(irgfocb);
 			}
@@ -425,7 +428,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 						Document doc = new Document(expr.toString());
 						ASTRewrite expr_rewrite = ASTRewrite.create(expr.getAST());
 						IRStatementNode expr_iirn = new IRStatementNode(1);
-						IRGeneratorForOneExpression ir_gfoe = new IRGeneratorForOneExpression(java_project, graph_manager, expr, expr_rewrite, pool, graph, expr_iirn, super_class_element);
+						IRGeneratorForOneExpression ir_gfoe = new IRGeneratorForOneExpression(java_project, graph_manager, expr, expr_rewrite, pool, graph, expr_iirn, super_class_element, it);
 						expr.accept(ir_gfoe);
 						expr_rewrite.rewriteAST(doc, null);
 						expr_iirn.SetContent("V=" + doc.toString() + ";");

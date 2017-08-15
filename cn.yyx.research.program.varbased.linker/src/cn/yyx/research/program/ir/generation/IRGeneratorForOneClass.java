@@ -30,7 +30,7 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 	
 	public IRGeneratorForOneClass(IType it, IJavaProject java_project, IRGraph graph, IRGraphManager graph_manager,
 			IRElementPool pool) {
-		super(java_project, null, graph, graph_manager, pool, null);
+		super(java_project, null, graph, graph_manager, pool, null, it);
 		this.it = it;
 	}
 	
@@ -59,7 +59,7 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 		if (ije instanceof IMethod) {
 			IMethod im = (IMethod)ije;
 			List<SingleVariableDeclaration> para_list = node.parameters();
-			IRGeneratorHelper.HandleMethodDeclaration(java_project, graph_manager, node.getBody(), pool, imb, im, para_list, super_class_element);
+			IRGeneratorHelper.HandleMethodDeclaration(java_project, graph_manager, node.getBody(), pool, imb, im, it, para_list, super_class_element);
 		}
 		return false;
 	}
