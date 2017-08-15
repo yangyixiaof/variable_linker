@@ -6,9 +6,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
-import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.ITypeBinding;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import cn.yyx.research.program.ir.storage.IRElementPool;
 import cn.yyx.research.program.ir.storage.IRGraph;
@@ -46,7 +44,7 @@ public class IRGeneratorForClassesInICompilationUnit extends ASTVisitor {
 		if (node instanceof AbstractTypeDeclaration) {
 			IType it = ResolveAbstractType(((AbstractTypeDeclaration)node).resolveBinding());
 			if (it != null) {
-				IRGeneratorForOneClass irfoc = new IRGeneratorForOneClass(it, java_project, new IRGraph(), graph_manager, pool, super_class_element);
+				IRGeneratorForOneClass irfoc = new IRGeneratorForOneClass(it, java_project, new IRGraph(), graph_manager, pool);
 				node.accept(irfoc);
 				// getClasses().add(irfoc.GetClassLevelGeneration());
 			}

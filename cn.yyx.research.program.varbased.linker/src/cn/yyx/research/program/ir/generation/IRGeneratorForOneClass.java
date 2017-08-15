@@ -19,7 +19,6 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import cn.yyx.research.program.ir.storage.IRElementPool;
 import cn.yyx.research.program.ir.storage.IRGraph;
 import cn.yyx.research.program.ir.storage.IRGraphManager;
-import cn.yyx.research.program.ir.storage.node.IRJavaElementNode;
 
 public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 
@@ -27,8 +26,8 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 	private IType it = null;
 	
 	public IRGeneratorForOneClass(IType it, IJavaProject java_project, IRGraph graph, IRGraphManager graph_manager,
-			IRElementPool pool, IRJavaElementNode super_class_element) {
-		super(java_project, null, graph, graph_manager, pool, super_class_element);
+			IRElementPool pool) {
+		super(java_project, null, graph, graph_manager, pool, null);
 		this.it = it;
 	}
 	
