@@ -16,7 +16,7 @@ import cn.yyx.research.program.systemutil.EnvironmentUtil;
 import cn.yyx.research.program.systemutil.SystemUtil;
 import cn.yyx.research.test.TestJavaSearch;
 
-public class Linker implements IApplication {
+public class LinkExtractor implements IApplication {
 	
 	public static IJavaProject LoadProjectAccordingToArgs(String[] args) throws Exception 
 	{
