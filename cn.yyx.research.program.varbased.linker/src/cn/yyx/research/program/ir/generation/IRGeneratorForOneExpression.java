@@ -146,7 +146,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	
 	@Override
 	public boolean visit(AnonymousClassDeclaration node) {
-		
+		// TODO 
 		return super.visit(node);
 	}
 	
