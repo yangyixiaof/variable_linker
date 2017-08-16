@@ -51,13 +51,13 @@ public class LinkExtractor implements IApplication {
 				IRGraphManager graph_manager = one_project.GetIRGraphManager();
 				// generate and print each local method.
 				GenerateDotForIRGraphs irproj_local_generation = new GenerateDotForIRGraphs(DotMeta.ProjectEachMethodDotDir, DotMeta.ProjectEachMethodPicDir, graph_manager);
-				irproj_local_generation.GenerateDots();
+				irproj_local_generation.GenerateDotsAndPrintToPictures();
 				
 				// generate and print all methods connected.
 				IRGeneratorForFullTrace irgft = new IRGeneratorForFullTrace(graph_manager);
 				irgft.GenerateFullTraceOnInitialIRGraphs();
 				GenerateDotForIRGraphs irproj_global_generation = new GenerateDotForIRGraphs(DotMeta.ProjectFullTraceDotDir, DotMeta.ProjectFullTracePicDir, graph_manager);
-				irproj_global_generation.GenerateDots();
+				irproj_global_generation.GenerateDotsAndPrintToPictures();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

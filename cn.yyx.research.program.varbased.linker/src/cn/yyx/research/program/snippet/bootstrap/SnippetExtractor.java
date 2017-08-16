@@ -60,7 +60,7 @@ public class SnippetExtractor implements IApplication {
 				// generate each local method.
 				GenerateDotForIRGraphs irproj_local_generation = new GenerateDotForIRGraphs(
 						DotMeta.ProjectEachMethodDotDir, DotMeta.ProjectEachMethodPicDir);
-				irproj_local_generation.GenerateDots();
+				irproj_local_generation.GenerateDotsAndPrintToPictures();
 
 				if (true) {
 					// generate for each full trace.
@@ -85,7 +85,7 @@ public class SnippetExtractor implements IApplication {
 					}
 					GenerateDotForEachFullTrace full_trace_generator = new GenerateDotForEachFullTrace(
 							DotMeta.FullTraceDotDir, DotMeta.FullTracePicDir, ft_traces);
-					full_trace_generator.GenerateDots();
+					full_trace_generator.GenerateDotsAndPrintToPictures();
 				}
 			}
 		} catch (Exception e) {

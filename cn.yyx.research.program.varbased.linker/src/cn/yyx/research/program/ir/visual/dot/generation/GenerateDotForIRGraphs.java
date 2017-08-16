@@ -29,7 +29,7 @@ public class GenerateDotForIRGraphs implements DotGenerator {
 	}
 	
 	@Override
-	public void GenerateDots() {
+	public void GenerateDotsAndPrintToPictures() {
 		int idx = 0;
 		List<IRCode> ircodes = IRGeneratorForOneProject.GetInstance().GetAllIRCodes();
 		Iterator<IRCode> iitr = ircodes.iterator();
