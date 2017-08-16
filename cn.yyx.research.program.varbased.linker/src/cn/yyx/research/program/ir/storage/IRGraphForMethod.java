@@ -1,5 +1,6 @@
 package cn.yyx.research.program.ir.storage;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,6 +14,12 @@ public class IRGraphForMethod extends IRGraph {
 	public IRGraphForMethod(List<IRJavaElementNode> params, IRJavaElementNode return_element_node) {
 		this.params.addAll(params);
 		this.return_element_node = return_element_node;
+		Iterator<IRJavaElementNode> pitr = params.iterator();
+		while (pitr.hasNext()) {
+			IRJavaElementNode irjen = pitr.next();
+			AddNonVirtualVariableNode(irjen);
+		}
+		AddNonVirtualVariableNode(return_element_node);
 	}
 	
 	public List<IRJavaElementNode> GetParameterElementNodes() {
