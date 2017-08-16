@@ -5,10 +5,14 @@ import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jdt.core.IJavaProject;
 
 import cn.yyx.research.logger.DebugLogger;
+import cn.yyx.research.program.analysis.fulltrace.generation.IRGeneratorForFullTrace;
 import cn.yyx.research.program.eclipse.exception.WrongArgumentException;
 import cn.yyx.research.program.eclipse.project.AnalysisEnvironment;
 import cn.yyx.research.program.eclipse.project.ProjectInfo;
+import cn.yyx.research.program.ir.generation.IRGeneratorForOneProject;
+import cn.yyx.research.program.ir.generation.structure.IRForOneProject;
 import cn.yyx.research.program.ir.meta.IRControlMeta;
+import cn.yyx.research.program.ir.storage.IRGraphManager;
 import cn.yyx.research.program.ir.visual.dot.generation.GenerateDotForIRGraphs;
 import cn.yyx.research.program.ir.visual.meta.DotMeta;
 import cn.yyx.research.program.systemutil.EnvironmentUtil;
@@ -42,13 +46,18 @@ public class LinkExtractor implements IApplication {
 			if (IRControlMeta.test) {
 				TestJavaSearch.TestInAll(java_project);
 			} else {
-				IRGeneratorForOneProject.GenerateForAllICompilationUnits(java_project);
+				IRGeneratorForOneProject irgfop = new IRGeneratorForOneProject(java_project);
+				IRForOneProject one_project = irgfop.GenerateForOneProject();
+				IRGraphManager graph_manager = one_project.GetIRGraphManager();
 				// generate and print each local method.
-				GenerateDotForIRGraphs irproj_local_generation = new GenerateDotForIRGraphs(DotMeta.ProjectEachMethodDotDir, DotMeta.ProjectEachMethodPicDir);
+				GenerateDotForIRGraphs irproj_local_generation = new GenerateDotForIRGraphs(DotMeta.ProjectEachMethodDotDir, DotMeta.ProjectEachMethodPicDir, graph_manager);
 				irproj_local_generation.GenerateDots();
 				
 				// generate and print all methods connected.
-				IRGeneratorForOneProject irinstance = IRGeneratorForOneProject.GetInstance();
+				IRGeneratorForFullTrace irgft = new IRGeneratorForFullTrace(graph_manager);
+				irgft.GenerateFullTraceOnInitialIRGraphs();
+				GenerateDotForIRGraphs irproj_global_generation = new GenerateDotForIRGraphs(DotMeta.ProjectFullTraceDotDir, DotMeta.ProjectFullTracePicDir, graph_manager);
+				irproj_global_generation.GenerateDots();
 				// TODO 
 				
 			}

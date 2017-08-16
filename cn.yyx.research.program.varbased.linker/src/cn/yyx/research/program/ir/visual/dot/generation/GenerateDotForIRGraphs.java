@@ -8,9 +8,7 @@ import java.util.Set;
 import org.eclipse.jdt.core.IJavaElement;
 
 import cn.yyx.research.program.fileutil.FileUtil;
-import cn.yyx.research.program.ir.generation.IRGeneratorForOneProject;
-import cn.yyx.research.program.ir.orgranization.IRTreeForOneControlElement;
-import cn.yyx.research.program.ir.storage.node.highlevel.IRCode;
+import cn.yyx.research.program.ir.storage.IRGraphManager;
 import cn.yyx.research.program.ir.util.IMemberDescriptionHelper;
 import cn.yyx.research.program.ir.visual.DotView;
 import cn.yyx.research.program.ir.visual.dot.DotGenerator;
@@ -20,10 +18,12 @@ public class GenerateDotForIRGraphs implements DotGenerator {
 	
 	String dot_generation_dir = null;
 	String dot_pic_dir = null;
+	IRGraphManager graph_manager = null;
 	
-	public GenerateDotForIRGraphs(String dot_generation_dir, String dot_pic_dir) {
+	public GenerateDotForIRGraphs(String dot_generation_dir, String dot_pic_dir, IRGraphManager graph_manager) {
 		this.dot_pic_dir = dot_pic_dir;
 		this.dot_generation_dir = dot_generation_dir;
+		this.graph_manager = graph_manager;
 		FileUtil.EnsureDirectoryExist(dot_generation_dir);
 		FileUtil.EnsureDirectoryExist(dot_pic_dir);
 	}

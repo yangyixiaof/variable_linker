@@ -19,6 +19,7 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import cn.yyx.research.program.eclipse.jdtutil.JDTParser;
 import cn.yyx.research.program.eclipse.searchutil.EclipseSearchForICompilationUnits;
 import cn.yyx.research.program.ir.element.VirtualMethodReturnElement;
+import cn.yyx.research.program.ir.generation.structure.IRForOneProject;
 import cn.yyx.research.program.ir.storage.IRElementPool;
 import cn.yyx.research.program.ir.storage.IRGraphForMethod;
 import cn.yyx.research.program.ir.storage.IRGraphManager;
@@ -52,25 +53,5 @@ public class IRGeneratorHelper {
 		graph_manager.AddMemberRelation(it, im);
 		node.accept(irgfs);
 	}
-
-	public static void GenerateForOneProject(IJavaProject java_project) {
-		IRGraphManager graph_manager = new IRGraphManager();
-		IRElementPool pool = new IRElementPool();
-		List<ICompilationUnit> units = null;
-		try {
-			units = EclipseSearchForICompilationUnits.SearchForAllICompilationUnits(java_project);
-		} catch (JavaModelException e) {
-			e.printStackTrace();
-		}
-		// System.err.println("unit_size:" + units.size());
-		if (units != null) {
-			for (final ICompilationUnit icu : units) {
-				CompilationUnit cu = JDTParser.CreateJDTParser(java_project).ParseICompilationUnit(icu);
-				IRGeneratorForClassesInICompilationUnit irgfcicu = new IRGeneratorForClassesInICompilationUnit(
-						java_project, graph_manager, pool);
-				cu.accept(irgfcicu);
-			}
-		}
-	}
-
+	
 }
