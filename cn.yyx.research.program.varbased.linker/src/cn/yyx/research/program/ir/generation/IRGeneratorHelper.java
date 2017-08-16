@@ -22,8 +22,6 @@ import cn.yyx.research.program.ir.storage.node.IRJavaElementNode;
 public class IRGeneratorHelper {
 
 	public static void HandleMethodDeclaration(IJavaProject java_project, IRGraphManager graph_manager, ASTNode node, IRElementPool pool, IMethodBinding imb, IMethod im, IType it, List<SingleVariableDeclaration> para_list, IRJavaElementNode super_class_element) {
-		// IRGeneratorForOneProject.GetInstance().AddCalleeCaller(im, null);
-		// IRForOneMethod imb = null;
 		IRJavaElementNode return_element_node = pool.UniversalElement(im.getKey(),
 				new VirtualMethodReturnElement(im.getKey()));
 		LinkedList<IRJavaElementNode> params = new LinkedList<IRJavaElementNode>();
@@ -45,15 +43,7 @@ public class IRGeneratorHelper {
 				super_class_element, it, im);
 		graph_manager.AddIRGraph(im, irgfm);
 		graph_manager.AddMemberRelation(it, im);
-		// if (node.isConstructor()) {
-		// imb = IRGeneratorForOneProject.GetInstance().FetchIConstructorIR(im, it);
-		// } else {
-		// imb = IRGeneratorForOneProject.GetInstance().FetchIMethodIR(im);
-		// }
-		// IRGeneratorForOneLogicBlock irgfocb = new IRGeneratorForOneLogicBlock(im,
-		// imb);
 		node.accept(irgfs);
-		// IRGeneratorForOneProject.GetInstance().FetchITypeIR((it)).AddMethodLevel((IRForOneMethod)irgfocb.GetGeneration());
 	}
 
 }

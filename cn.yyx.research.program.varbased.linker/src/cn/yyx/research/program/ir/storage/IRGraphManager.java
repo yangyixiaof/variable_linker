@@ -1,5 +1,6 @@
 package cn.yyx.research.program.ir.storage;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,6 +18,10 @@ public class IRGraphManager {
 	
 	public void AddIRGraph(IMember imember, IRGraph graph) {
 		resource_graphs.put(imember, graph);
+	}
+	
+	public Collection<IRGraph> GetAllGraphs() {
+		return resource_graphs.values();
 	}
 	
 	public IRGraph GetGraphByIMember(IMember imember) {

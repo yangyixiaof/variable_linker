@@ -15,4 +15,12 @@ public class IRGraphForMethod extends IRGraph {
 		this.return_element_node = return_element_node;
 	}
 	
+	public List<IRJavaElementNode> GetParameterElementNodes() {
+		return params;
+	}
+	
+	public IRJavaElementNode GetReturnElementNode() {
+		return return_element_node;
+	}
+	
 }
