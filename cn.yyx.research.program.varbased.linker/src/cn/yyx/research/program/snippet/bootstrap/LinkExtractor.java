@@ -10,7 +10,7 @@ import cn.yyx.research.program.eclipse.project.AnalysisEnvironment;
 import cn.yyx.research.program.eclipse.project.ProjectInfo;
 import cn.yyx.research.program.ir.generation.IRGeneratorForOneProject;
 import cn.yyx.research.program.ir.meta.IRControlMeta;
-import cn.yyx.research.program.ir.visual.dot.generation.GenerateDotForEachIRCodeInIRProject;
+import cn.yyx.research.program.ir.visual.dot.generation.GenerateDotForIRGraphs;
 import cn.yyx.research.program.ir.visual.meta.DotMeta;
 import cn.yyx.research.program.systemutil.EnvironmentUtil;
 import cn.yyx.research.program.systemutil.SystemUtil;
@@ -45,7 +45,7 @@ public class LinkExtractor implements IApplication {
 			} else {
 				IRGeneratorForOneProject.GenerateForAllICompilationUnits(java_project);
 				// generate each local method.
-				GenerateDotForEachIRCodeInIRProject irproj_local_generation = new GenerateDotForEachIRCodeInIRProject(DotMeta.ProjectEachMethodDotDir, DotMeta.ProjectEachMethodPicDir);
+				GenerateDotForIRGraphs irproj_local_generation = new GenerateDotForIRGraphs(DotMeta.ProjectEachMethodDotDir, DotMeta.ProjectEachMethodPicDir);
 				irproj_local_generation.GenerateDots();
 				
 				// generate for each full trace.

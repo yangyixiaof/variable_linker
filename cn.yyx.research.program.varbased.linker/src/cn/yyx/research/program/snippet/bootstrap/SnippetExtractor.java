@@ -22,7 +22,7 @@ import cn.yyx.research.program.eclipse.searchutil.EclipseSearchForICallGraph;
 import cn.yyx.research.program.ir.generation.IRGeneratorForOneProject;
 import cn.yyx.research.program.ir.meta.IRControlMeta;
 import cn.yyx.research.program.ir.visual.dot.generation.GenerateDotForEachFullTrace;
-import cn.yyx.research.program.ir.visual.dot.generation.GenerateDotForEachIRCodeInIRProject;
+import cn.yyx.research.program.ir.visual.dot.generation.GenerateDotForIRGraphs;
 import cn.yyx.research.program.ir.visual.meta.DotMeta;
 import cn.yyx.research.program.systemutil.EnvironmentUtil;
 import cn.yyx.research.program.systemutil.SystemUtil;
@@ -58,7 +58,7 @@ public class SnippetExtractor implements IApplication {
 			} else {
 				IRGeneratorForOneProject.GenerateForAllICompilationUnits(java_project);
 				// generate each local method.
-				GenerateDotForEachIRCodeInIRProject irproj_local_generation = new GenerateDotForEachIRCodeInIRProject(
+				GenerateDotForIRGraphs irproj_local_generation = new GenerateDotForIRGraphs(
 						DotMeta.ProjectEachMethodDotDir, DotMeta.ProjectEachMethodPicDir);
 				irproj_local_generation.GenerateDots();
 
