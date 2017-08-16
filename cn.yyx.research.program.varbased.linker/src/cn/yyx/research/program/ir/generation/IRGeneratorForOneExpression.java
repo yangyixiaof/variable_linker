@@ -382,14 +382,14 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		// IRJavaElementNode irje = pool.UniversalElement(content, ele);
 		// graph.AddNonVirtualVariableNode(irje);
 		if (super_class_element != null) {
-			graph.RegistConnection(super_class_element, iir_stmt_node, new SuperConnect());
+			IRGraph.RegistConnection(super_class_element, iir_stmt_node, new SuperConnect());
 		}
 	}
 
 	protected void HandleCommonIJavaElement(String content, IJavaElement ije, ASTNode node, String symbol) {
 		IRJavaElementNode uni_ele = pool.UniversalElement(content, ije);
 		graph.AddNonVirtualVariableNode(uni_ele);
-		graph.RegistConnection(uni_ele, iir_stmt_node,
+		IRGraph.RegistConnection(uni_ele, iir_stmt_node,
 				new VariableConnect(iir_stmt_node.IncreaseAndGetVariableIndex()));
 		rewrite.replace(node, ast.newSimpleName(symbol), null);
 	}
@@ -480,7 +480,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 						IRSourceMethodParamElementNode irsmpen = new IRSourceMethodParamElementNode(irsmsn, index, null,
 								null);
 						graph.AddSourceMethodParam(irsmpen);
-						graph.RegistConnection(irsmpen, expr_iirn, new VariableConnect(1));
+						IRGraph.RegistConnection(irsmpen, expr_iirn, new VariableConnect(1));
 						irsmsn.AddArgumentStatement(expr_iirn);
 					}
 					// method_node goes forward one step.
@@ -490,7 +490,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 					IRSourceMethodReturnElementNode ir_mi_return = new IRSourceMethodReturnElementNode(irsmsn, null,
 							null);
 					graph.AddSourceMethodReturn(ir_mi_return);
-					graph.RegistConnection(ir_mi_return, iir_stmt_node,
+					IRGraph.RegistConnection(ir_mi_return, iir_stmt_node,
 							new VariableConnect(iir_stmt_node.IncreaseAndGetVariableIndex()));
 					rewrite.replace(node, ast.newSimpleName("R"), null);
 				}

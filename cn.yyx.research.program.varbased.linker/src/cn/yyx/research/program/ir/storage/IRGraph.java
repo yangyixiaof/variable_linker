@@ -29,6 +29,10 @@ public class IRGraph {
 
 	public IRGraph() {
 	}
+	
+	public Set<IIRNode> GetControlOutNodes() {
+		return control_out_nodes;
+	}
 
 	public Set<IRSourceMethodStatementNode> GetSourceMethodStatements() {
 		return source_method_statements;
@@ -77,8 +81,13 @@ public class IRGraph {
 	public IIRNode getRoot() {
 		return root;
 	}
+	
+	public void GoForwardAStep(IIRNode iirn) {
+		RegistConnection(active, iirn, new FlowConnect());
+		active = iirn;
+	}
 
-	public void RegistConnection(IIRNode source, IIRNode target, Connect connect) {
+	public static void RegistConnection(IIRNode source, IIRNode target, Connect connect) {
 		IIRConnection irc = null;
 		if (!target.HasInConnection(source) && !source.HasOutConnection(target)) {
 			irc = new IIRConnection(source, target);
@@ -95,12 +104,7 @@ public class IRGraph {
 		}
 	}
 
-	public void GoForwardAStep(IIRNode iirn) {
-		RegistConnection(active, iirn, new FlowConnect());
-		active = iirn;
-	}
-
-	public void MergeNodesToOne(Set<IRStatementNode> wait_merge_nodes, IIRNode new_node) {
+	public static void MergeNodesToOne(Set<IRStatementNode> wait_merge_nodes, IIRNode new_node) {
 		Iterator<IRStatementNode> witr = wait_merge_nodes.iterator();
 		while (witr.hasNext()) {
 			IRStatementNode irsn = witr.next();
@@ -118,7 +122,7 @@ public class IRGraph {
 		}
 	}
 
-	public void TransferConnectionFromNodeToNode(IIRNode from, IIRNode to) {
+	public static void TransferConnectionFromNodeToNode(IIRNode from, IIRNode to) {
 		{
 			Collection<IIRConnection> out_conns = from.GetAllOutConnections();
 			Iterator<IIRConnection> out_itr = out_conns.iterator();
@@ -143,7 +147,7 @@ public class IRGraph {
 		}
 	}
 
-	public void RemoveConnectionsOfNode(IIRNode to_be_deleted) {
+	public static void RemoveConnectionsOfNode(IIRNode to_be_deleted) {
 		{
 			Collection<IIRConnection> out_conns = to_be_deleted.GetAllOutConnections();
 			Iterator<IIRConnection> oitr = out_conns.iterator();

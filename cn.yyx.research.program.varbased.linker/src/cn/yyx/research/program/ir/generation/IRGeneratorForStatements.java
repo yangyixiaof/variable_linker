@@ -226,7 +226,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 			Iterator<IRNoneSucceedNode> nitr = none_succeed_nodes.iterator();
 			while (nitr.hasNext()) {
 				IRNoneSucceedNode irnsn = nitr.next();
-				graph.RegistConnection(irnsn, over, new Connect());
+				IRGraph.RegistConnection(irnsn, over, new Connect());
 			}
 		}
 	}
@@ -261,7 +261,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 			IRStatementNode iirn = info.GetIRStatementNode();
 			iirn.SetContent("V=" + iirn.GetContent());
 			graph.GoForwardAStep(iirn);
-			graph.RegistConnection(f_return, iirn, new VariableConnect(1));
+			IRGraph.RegistConnection(f_return, iirn, new VariableConnect(1));
 		}
 		graph.AddControlOutNodes(graph.getActive());
 		return false;
@@ -286,11 +286,11 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		Iterator<IIRNode> bitr = branches.iterator();
 		while (bitr.hasNext()) {
 			IIRNode iirn = bitr.next();
-			graph.RegistConnection(iirn, over, new Connect());
+			IRGraph.RegistConnection(iirn, over, new Connect());
 		}
 		if (branches.size() < 2) {
 			IIRNode branch_root = sbi.GetBranchRoot();
-			graph.RegistConnection(branch_root, over, new Connect());
+			IRGraph.RegistConnection(branch_root, over, new Connect());
 		}
 		graph.setActive(over);
 		return over;
@@ -305,11 +305,11 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		Iterator<IIRNode> bitr = branches.iterator();
 		while (bitr.hasNext()) {
 			IIRNode iirn = bitr.next();
-			graph.RegistConnection(iirn, over, new Connect());
+			IRGraph.RegistConnection(iirn, over, new Connect());
 		}
 		if (branches.size() == 0) {
 			IIRNode branch_root = sbi.GetBranchRoot();
-			graph.RegistConnection(branch_root, over, new Connect());
+			IRGraph.RegistConnection(branch_root, over, new Connect());
 		}
 		graph.setActive(over);
 		return over;
@@ -362,7 +362,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		IRStatementNode branch_root = new IRStatementNode(info.GetIRStatementNode().GetVariableIndex());
 		branch_root.SetContent(enh_for.toString());
 		semantic_block_control.put(node, branch_root);
-		graph.MergeNodesToOne(wait_merge_nodes, branch_root);
+		IRGraph.MergeNodesToOne(wait_merge_nodes, branch_root);
 		graph.GoForwardAStep(branch_root);
 		StatementBranchInfo sbi = new StatementBranchInfo(branch_root);
 		statement_branch_map.put(node, sbi);
@@ -436,7 +436,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		
 		IIRNode branch_root = new IIRNode(for_builder.toString());
 		semantic_block_control.put(node, branch_root);
-		graph.MergeNodesToOne(wait_merge_nodes, branch_root);
+		IRGraph.MergeNodesToOne(wait_merge_nodes, branch_root);
 		graph.GoForwardAStep(branch_root);
 		StatementBranchInfo sbi = new StatementBranchInfo(branch_root);
 		statement_branch_map.put(node, sbi);
