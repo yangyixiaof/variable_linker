@@ -99,7 +99,7 @@ public class IRGeneratorForFullTrace {
 				
 				// List<IRStatementNode> connect to root of im.
 				
-				// out nodes of im connect to IRSourceMethodStatementNode
+				// control-out-nodes of im connect to IRSourceMethodStatementNode
 				
 			}
 			
