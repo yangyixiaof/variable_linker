@@ -14,6 +14,7 @@ import cn.yyx.research.program.ir.storage.node.IRJavaElementNode;
 import cn.yyx.research.program.ir.storage.node.IRSourceMethodParamElementNode;
 import cn.yyx.research.program.ir.storage.node.IRSourceMethodReturnElementNode;
 import cn.yyx.research.program.ir.storage.node.IRSourceMethodStatementNode;
+import cn.yyx.research.program.ir.storage.node.IRStatementNode;
 
 public class IRGeneratorForFullTrace {
 	
@@ -86,7 +87,18 @@ public class IRGeneratorForFullTrace {
 
 	private void HandleSourceMethodStatements(IRGraph graph, Set<IRSourceMethodStatementNode> mstatements) {
 		// TODO Auto-generated method stub
-		
+		Iterator<IRSourceMethodStatementNode> msitr = mstatements.iterator();
+		while (msitr.hasNext()) {
+			IRSourceMethodStatementNode irsmsn = msitr.next();
+			List<IRStatementNode> arg_stmts = irsmsn.GetArgumentStatements();
+			Collection<IMethod> methods = irsmsn.GetMethods();
+			Iterator<IMethod> mitr = methods.iterator();
+			while (mitr.hasNext()) {
+				IMethod im = mitr.next();
+				
+			}
+			
+		}
 	}
 	
 }
