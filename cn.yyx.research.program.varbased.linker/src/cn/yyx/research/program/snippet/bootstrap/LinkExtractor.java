@@ -8,7 +8,6 @@ import cn.yyx.research.logger.DebugLogger;
 import cn.yyx.research.program.eclipse.exception.WrongArgumentException;
 import cn.yyx.research.program.eclipse.project.AnalysisEnvironment;
 import cn.yyx.research.program.eclipse.project.ProjectInfo;
-import cn.yyx.research.program.ir.generation.IRGeneratorForOneProject;
 import cn.yyx.research.program.ir.meta.IRControlMeta;
 import cn.yyx.research.program.ir.visual.dot.generation.GenerateDotForIRGraphs;
 import cn.yyx.research.program.ir.visual.meta.DotMeta;
@@ -44,35 +43,14 @@ public class LinkExtractor implements IApplication {
 				TestJavaSearch.TestInAll(java_project);
 			} else {
 				IRGeneratorForOneProject.GenerateForAllICompilationUnits(java_project);
-				// generate each local method.
+				// generate and print each local method.
 				GenerateDotForIRGraphs irproj_local_generation = new GenerateDotForIRGraphs(DotMeta.ProjectEachMethodDotDir, DotMeta.ProjectEachMethodPicDir);
 				irproj_local_generation.GenerateDots();
 				
-				// generate for each full trace.
+				// generate and print all methods connected.
 				IRGeneratorForOneProject irinstance = IRGeneratorForOneProject.GetInstance();
 				// TODO 
 				
-				// Set<IMethod> roots = EclipseSearchForICallGraph.GetRootCallEntries(irinstance.GetInverseCallGraph());
-				
-				// debugging.
-				// DebugLogger.Log("root size:" + roots.size());
-				// DebugLogger.Log("root imethods:" + roots);
-				
-				// InvokeMethodSelector ims = new InvokeMethodSelector(roots);
-				// ims.StartSelectMethodsProcess();
-				// List<MethodSelection> method_selects = ims.GetMethodSelections();
-				// List<FullTrace> ft_traces = new LinkedList<FullTrace>();
-				// Iterator<MethodSelection> mitr = method_selects.iterator();
-				// while (mitr.hasNext()) {
-				// 	MethodSelection ms = mitr.next();
-				//	CodeOnOneTraceGenerator cootg = new CodeOnOneTraceGenerator(ms);
-				//	FullTrace ft = cootg.GetFullTrace();
-				//	ft_traces.add(ft);
-				// }
-				// CodeOnOneTraceGenerator cootg = new CodeOnOneTraceGenerator();
-				// FullTrace ft = cootg.GetFullTrace();
-				// GenerateDotForEachFullTrace full_trace_generator = new GenerateDotForEachFullTrace(DotMeta.FullTraceDotDir, DotMeta.FullTracePicDir, ft);
-				// full_trace_generator.GenerateDots();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
