@@ -12,11 +12,11 @@ public class EnvironmentUtil {
 
 	public static void Clear() {
 		File f = null;
-		f = new File(DotMeta.FullTraceDotDir);
+		f = new File(DotMeta.ProjectFullTraceDotDir);
 		if (f.exists()) {
 			FileUtil.DeleteFile(f);
 		}
-		f = new File(DotMeta.FullTracePicDir);
+		f = new File(DotMeta.ProjectFullTracePicDir);
 		if (f.exists()) {
 			FileUtil.DeleteFile(f);
 		}

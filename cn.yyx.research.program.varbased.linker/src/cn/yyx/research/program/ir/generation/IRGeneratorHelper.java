@@ -4,22 +4,16 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 
-import cn.yyx.research.program.eclipse.jdtutil.JDTParser;
-import cn.yyx.research.program.eclipse.searchutil.EclipseSearchForICompilationUnits;
 import cn.yyx.research.program.ir.element.VirtualMethodReturnElement;
-import cn.yyx.research.program.ir.generation.structure.IRForOneProject;
 import cn.yyx.research.program.ir.storage.IRElementPool;
 import cn.yyx.research.program.ir.storage.IRGraphForMethod;
 import cn.yyx.research.program.ir.storage.IRGraphManager;
