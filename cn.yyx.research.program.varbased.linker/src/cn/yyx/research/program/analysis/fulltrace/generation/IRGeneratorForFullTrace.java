@@ -95,6 +95,11 @@ public class IRGeneratorForFullTrace {
 			Iterator<IMethod> mitr = methods.iterator();
 			while (mitr.hasNext()) {
 				IMethod im = mitr.next();
+				// IRSourceMethodStatementNode connects to List<IRStatementNode>.
+				
+				// List<IRStatementNode> connect to root of im.
+				
+				// out nodes of im connect to IRSourceMethodStatementNode
 				
 			}
 			
