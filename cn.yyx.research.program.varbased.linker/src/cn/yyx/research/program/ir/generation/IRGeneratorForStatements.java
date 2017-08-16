@@ -280,7 +280,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	protected IIRNode PostHandleMustTwoBranches(ASTNode node) {
 		// Solved. handle situation that there are no branches. in which branch_root
 		// should directly connect to block_over node.
-		IIRNode over = new IIRBranchOverNode("Virtual_Branch_Over");
+		IRStatementNode over = new IIRBranchOverNode("Virtual_Branch_Over");
 		StatementBranchInfo sbi = statement_branch_map.remove(node);
 		List<IIRNode> branches = sbi.GetBranches();
 		Iterator<IIRNode> bitr = branches.iterator();
@@ -299,7 +299,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	protected IIRNode PostHandleMultiBranches(ASTNode node) {
 		// Solved. handle situation that there are no branches. in which branch_root should
 		// directly connect to block_over node.
-		IIRNode over = new IIRBranchOverNode("Virtual_Branch_Over");
+		IRStatementNode over = new IIRBranchOverNode("Virtual_Branch_Over");
 		StatementBranchInfo sbi = statement_branch_map.remove(node);
 		List<IIRNode> branches = sbi.GetBranches();
 		Iterator<IIRNode> bitr = branches.iterator();
@@ -320,7 +320,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	@Override
 	public boolean visit(DoStatement node) {
 		ASTNodeHandledInfo info = PreHandleOneASTNode(node.getExpression(), 0);
-		IIRNode branch_root = info.GetIRStatementNode();
+		IRStatementNode branch_root = info.GetIRStatementNode();
 		semantic_block_control.put(node, branch_root);
 		graph.GoForwardAStep(branch_root);
 		StatementBranchInfo sbi = new StatementBranchInfo(branch_root);
@@ -434,7 +434,8 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		}
 		for_builder.append(") {}");
 		
-		IIRNode branch_root = new IIRNode(for_builder.toString());
+		IRStatementNode branch_root = new IRStatementNode(element_index);
+		branch_root.SetContent(for_builder.toString());
 		semantic_block_control.put(node, branch_root);
 		IRGraph.MergeNodesToOne(wait_merge_nodes, branch_root);
 		graph.GoForwardAStep(branch_root);
@@ -632,7 +633,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	
 	@Override
 	public void endVisit(SynchronizedStatement node) {
-		IIRNode over = new IIRBlockOverNode("Virtual_Block_Over");
+		IRStatementNode over = new IIRBlockOverNode("Virtual_Block_Over");
 		graph.GoForwardAStep(over);
 	}
 	

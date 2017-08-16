@@ -17,21 +17,27 @@ import cn.yyx.research.program.ir.storage.node.IRStatementNode;
 
 public class IRGraph {
 
-	private IIRNode root = null;
-	private IIRNode active = null;
+	private IRStatementNode root = null;
+	private IRStatementNode active = null;
 
 	private Set<IRSourceMethodStatementNode> source_method_statements = new HashSet<IRSourceMethodStatementNode>();
 	private Set<IRSourceMethodReturnElementNode> source_method_returns = new HashSet<IRSourceMethodReturnElementNode>();
 	private Set<IRSourceMethodParamElementNode> source_method_params = new HashSet<IRSourceMethodParamElementNode>();
-	// TODO control_out_nodes is not set.
-	private Set<IIRNode> control_out_nodes = new HashSet<IIRNode>();
+	// Solved. control_out_nodes is not set.
+	private Set<IRStatementNode> control_out_nodes = new HashSet<IRStatementNode>();
 	private Set<IRJavaElementNode> variable_nodes = new HashSet<IRJavaElementNode>();
 
 	public IRGraph() {
 	}
 	
 	public Set<IIRNode> GetControlOutNodes() {
-		return control_out_nodes;
+		HashSet<IIRNode> result = new HashSet<IIRNode>();
+		if (active != null) {
+			// add last statement.
+			result.add(active);
+		}
+		result.addAll(control_out_nodes);
+		return result;
 	}
 
 	public Set<IRSourceMethodStatementNode> GetSourceMethodStatements() {
@@ -54,11 +60,11 @@ public class IRGraph {
 		variable_nodes.add(var);
 	}
 
-	public void setActive(IIRNode active) {
+	public void setActive(IRStatementNode active) {
 		this.active = active;
 	}
 
-	public void AddControlOutNodes(IIRNode iirn) {
+	public void AddControlOutNodes(IRStatementNode iirn) {
 		control_out_nodes.add(iirn);
 	}
 
@@ -74,15 +80,15 @@ public class IRGraph {
 		source_method_params.add(iesmpe);
 	}
 
-	public IIRNode getActive() {
+	public IRStatementNode getActive() {
 		return active;
 	}
 
-	public IIRNode getRoot() {
+	public IRStatementNode getRoot() {
 		return root;
 	}
 	
-	public void GoForwardAStep(IIRNode iirn) {
+	public void GoForwardAStep(IRStatementNode iirn) {
 		RegistConnection(active, iirn, new FlowConnect());
 		active = iirn;
 	}
