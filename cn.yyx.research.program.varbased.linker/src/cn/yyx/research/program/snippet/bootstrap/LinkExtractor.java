@@ -58,8 +58,6 @@ public class LinkExtractor implements IApplication {
 				irgft.GenerateFullTraceOnInitialIRGraphs();
 				GenerateDotForIRGraphs irproj_global_generation = new GenerateDotForIRGraphs(DotMeta.ProjectFullTraceDotDir, DotMeta.ProjectFullTracePicDir, graph_manager);
 				irproj_global_generation.GenerateDots();
-				// TODO 
-				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
