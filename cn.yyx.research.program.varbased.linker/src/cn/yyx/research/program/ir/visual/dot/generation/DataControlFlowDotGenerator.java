@@ -11,15 +11,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import cn.yyx.research.program.fileutil.FileUtil;
+import cn.yyx.research.program.ir.storage.IRGraphManager;
 import cn.yyx.research.program.ir.storage.connection.ConnectionInfo;
 import cn.yyx.research.program.ir.storage.connection.EdgeBaseType;
 import cn.yyx.research.program.ir.storage.connection.EdgeTypeUtil;
 import cn.yyx.research.program.ir.storage.connection.detail.ConnectionDetail;
+import cn.yyx.research.program.ir.visual.dot.DotGenerator;
 import cn.yyx.research.program.ir.visual.node.IVNode;
 import cn.yyx.research.program.ir.visual.node.connection.IVConnection;
 import cn.yyx.research.program.ir.visual.node.container.IVNodeContainer;
 
-public class VariableOperationDotGenerator {
+public class DataControlFlowDotGenerator implements DotGenerator {
+	
+	String dot_generation_dir = null;
+	String dot_pic_dir = null;
+	IRGraphManager graph_manager = null;
 	
 	String dot_file = null;
 	Set<IVNode> pc = null;
@@ -28,11 +35,42 @@ public class VariableOperationDotGenerator {
 	Map<IVNode, Integer> ivn_id = new HashMap<IVNode, Integer>();
 	String description = null;
 	
-	public VariableOperationDotGenerator(Set<IVNode> pc, IVNodeContainer ivc, String dot_file, String description) {
+	public DataControlFlowDotGenerator(String dot_generation_dir, String dot_pic_dir, IRGraphManager graph_manager, Set<IVNode> pc, IVNodeContainer ivc, String dot_file, String description) {
+		this.dot_generation_dir = dot_generation_dir;
+		this.dot_pic_dir = dot_pic_dir;
+		this.graph_manager = graph_manager;
+		FileUtil.EnsureDirectoryExist(dot_generation_dir);
+		FileUtil.EnsureDirectoryExist(dot_pic_dir);
 		this.dot_file = dot_file;
 		this.pc = pc;
 		this.ivc = ivc;
 		this.description = description;
+	}
+	
+	@Override
+	public void GenerateDotsAndPrintToPictures() {
+//		int idx = 0;
+//		List<IRCode> ircodes = IRGeneratorForOneProject.GetInstance().GetAllIRCodes();
+//		Iterator<IRCode> iitr = ircodes.iterator();
+//		while (iitr.hasNext()) {
+//			IRCode irc = iitr.next();
+//			if (!irc.IsHasElement()) {
+//				continue;
+//			}
+//			idx++;
+//			IRTreeForOneControlElement control_ir = irc.GetControlLogicHolderElementIR();
+//			HashSet<IVNode> pc = new HashSet<IVNode>();
+//			pc.add(control_ir.GetRoot());
+//			Set<IJavaElement> eles = irc.GetAllElements();
+//			Iterator<IJavaElement> eitr = eles.iterator();
+//			while (eitr.hasNext()) {
+//				IJavaElement ije = eitr.next();
+//				pc.add(irc.GetFirstIRTreeNode(ije));
+//			}
+//			DataControlFlowDotGenerator cdg = new DataControlFlowDotGenerator(pc, IRGeneratorForOneProject.GetInstance(), dot_generation_dir + "/" + "IRCode" + idx + ".dot", IMemberDescriptionHelper.GetDescription(irc.getIm()));
+//			cdg.GenerateDot();
+//		}
+//		DotView.HandleAllDotsInDirectory(dot_generation_dir, dot_pic_dir);
 	}
 	
 	private void DrawConnections(Set<IVConnection> conns, StringBuffer one_bw, String line_seperator) {
