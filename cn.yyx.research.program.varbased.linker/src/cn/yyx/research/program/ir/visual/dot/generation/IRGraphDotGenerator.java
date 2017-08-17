@@ -14,13 +14,13 @@ import cn.yyx.research.program.ir.visual.DotView;
 import cn.yyx.research.program.ir.visual.dot.DotGenerator;
 import cn.yyx.research.program.ir.visual.node.IVNode;
 
-public class IRGraphGenerateDot implements DotGenerator {
+public class IRGraphDotGenerator implements DotGenerator {
 	
 	String dot_generation_dir = null;
 	String dot_pic_dir = null;
 	IRGraphManager graph_manager = null;
 	
-	public IRGraphGenerateDot(String dot_generation_dir, String dot_pic_dir, IRGraphManager graph_manager) {
+	public IRGraphDotGenerator(String dot_generation_dir, String dot_pic_dir, IRGraphManager graph_manager) {
 		this.dot_generation_dir = dot_generation_dir;
 		this.dot_pic_dir = dot_pic_dir;
 		this.graph_manager = graph_manager;
