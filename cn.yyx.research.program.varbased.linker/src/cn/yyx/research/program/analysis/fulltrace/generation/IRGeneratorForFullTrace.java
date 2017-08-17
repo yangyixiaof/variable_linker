@@ -131,7 +131,7 @@ public class IRGeneratorForFullTrace {
 						Iterator<IIRNode> oitr = out_nodes.iterator();
 						while (oitr.hasNext()) {
 							IIRNode iirn = oitr.next();
-							IRGraph.RegistConnection(iirn, irsmsn, new Connect());
+							IRGraph.RegistConnection(iirn, irsmsn, new MethodJumpConnect());
 						}
 					}
 				}
