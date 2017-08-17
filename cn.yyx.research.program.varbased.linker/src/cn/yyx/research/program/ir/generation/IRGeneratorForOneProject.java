@@ -10,8 +10,8 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import cn.yyx.research.program.eclipse.jdtutil.JDTParser;
 import cn.yyx.research.program.eclipse.searchutil.EclipseSearchForICompilationUnits;
 import cn.yyx.research.program.ir.generation.structure.IRForOneProject;
-import cn.yyx.research.program.ir.storage.IRElementPool;
-import cn.yyx.research.program.ir.storage.IRGraphManager;
+import cn.yyx.research.program.ir.storage.graph.IRGraphManager;
+import cn.yyx.research.program.ir.storage.node.creation.IRElementFactory;
 
 public class IRGeneratorForOneProject {
 	
@@ -23,7 +23,7 @@ public class IRGeneratorForOneProject {
 	
 	public IRForOneProject GenerateForOneProject() {
 		IRGraphManager graph_manager = new IRGraphManager();
-		IRElementPool pool = new IRElementPool();
+		IRElementFactory pool = new IRElementFactory();
 		List<ICompilationUnit> units = null;
 		try {
 			units = EclipseSearchForICompilationUnits.SearchForAllICompilationUnits(java_project);

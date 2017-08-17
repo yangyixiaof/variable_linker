@@ -51,23 +51,23 @@ import cn.yyx.research.program.ir.generation.structure.StatementBranchInfo;
 import cn.yyx.research.program.ir.generation.structure.SwitchCaseBlock;
 import cn.yyx.research.program.ir.generation.structure.SwitchCaseBlockList;
 import cn.yyx.research.program.ir.generation.traversal.task.IRASTNodeTask;
-import cn.yyx.research.program.ir.storage.IRElementPool;
-import cn.yyx.research.program.ir.storage.IRGraph;
-import cn.yyx.research.program.ir.storage.IRGraphManager;
 import cn.yyx.research.program.ir.storage.connection.Connect;
 import cn.yyx.research.program.ir.storage.connection.VariableConnect;
+import cn.yyx.research.program.ir.storage.graph.IRGraph;
+import cn.yyx.research.program.ir.storage.graph.IRGraphManager;
 import cn.yyx.research.program.ir.storage.node.IIRBlockOverNode;
 import cn.yyx.research.program.ir.storage.node.IIRBranchOverNode;
 import cn.yyx.research.program.ir.storage.node.IIRNode;
 import cn.yyx.research.program.ir.storage.node.IRJavaElementNode;
 import cn.yyx.research.program.ir.storage.node.IRNoneSucceedNode;
 import cn.yyx.research.program.ir.storage.node.IRStatementNode;
+import cn.yyx.research.program.ir.storage.node.creation.IRElementFactory;
 
 public class IRGeneratorForStatements extends ASTVisitor {
 	
 	protected IJavaProject java_project = null;
 	protected IRGraphManager graph_manager = null;
-	protected IRElementPool pool = null;
+	protected IRElementFactory pool = null;
 	protected IRJavaElementNode super_class_element = null;
 	protected IRASTNodeTask post_visit_task = new IRASTNodeTask();
 	protected IRASTNodeTask pre_visit_task = new IRASTNodeTask();
@@ -76,7 +76,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	protected IType it = null;
 	protected IMethod im = null;
 	
-	public IRGeneratorForStatements(IJavaProject java_project, IRGraph graph, IRGraphManager graph_manager, IRElementPool pool,
+	public IRGeneratorForStatements(IJavaProject java_project, IRGraph graph, IRGraphManager graph_manager, IRElementFactory pool,
 			IRJavaElementNode super_class_element, IType it, IMethod im) {
 		this.java_project = java_project;
 		this.graph = graph;

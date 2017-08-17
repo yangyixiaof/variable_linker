@@ -7,11 +7,11 @@ import java.util.Set;
 
 import org.eclipse.jdt.core.IMethod;
 
-import cn.yyx.research.program.ir.storage.IRGraph;
-import cn.yyx.research.program.ir.storage.IRGraphForMethod;
-import cn.yyx.research.program.ir.storage.IRGraphManager;
 import cn.yyx.research.program.ir.storage.connection.Connect;
 import cn.yyx.research.program.ir.storage.connection.MethodJumpConnect;
+import cn.yyx.research.program.ir.storage.graph.IRGraph;
+import cn.yyx.research.program.ir.storage.graph.IRGraphForMethod;
+import cn.yyx.research.program.ir.storage.graph.IRGraphManager;
 import cn.yyx.research.program.ir.storage.node.IIRNode;
 import cn.yyx.research.program.ir.storage.node.IRJavaElementNode;
 import cn.yyx.research.program.ir.storage.node.IRSourceMethodParamElementNode;

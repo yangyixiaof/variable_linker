@@ -14,15 +14,15 @@ import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 
 import cn.yyx.research.program.ir.element.VirtualMethodReturnElement;
-import cn.yyx.research.program.ir.storage.IRElementPool;
-import cn.yyx.research.program.ir.storage.IRGraphForMethod;
-import cn.yyx.research.program.ir.storage.IRGraphManager;
+import cn.yyx.research.program.ir.storage.graph.IRGraphForMethod;
+import cn.yyx.research.program.ir.storage.graph.IRGraphManager;
 import cn.yyx.research.program.ir.storage.node.IRJavaElementNode;
+import cn.yyx.research.program.ir.storage.node.creation.IRElementFactory;
 
 public class IRGeneratorHelper {
 
 	public static void HandleMethodDeclaration(IJavaProject java_project, IRGraphManager graph_manager, ASTNode node,
-			IRElementPool pool, IMethodBinding imb, IMethod im, IType it, List<SingleVariableDeclaration> para_list,
+			IRElementFactory pool, IMethodBinding imb, IMethod im, IType it, List<SingleVariableDeclaration> para_list,
 			IRJavaElementNode super_class_element) {
 		IRJavaElementNode return_element_node = pool.UniversalElement(im.getKey(),
 				new VirtualMethodReturnElement(im.getKey()));

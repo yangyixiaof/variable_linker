@@ -12,7 +12,7 @@ import cn.yyx.research.program.eclipse.project.ProjectInfo;
 import cn.yyx.research.program.ir.generation.IRGeneratorForOneProject;
 import cn.yyx.research.program.ir.generation.structure.IRForOneProject;
 import cn.yyx.research.program.ir.meta.IRControlMeta;
-import cn.yyx.research.program.ir.storage.IRGraphManager;
+import cn.yyx.research.program.ir.storage.graph.IRGraphManager;
 import cn.yyx.research.program.ir.visual.dot.generation.ConnectionOnlyDotGenerator;
 import cn.yyx.research.program.ir.visual.meta.DotMeta;
 import cn.yyx.research.program.systemutil.EnvironmentUtil;

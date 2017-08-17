@@ -8,18 +8,18 @@ import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 
-import cn.yyx.research.program.ir.storage.IRElementPool;
-import cn.yyx.research.program.ir.storage.IRGraph;
-import cn.yyx.research.program.ir.storage.IRGraphManager;
+import cn.yyx.research.program.ir.storage.graph.IRGraph;
+import cn.yyx.research.program.ir.storage.graph.IRGraphManager;
+import cn.yyx.research.program.ir.storage.node.creation.IRElementFactory;
 
 public class IRGeneratorForClassesInICompilationUnit extends ASTVisitor {
 	
 	IJavaProject java_project = null;
 	IRGraphManager graph_manager = null;
-	IRElementPool pool = null;
+	IRElementFactory pool = null;
 	
 	public IRGeneratorForClassesInICompilationUnit(IJavaProject java_project, IRGraphManager graph_manager,
-			IRElementPool pool) {
+			IRElementFactory pool) {
 		this.java_project = java_project;
 		this.graph_manager = graph_manager;
 		this.pool = pool;

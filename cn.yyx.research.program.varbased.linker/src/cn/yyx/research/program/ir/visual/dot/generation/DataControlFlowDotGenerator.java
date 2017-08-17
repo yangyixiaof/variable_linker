@@ -12,11 +12,11 @@ import java.util.Map;
 import java.util.Set;
 
 import cn.yyx.research.program.fileutil.FileUtil;
-import cn.yyx.research.program.ir.storage.IRGraphManager;
 import cn.yyx.research.program.ir.storage.connection.ConnectionInfo;
 import cn.yyx.research.program.ir.storage.connection.EdgeBaseType;
 import cn.yyx.research.program.ir.storage.connection.EdgeTypeUtil;
 import cn.yyx.research.program.ir.storage.connection.detail.ConnectionDetail;
+import cn.yyx.research.program.ir.storage.graph.IRGraphManager;
 import cn.yyx.research.program.ir.visual.dot.DotGenerator;
 import cn.yyx.research.program.ir.visual.node.IVNode;
 import cn.yyx.research.program.ir.visual.node.connection.IVConnection;

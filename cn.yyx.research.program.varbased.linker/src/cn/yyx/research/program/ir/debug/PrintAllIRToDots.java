@@ -1,6 +1,6 @@
 package cn.yyx.research.program.ir.debug;
 
-import cn.yyx.research.program.ir.storage.IRGraphManager;
+import cn.yyx.research.program.ir.storage.graph.IRGraphManager;
 
 public class PrintAllIRToDots {
 	

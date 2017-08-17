@@ -1,4 +1,4 @@
-package cn.yyx.research.program.ir.storage;
+package cn.yyx.research.program.ir.storage.graph;
 
 import java.util.Iterator;
 import java.util.LinkedList;

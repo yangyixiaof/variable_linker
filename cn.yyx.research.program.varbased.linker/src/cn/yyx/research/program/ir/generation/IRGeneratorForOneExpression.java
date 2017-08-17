@@ -63,17 +63,17 @@ import cn.yyx.research.program.ir.element.UnSourceResolvedLambdaElement;
 import cn.yyx.research.program.ir.element.UnSourceResolvedNameElement;
 import cn.yyx.research.program.ir.element.UnSourceResolvedTypeElement;
 import cn.yyx.research.program.ir.search.IRSearchMethodRequestor;
-import cn.yyx.research.program.ir.storage.IRElementPool;
-import cn.yyx.research.program.ir.storage.IRGraph;
-import cn.yyx.research.program.ir.storage.IRGraphManager;
-import cn.yyx.research.program.ir.storage.IRMethodInvoke;
 import cn.yyx.research.program.ir.storage.connection.SuperConnect;
 import cn.yyx.research.program.ir.storage.connection.VariableConnect;
+import cn.yyx.research.program.ir.storage.graph.IRGraph;
+import cn.yyx.research.program.ir.storage.graph.IRGraphManager;
+import cn.yyx.research.program.ir.storage.graph.IRMethodInvoke;
 import cn.yyx.research.program.ir.storage.node.IRJavaElementNode;
 import cn.yyx.research.program.ir.storage.node.IRSourceMethodParamElementNode;
 import cn.yyx.research.program.ir.storage.node.IRSourceMethodReturnElementNode;
 import cn.yyx.research.program.ir.storage.node.IRSourceMethodStatementNode;
 import cn.yyx.research.program.ir.storage.node.IRStatementNode;
+import cn.yyx.research.program.ir.storage.node.creation.IRElementFactory;
 
 public class IRGeneratorForOneExpression extends ASTVisitor {
 
@@ -82,7 +82,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	protected ASTNode node = null;
 	protected AST ast = null;
 	protected ASTRewrite rewrite = null;
-	protected IRElementPool pool = null;
+	protected IRElementFactory pool = null;
 	protected IRGraph graph = null;
 	protected IRStatementNode iir_stmt_node = null;
 	protected IRJavaElementNode super_class_element = null;
@@ -90,7 +90,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	protected IMethod im = null;
 
 	public IRGeneratorForOneExpression(IJavaProject java_project, IRGraphManager graph_manager, ASTNode node,
-			ASTRewrite rewrite, IRElementPool pool, IRGraph graph, IRStatementNode iir_stmt_node,
+			ASTRewrite rewrite, IRElementFactory pool, IRGraph graph, IRStatementNode iir_stmt_node,
 			IRJavaElementNode super_class_element, IType it, IMethod im) {
 		this.java_project = java_project;
 		this.graph_manager = graph_manager;

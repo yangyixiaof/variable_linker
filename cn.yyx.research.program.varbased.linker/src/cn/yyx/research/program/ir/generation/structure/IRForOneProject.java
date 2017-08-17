@@ -1,14 +1,14 @@
 package cn.yyx.research.program.ir.generation.structure;
 
-import cn.yyx.research.program.ir.storage.IRElementPool;
-import cn.yyx.research.program.ir.storage.IRGraphManager;
+import cn.yyx.research.program.ir.storage.graph.IRGraphManager;
+import cn.yyx.research.program.ir.storage.node.creation.IRElementFactory;
 
 public class IRForOneProject {
 	
 	IRGraphManager graph_manager = null;
-	IRElementPool pool = null;
+	IRElementFactory pool = null;
 	
-	public IRForOneProject(IRGraphManager graph_manager, IRElementPool pool) {
+	public IRForOneProject(IRGraphManager graph_manager, IRElementFactory pool) {
 		this.graph_manager = graph_manager;
 		this.pool = pool;
 	}
@@ -17,7 +17,7 @@ public class IRForOneProject {
 		return graph_manager;
 	}
 	
-	public IRElementPool GetIRElementPool() {
+	public IRElementFactory GetIRElementPool() {
 		return pool;
 	}
 	

@@ -1,4 +1,4 @@
-package cn.yyx.research.program.ir.storage;
+package cn.yyx.research.program.ir.storage.node.creation;
 
 import java.util.TreeMap;
 
@@ -6,11 +6,11 @@ import org.eclipse.jdt.core.IJavaElement;
 
 import cn.yyx.research.program.ir.storage.node.IRJavaElementNode;
 
-public class IRElementPool {
+public class IRElementFactory {
 	
 	TreeMap<String, IRJavaElementNode> pool = new TreeMap<String, IRJavaElementNode>();
 	
-	public IRElementPool() {
+	public IRElementFactory() {
 	}
 	
 	public IRJavaElementNode UniversalElement(String content, IJavaElement ije) {

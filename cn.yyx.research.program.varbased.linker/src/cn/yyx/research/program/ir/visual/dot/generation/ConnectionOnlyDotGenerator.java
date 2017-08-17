@@ -1,7 +1,7 @@
 package cn.yyx.research.program.ir.visual.dot.generation;
 
 import cn.yyx.research.program.fileutil.FileUtil;
-import cn.yyx.research.program.ir.storage.IRGraphManager;
+import cn.yyx.research.program.ir.storage.graph.IRGraphManager;
 import cn.yyx.research.program.ir.visual.dot.DotGenerator;
 
 public class ConnectionOnlyDotGenerator implements DotGenerator {
