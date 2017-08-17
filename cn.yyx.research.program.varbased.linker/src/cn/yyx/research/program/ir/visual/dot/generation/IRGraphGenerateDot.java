@@ -14,13 +14,13 @@ import cn.yyx.research.program.ir.visual.DotView;
 import cn.yyx.research.program.ir.visual.dot.DotGenerator;
 import cn.yyx.research.program.ir.visual.node.IVNode;
 
-public class GenerateDotForIRGraphs implements DotGenerator {
+public class IRGraphGenerateDot implements DotGenerator {
 	
 	String dot_generation_dir = null;
 	String dot_pic_dir = null;
 	IRGraphManager graph_manager = null;
 	
-	public GenerateDotForIRGraphs(String dot_generation_dir, String dot_pic_dir, IRGraphManager graph_manager) {
+	public IRGraphGenerateDot(String dot_generation_dir, String dot_pic_dir, IRGraphManager graph_manager) {
 		this.dot_generation_dir = dot_generation_dir;
 		this.dot_pic_dir = dot_pic_dir;
 		this.graph_manager = graph_manager;
@@ -48,7 +48,7 @@ public class GenerateDotForIRGraphs implements DotGenerator {
 				IJavaElement ije = eitr.next();
 				pc.add(irc.GetFirstIRTreeNode(ije));
 			}
-			CommonDotGenerator cdg = new CommonDotGenerator(pc, IRGeneratorForOneProject.GetInstance(), dot_generation_dir + "/" + "IRCode" + idx + ".dot", IMemberDescriptionHelper.GetDescription(irc.getIm()));
+			VariableOperationDotGenerator cdg = new VariableOperationDotGenerator(pc, IRGeneratorForOneProject.GetInstance(), dot_generation_dir + "/" + "IRCode" + idx + ".dot", IMemberDescriptionHelper.GetDescription(irc.getIm()));
 			cdg.GenerateDot();
 		}
 		DotView.HandleAllDotsInDirectory(dot_generation_dir, dot_pic_dir);

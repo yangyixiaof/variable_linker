@@ -13,7 +13,7 @@ import cn.yyx.research.program.ir.generation.IRGeneratorForOneProject;
 import cn.yyx.research.program.ir.generation.structure.IRForOneProject;
 import cn.yyx.research.program.ir.meta.IRControlMeta;
 import cn.yyx.research.program.ir.storage.IRGraphManager;
-import cn.yyx.research.program.ir.visual.dot.generation.GenerateDotForIRGraphs;
+import cn.yyx.research.program.ir.visual.dot.generation.IRGraphGenerateDot;
 import cn.yyx.research.program.ir.visual.meta.DotMeta;
 import cn.yyx.research.program.systemutil.EnvironmentUtil;
 import cn.yyx.research.program.systemutil.SystemUtil;
@@ -50,13 +50,13 @@ public class LinkExtractor implements IApplication {
 				IRForOneProject one_project = irgfop.GenerateForOneProject();
 				IRGraphManager graph_manager = one_project.GetIRGraphManager();
 				// generate and print each local method.
-				GenerateDotForIRGraphs irproj_local_generation = new GenerateDotForIRGraphs(DotMeta.ProjectEachMethodDotDir, DotMeta.ProjectEachMethodPicDir, graph_manager);
+				IRGraphGenerateDot irproj_local_generation = new IRGraphGenerateDot(DotMeta.ProjectEachMethodDotDir, DotMeta.ProjectEachMethodPicDir, graph_manager);
 				irproj_local_generation.GenerateDotsAndPrintToPictures();
 				
 				// generate and print all methods connected.
 				IRGeneratorForFullTrace irgft = new IRGeneratorForFullTrace(graph_manager);
 				irgft.GenerateFullTraceOnInitialIRGraphs();
-				GenerateDotForIRGraphs irproj_global_generation = new GenerateDotForIRGraphs(DotMeta.ProjectFullTraceDotDir, DotMeta.ProjectFullTracePicDir, graph_manager);
+				IRGraphGenerateDot irproj_global_generation = new IRGraphGenerateDot(DotMeta.ProjectFullTraceDotDir, DotMeta.ProjectFullTracePicDir, graph_manager);
 				irproj_global_generation.GenerateDotsAndPrintToPictures();
 			}
 		} catch (Exception e) {

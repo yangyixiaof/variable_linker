@@ -19,7 +19,7 @@ import cn.yyx.research.program.ir.visual.node.IVNode;
 import cn.yyx.research.program.ir.visual.node.connection.IVConnection;
 import cn.yyx.research.program.ir.visual.node.container.IVNodeContainer;
 
-public class CommonDotGenerator {
+public class VariableOperationDotGenerator {
 	
 	String dot_file = null;
 	Set<IVNode> pc = null;
@@ -28,7 +28,7 @@ public class CommonDotGenerator {
 	Map<IVNode, Integer> ivn_id = new HashMap<IVNode, Integer>();
 	String description = null;
 	
-	public CommonDotGenerator(Set<IVNode> pc, IVNodeContainer ivc, String dot_file, String description) {
+	public VariableOperationDotGenerator(Set<IVNode> pc, IVNodeContainer ivc, String dot_file, String description) {
 		this.dot_file = dot_file;
 		this.pc = pc;
 		this.ivc = ivc;
