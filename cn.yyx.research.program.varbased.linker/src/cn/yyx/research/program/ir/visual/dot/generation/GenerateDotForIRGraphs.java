@@ -21,8 +21,8 @@ public class GenerateDotForIRGraphs implements DotGenerator {
 	IRGraphManager graph_manager = null;
 	
 	public GenerateDotForIRGraphs(String dot_generation_dir, String dot_pic_dir, IRGraphManager graph_manager) {
-		this.dot_pic_dir = dot_pic_dir;
 		this.dot_generation_dir = dot_generation_dir;
+		this.dot_pic_dir = dot_pic_dir;
 		this.graph_manager = graph_manager;
 		FileUtil.EnsureDirectoryExist(dot_generation_dir);
 		FileUtil.EnsureDirectoryExist(dot_pic_dir);
