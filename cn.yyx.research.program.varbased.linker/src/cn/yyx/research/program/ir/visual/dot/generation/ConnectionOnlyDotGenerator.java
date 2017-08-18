@@ -1,7 +1,15 @@
 package cn.yyx.research.program.ir.visual.dot.generation;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 import cn.yyx.research.program.fileutil.FileUtil;
 import cn.yyx.research.program.ir.generation.structure.IRForOneProject;
+import cn.yyx.research.program.ir.storage.node.IIRNode;
+import cn.yyx.research.program.ir.storage.node.IRJavaElementNode;
+import cn.yyx.research.program.ir.storage.node.IRStatementNode;
+import cn.yyx.research.program.ir.storage.node.factory.IRElementFactory;
+import cn.yyx.research.program.ir.storage.node.factory.IRStatementFactory;
 import cn.yyx.research.program.ir.visual.dot.DotGenerator;
 
 public class ConnectionOnlyDotGenerator implements DotGenerator {
@@ -20,7 +28,20 @@ public class ConnectionOnlyDotGenerator implements DotGenerator {
 	
 	@Override
 	public void GenerateDotsAndPrintToPictures() {
-		
+		IRElementFactory ele_pool = one_project.GetIRElementPool();
+		Collection<IRJavaElementNode> eles = ele_pool.GetAllIRJavaElementNodes();
+		HandleOutConnectionsFromIIRNodes(eles);
+		IRStatementFactory stmt_pool = one_project.GetIRStatementPool();
+		Collection<IRStatementNode> stmts = stmt_pool.GetAllIRStatementNodes();
+		HandleOutConnectionsFromIIRNodes(stmts);
+	}
+	
+	public void HandleOutConnectionsFromIIRNodes(Collection<? extends IIRNode> nodes) {
+		Iterator<? extends IIRNode> nitr = nodes.iterator();
+		while (nitr.hasNext()) {
+			IIRNode iirn = nitr.next();
+			
+		}
 	}
 	
 }

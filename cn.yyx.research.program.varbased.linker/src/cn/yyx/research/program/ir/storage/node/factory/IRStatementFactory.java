@@ -54,11 +54,10 @@ public class IRStatementFactory {
 		return statements;
 	}
 	
-//	public IRStatementNode UniversalStatement(IRStatementNode irsn) {
-		// IRJavaElement irje
-		// String content = irje.getElement().toString();
-//		statements.add(irsn);
-//		return irsn;
-//	}
+	public Collection<IRStatementNode> GetAllIRStatementNodes() {
+		Collection<IRStatementNode> result = new LinkedList<IRStatementNode>();
+		result.addAll(statements);
+		return result;
+	}
 	
 }

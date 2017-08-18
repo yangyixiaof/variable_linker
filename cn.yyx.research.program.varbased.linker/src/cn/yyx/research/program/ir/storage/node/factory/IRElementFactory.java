@@ -1,5 +1,6 @@
 package cn.yyx.research.program.ir.storage.node.factory;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
@@ -44,6 +45,13 @@ public class IRElementFactory {
 			pool.put(content, ele);
 		}
 		return ele;
+	}
+	
+	public Collection<IRJavaElementNode> GetAllIRJavaElementNodes() {
+		Collection<IRJavaElementNode> result = new LinkedList<IRJavaElementNode>();
+		result.addAll(non_universal_elements);
+		result.addAll(pool.values());
+		return result;
 	}
 	
 }

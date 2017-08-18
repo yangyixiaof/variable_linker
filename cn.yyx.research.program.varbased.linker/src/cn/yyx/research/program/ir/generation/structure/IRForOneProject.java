@@ -24,4 +24,8 @@ public class IRForOneProject {
 		return ele_factory;
 	}
 	
+	public IRStatementFactory GetIRStatementPool() {
+		return stmt_factory;
+	}
+	
 }
