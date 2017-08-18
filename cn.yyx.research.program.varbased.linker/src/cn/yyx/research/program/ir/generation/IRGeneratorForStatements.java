@@ -59,8 +59,8 @@ import cn.yyx.research.program.ir.storage.node.IIRNode;
 import cn.yyx.research.program.ir.storage.node.IRJavaElementNode;
 import cn.yyx.research.program.ir.storage.node.IRNoneSucceedNode;
 import cn.yyx.research.program.ir.storage.node.IRStatementNode;
-import cn.yyx.research.program.ir.storage.node.creation.IRElementFactory;
-import cn.yyx.research.program.ir.storage.node.creation.IRStatementFactory;
+import cn.yyx.research.program.ir.storage.node.factory.IRElementFactory;
+import cn.yyx.research.program.ir.storage.node.factory.IRStatementFactory;
 
 public class IRGeneratorForStatements extends ASTVisitor {
 	
@@ -256,7 +256,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		Expression expr = node.getExpression();
 		if (expr != null && im != null) {
 			IJavaElement ije = new VirtualMethodReturnElement(im.getKey());
-			IRJavaElementNode f_return = ele_factory.UniversalElement(im.getKey(), ije);
+			IRJavaElementNode f_return = ele_factory.UniversalElement(ije); // im.getKey(), 
 			graph.AddNonVirtualVariableNode(f_return);
 			ASTNodeHandledInfo info = PreHandleOneASTNode(expr, 1);
 			IRStatementNode iirn = info.GetIRStatementNode();

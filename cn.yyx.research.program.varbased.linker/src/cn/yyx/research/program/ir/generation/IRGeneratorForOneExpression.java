@@ -73,8 +73,8 @@ import cn.yyx.research.program.ir.storage.node.IRSourceMethodParamElementNode;
 import cn.yyx.research.program.ir.storage.node.IRSourceMethodReturnElementNode;
 import cn.yyx.research.program.ir.storage.node.IRSourceMethodStatementNode;
 import cn.yyx.research.program.ir.storage.node.IRStatementNode;
-import cn.yyx.research.program.ir.storage.node.creation.IRElementFactory;
-import cn.yyx.research.program.ir.storage.node.creation.IRStatementFactory;
+import cn.yyx.research.program.ir.storage.node.factory.IRElementFactory;
+import cn.yyx.research.program.ir.storage.node.factory.IRStatementFactory;
 
 public class IRGeneratorForOneExpression extends ASTVisitor {
 
@@ -111,7 +111,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	@Override
 	public boolean visit(NumberLiteral node) {
 		String content = node.toString();
-		HandleIConstantElement(content, new ConstantUniqueElement(content), node);
+		HandleIConstantElement(new ConstantUniqueElement(content), node); // content, 
 		// IRConstantMeta.NumberConstant + "$" +
 		return super.visit(node);
 	}
@@ -119,7 +119,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	@Override
 	public boolean visit(NullLiteral node) {
 		String content = node.toString();
-		HandleIConstantElement(content, new ConstantUniqueElement(content), node);
+		HandleIConstantElement(new ConstantUniqueElement(content), node); // content, 
 		// IRConstantMeta.NullConstant + "$" +
 		return super.visit(node);
 	}
@@ -127,7 +127,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	@Override
 	public boolean visit(CharacterLiteral node) {
 		String content = node.toString();
-		HandleIConstantElement(content, new ConstantUniqueElement(content), node);
+		HandleIConstantElement(new ConstantUniqueElement(content), node); // content, 
 		// IRConstantMeta.CharConstant + "$" +
 		return super.visit(node);
 	}
@@ -135,7 +135,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	@Override
 	public boolean visit(BooleanLiteral node) {
 		String content = node.toString();
-		HandleIConstantElement(content, new ConstantUniqueElement(content), node);
+		HandleIConstantElement(new ConstantUniqueElement(content), node); // content, 
 		// IRConstantMeta.BooleanConstant + "$" +
 		return super.visit(node);
 	}
@@ -143,7 +143,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	@Override
 	public boolean visit(StringLiteral node) {
 		String content = node.toString();
-		HandleIConstantElement(content, new ConstantUniqueElement(content), node);
+		HandleIConstantElement(new ConstantUniqueElement(content), node); // content, 
 		// IRConstantMeta.StringConstant + "$" +
 		return super.visit(node);
 	}
@@ -164,7 +164,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 			IJavaElement ije = itb.getJavaElement();
 			if (ije != null) {
 				IType it = (IType) ije;
-				HandleITypeElement(it.getElementName(), it, node);
+				HandleITypeElement(it, node); // it.getElementName(), 
 				handled = true;
 				IRGeneratorForOneClass irgfoc = new IRGeneratorForOneClass(it, java_project, graph, graph_manager,
 						ele_factory, stmt_factory);
@@ -173,7 +173,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		}
 		if (!handled) {
 			String content = node.toString();
-			HandleITypeElement(content, new UnSourceResolvedTypeElement(content), node);
+			HandleITypeElement(new UnSourceResolvedTypeElement(content), node); // content, 
 		}
 		return super.visit(node);
 	}
@@ -187,7 +187,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 			IJavaElement jele = imb.getJavaElement();
 			if (jele != null && jele instanceof IMethod) {
 				IMethod im = (IMethod) jele;
-				HandleIMethodElement(im.getElementName(), im, node);
+				HandleIMethodElement(im, node); // im.getElementName(), 
 				handled = true;
 				// take it as a method.
 				List<SingleVariableDeclaration> para_list = node.parameters();
@@ -200,7 +200,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		}
 		if (!handled) {
 			String content = node.toString();
-			HandleIMethodElement(content, new UnSourceResolvedLambdaElement(content), node);
+			HandleIMethodElement(new UnSourceResolvedLambdaElement(content), node); // content, 
 		}
 		return false;
 	}
@@ -221,10 +221,10 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		IBinding ib = node.resolveBinding();
 		if (BindingManager.SourceResolvedBinding(ib)) {
 			IJavaElement ije = ib.getJavaElement();
-			HandleCommonIJavaElement(ije.getElementName(), ije, node, "N");
+			HandleCommonIJavaElement(ije, node, "N"); // ije.getElementName(), 
 		} else {
 			String content = node.toString();
-			HandleCommonIJavaElement(content, new UnSourceResolvedNameElement(content), node, "N");
+			HandleCommonIJavaElement(new UnSourceResolvedNameElement(content), node, "N"); // content, 
 		}
 	}
 
@@ -233,7 +233,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		IVariableBinding ib = node.resolveFieldBinding();
 		if (BindingManager.SourceResolvedBinding(ib)) {
 			IJavaElement jele = ib.getJavaElement();
-			HandleCommonIJavaElement(jele.getElementName(), jele, node, "V");
+			HandleCommonIJavaElement(jele, node, "V"); // jele.getElementName(), 
 			return false;
 		}
 		// else {
@@ -249,7 +249,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		IVariableBinding ib = node.resolveFieldBinding();
 		if (BindingManager.SourceResolvedBinding(ib)) {
 			IJavaElement jele = ib.getJavaElement();
-			HandleCommonIJavaElement(jele.getElementName(), jele, node, "V");
+			HandleCommonIJavaElement(jele, node, "V"); // jele.getElementName(), 
 			return false;
 		} else {
 			// String content = node.toString();
@@ -309,10 +309,10 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	protected void HandleType(ITypeBinding ib, ASTNode node) {
 		if (BindingManager.SourceResolvedBinding(ib)) {
 			IType it = (IType) ib.getJavaElement();
-			HandleITypeElement(it.getElementName(), it, node);
+			HandleITypeElement(it, node); // it.getElementName(), 
 		} else {
 			String content = node.toString();
-			HandleITypeElement(content, new UnSourceResolvedTypeElement(content), node);
+			HandleITypeElement(new UnSourceResolvedTypeElement(content), node); // content, 
 		}
 	}
 
@@ -389,20 +389,23 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		}
 	}
 
-	protected void HandleCommonIJavaElement(String content, IJavaElement ije, ASTNode node, String symbol) {
-		IRJavaElementNode uni_ele = ele_factory.UniversalElement(content, ije);
+	protected void HandleCommonIJavaElement(IJavaElement ije, ASTNode node, String symbol) {
+		// String content, 
+		IRJavaElementNode uni_ele = ele_factory.UniversalElement(ije);
 		graph.AddNonVirtualVariableNode(uni_ele);
 		IRGraph.RegistConnection(uni_ele, iir_stmt_node,
 				new VariableConnect(iir_stmt_node.IncreaseAndGetVariableIndex()));
 		rewrite.replace(node, ast.newSimpleName(symbol), null);
 	}
 
-	protected void HandleIConstantElement(String content, ConstantUniqueElement icue, ASTNode node) {
-		HandleCommonIJavaElement(content, icue, node, "C");
+	protected void HandleIConstantElement(ConstantUniqueElement icue, ASTNode node) {
+		// String content, 
+		HandleCommonIJavaElement(icue, node, "C");
 	}
 
-	protected void HandleIMethodElement(String content, IMethod imd, ASTNode node) {
-		HandleCommonIJavaElement(content, imd, node, "M");
+	protected void HandleIMethodElement(IMethod imd, ASTNode node) {
+		// String content, 
+		HandleCommonIJavaElement(imd, node, "M");
 	}
 
 	// protected void HandleINameElement(String content, UnSourceResolvedNameElement
@@ -414,16 +417,16 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	// HandleCommonIJavaElement(content, it, node, "S");
 	// }
 
-	protected void HandleITypeElement(String content, IType it, ASTNode node) {
-		HandleCommonIJavaElement(content, it, node, "T");
+	protected void HandleITypeElement(IType it, ASTNode node) {
+		HandleCommonIJavaElement(it, node, "T");
 	}
 
-	protected void HandleIVariableElement(String content, ILocalVariable ilv, ASTNode node) {
-		HandleCommonIJavaElement(content, ilv, node, "V");
+	protected void HandleIVariableElement(ILocalVariable ilv, ASTNode node) {
+		HandleCommonIJavaElement(ilv, node, "V");
 	}
 
-	protected void HandleIFieldElement(String content, IField ifd, ASTNode node) {
-		HandleCommonIJavaElement(content, ifd, node, "V");
+	protected void HandleIFieldElement(IField ifd, ASTNode node) {
+		HandleCommonIJavaElement(ifd, node, "V");
 	}
 
 	protected boolean PreHandleMethodInvocation(IMethodBinding imb, ASTNode node, List<Expression> arg_list) {
@@ -603,7 +606,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	protected boolean HandleMethodReference(IMethodBinding imb, MethodReference node) {
 		if (BindingManager.SourceResolvedBinding(imb)) {
 			IMethod im = (IMethod) imb.getJavaElement();
-			HandleIMethodElement(im.toString(), im, node);
+			HandleIMethodElement(im, node);
 			return false;
 		}
 		// else {

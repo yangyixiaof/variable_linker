@@ -11,8 +11,8 @@ import cn.yyx.research.program.eclipse.jdtutil.JDTParser;
 import cn.yyx.research.program.eclipse.searchutil.EclipseSearchForICompilationUnits;
 import cn.yyx.research.program.ir.generation.structure.IRForOneProject;
 import cn.yyx.research.program.ir.storage.graph.IRGraphManager;
-import cn.yyx.research.program.ir.storage.node.creation.IRElementFactory;
-import cn.yyx.research.program.ir.storage.node.creation.IRStatementFactory;
+import cn.yyx.research.program.ir.storage.node.factory.IRElementFactory;
+import cn.yyx.research.program.ir.storage.node.factory.IRStatementFactory;
 
 public class IRGeneratorForOneProject {
 	

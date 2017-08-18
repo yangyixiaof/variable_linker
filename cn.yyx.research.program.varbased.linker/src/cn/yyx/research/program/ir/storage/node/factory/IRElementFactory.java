@@ -1,4 +1,4 @@
-package cn.yyx.research.program.ir.storage.node.creation;
+package cn.yyx.research.program.ir.storage.node.factory;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -31,10 +31,14 @@ public class IRElementFactory {
 		return result;
 	}
 	
-	public IRJavaElementNode UniversalElement(String content, IJavaElement ije) {
+	public IRJavaElementNode UniversalElement(IJavaElement ije) {
+		// String content, 
 		// IRJavaElement irje
 		// String content = irje.getElement().toString();
-		IRJavaElementNode ele = pool.get(content);
+		// TODO Here needs to be checked.
+		System.out.println("debugging...element_name:" + ije.getElementName());
+		String content = ije.getElementName();
+		IRJavaElementNode ele = pool.get(ije.getElementName());
 		if (ele == null) {
 			ele = new IRJavaElementNode(content, ije);
 			pool.put(content, ele);

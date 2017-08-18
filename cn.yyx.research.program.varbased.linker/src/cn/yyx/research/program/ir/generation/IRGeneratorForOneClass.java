@@ -20,8 +20,8 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import cn.yyx.research.program.ir.storage.graph.IRGraph;
 import cn.yyx.research.program.ir.storage.graph.IRGraphManager;
-import cn.yyx.research.program.ir.storage.node.creation.IRElementFactory;
-import cn.yyx.research.program.ir.storage.node.creation.IRStatementFactory;
+import cn.yyx.research.program.ir.storage.node.factory.IRElementFactory;
+import cn.yyx.research.program.ir.storage.node.factory.IRStatementFactory;
 
 public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 
@@ -86,7 +86,7 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 					}
 				}
 				if (type_equals) {// && has_element
-					this.super_class_element = ele_factory.UniversalElement(super_it.getElementName(), super_it);
+					this.super_class_element = ele_factory.UniversalElement(super_it); // super_it.getElementName(), 
 					// IRGeneratorForOneProject.GetInstance().FetchITypeIR((it)).SetFieldLevel((IRForOneField)irc);
 				} else {
 					IRGraph graph = new IRGraph();

@@ -1,8 +1,8 @@
 package cn.yyx.research.program.ir.generation.structure;
 
 import cn.yyx.research.program.ir.storage.graph.IRGraphManager;
-import cn.yyx.research.program.ir.storage.node.creation.IRElementFactory;
-import cn.yyx.research.program.ir.storage.node.creation.IRStatementFactory;
+import cn.yyx.research.program.ir.storage.node.factory.IRElementFactory;
+import cn.yyx.research.program.ir.storage.node.factory.IRStatementFactory;
 
 public class IRForOneProject {
 	

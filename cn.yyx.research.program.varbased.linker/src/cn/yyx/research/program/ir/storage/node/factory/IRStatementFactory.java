@@ -1,4 +1,4 @@
-package cn.yyx.research.program.ir.storage.node.creation;
+package cn.yyx.research.program.ir.storage.node.factory;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -50,8 +50,8 @@ public class IRStatementFactory {
 		return result;
 	}
 	
-	public void CreateStatementNode() {
-		
+	public Collection<IRStatementNode> GetStatements() {
+		return statements;
 	}
 	
 //	public IRStatementNode UniversalStatement(IRStatementNode irsn) {
