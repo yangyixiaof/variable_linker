@@ -1,13 +1,11 @@
 package cn.yyx.research.program.ir.storage.node;
 
-import org.eclipse.jdt.core.IJavaElement;
-
 public class IRSourceMethodReturnElementNode extends IRJavaElementNode {
 	
 	private IRSourceMethodStatementNode irsmsn = null;
 	
-	public IRSourceMethodReturnElementNode(IRSourceMethodStatementNode irsmsn, String content, IJavaElement ele) {
-		super(content, ele);
+	public IRSourceMethodReturnElementNode(IRSourceMethodStatementNode irsmsn) {
+		super(null, null);
 		this.SetIRSourceMethodStatementNode(irsmsn);
 	}
 

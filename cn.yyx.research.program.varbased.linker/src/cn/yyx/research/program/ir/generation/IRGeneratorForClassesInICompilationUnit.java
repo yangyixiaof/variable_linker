@@ -11,18 +11,21 @@ import org.eclipse.jdt.core.dom.ITypeBinding;
 import cn.yyx.research.program.ir.storage.graph.IRGraph;
 import cn.yyx.research.program.ir.storage.graph.IRGraphManager;
 import cn.yyx.research.program.ir.storage.node.creation.IRElementFactory;
+import cn.yyx.research.program.ir.storage.node.creation.IRStatementFactory;
 
 public class IRGeneratorForClassesInICompilationUnit extends ASTVisitor {
 	
 	IJavaProject java_project = null;
 	IRGraphManager graph_manager = null;
-	IRElementFactory pool = null;
+	IRElementFactory ele_factory = null;
+	IRStatementFactory stmt_factory = null;
 	
 	public IRGeneratorForClassesInICompilationUnit(IJavaProject java_project, IRGraphManager graph_manager,
-			IRElementFactory pool) {
+			IRElementFactory ele_factory, IRStatementFactory stmt_factory) {
 		this.java_project = java_project;
 		this.graph_manager = graph_manager;
-		this.pool = pool;
+		this.ele_factory = ele_factory;
+		this.stmt_factory = stmt_factory;
 	}
 	
 	// private List<IRForOneClass> classes = new LinkedList<IRForOneClass>();
@@ -46,7 +49,7 @@ public class IRGeneratorForClassesInICompilationUnit extends ASTVisitor {
 			if (it != null) {
 				IRGraph graph = new IRGraph();
 				graph_manager.AddIRGraph(it, graph);
-				IRGeneratorForOneClass irfoc = new IRGeneratorForOneClass(it, java_project, graph, graph_manager, pool);
+				IRGeneratorForOneClass irfoc = new IRGeneratorForOneClass(it, java_project, graph, graph_manager, ele_factory, stmt_factory);
 				node.accept(irfoc);
 				// getClasses().add(irfoc.GetClassLevelGeneration());
 			}

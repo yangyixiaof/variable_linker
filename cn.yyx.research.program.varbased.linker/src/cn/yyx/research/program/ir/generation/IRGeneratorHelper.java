@@ -18,13 +18,14 @@ import cn.yyx.research.program.ir.storage.graph.IRGraphForMethod;
 import cn.yyx.research.program.ir.storage.graph.IRGraphManager;
 import cn.yyx.research.program.ir.storage.node.IRJavaElementNode;
 import cn.yyx.research.program.ir.storage.node.creation.IRElementFactory;
+import cn.yyx.research.program.ir.storage.node.creation.IRStatementFactory;
 
 public class IRGeneratorHelper {
 
 	public static void HandleMethodDeclaration(IJavaProject java_project, IRGraphManager graph_manager, ASTNode node,
-			IRElementFactory pool, IMethodBinding imb, IMethod im, IType it, List<SingleVariableDeclaration> para_list,
+			IRElementFactory ele_factory, IRStatementFactory stmt_factory, IMethodBinding imb, IMethod im, IType it, List<SingleVariableDeclaration> para_list,
 			IRJavaElementNode super_class_element) {
-		IRJavaElementNode return_element_node = pool.UniversalElement(im.getKey(),
+		IRJavaElementNode return_element_node = ele_factory.UniversalElement(im.getKey(),
 				new VirtualMethodReturnElement(im.getKey()));
 		LinkedList<IRJavaElementNode> params = new LinkedList<IRJavaElementNode>();
 		Iterator<SingleVariableDeclaration> sitr = para_list.iterator();
@@ -36,12 +37,12 @@ public class IRGeneratorHelper {
 				IJavaElement sije = sib.getJavaElement();
 				if (sije != null) {
 					params.removeLast();
-					params.add(pool.UniversalElement(sije.getElementName(), sije));
+					params.add(ele_factory.UniversalElement(sije.getElementName(), sije));
 				}
 			}
 		}
 		IRGraphForMethod irgfm = new IRGraphForMethod(params, return_element_node);
-		IRGeneratorForStatements irgfs = new IRGeneratorForStatements(java_project, irgfm, graph_manager, pool,
+		IRGeneratorForStatements irgfs = new IRGeneratorForStatements(java_project, irgfm, graph_manager, ele_factory, stmt_factory,
 				super_class_element, it, im);
 		graph_manager.AddIRGraph(im, irgfm);
 		graph_manager.AddMemberRelation(it, im);

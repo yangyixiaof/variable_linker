@@ -55,19 +55,19 @@ import cn.yyx.research.program.ir.storage.connection.Connect;
 import cn.yyx.research.program.ir.storage.connection.VariableConnect;
 import cn.yyx.research.program.ir.storage.graph.IRGraph;
 import cn.yyx.research.program.ir.storage.graph.IRGraphManager;
-import cn.yyx.research.program.ir.storage.node.IIRBlockOverNode;
-import cn.yyx.research.program.ir.storage.node.IIRBranchOverNode;
 import cn.yyx.research.program.ir.storage.node.IIRNode;
 import cn.yyx.research.program.ir.storage.node.IRJavaElementNode;
 import cn.yyx.research.program.ir.storage.node.IRNoneSucceedNode;
 import cn.yyx.research.program.ir.storage.node.IRStatementNode;
 import cn.yyx.research.program.ir.storage.node.creation.IRElementFactory;
+import cn.yyx.research.program.ir.storage.node.creation.IRStatementFactory;
 
 public class IRGeneratorForStatements extends ASTVisitor {
 	
 	protected IJavaProject java_project = null;
 	protected IRGraphManager graph_manager = null;
-	protected IRElementFactory pool = null;
+	protected IRElementFactory ele_factory = null;
+	protected IRStatementFactory stmt_factory = null;
 	protected IRJavaElementNode super_class_element = null;
 	protected IRASTNodeTask post_visit_task = new IRASTNodeTask();
 	protected IRASTNodeTask pre_visit_task = new IRASTNodeTask();
@@ -76,12 +76,13 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	protected IType it = null;
 	protected IMethod im = null;
 	
-	public IRGeneratorForStatements(IJavaProject java_project, IRGraph graph, IRGraphManager graph_manager, IRElementFactory pool,
+	public IRGeneratorForStatements(IJavaProject java_project, IRGraph graph, IRGraphManager graph_manager, IRElementFactory ele_factory, IRStatementFactory stmt_factory,
 			IRJavaElementNode super_class_element, IType it, IMethod im) {
 		this.java_project = java_project;
 		this.graph = graph;
 		this.graph_manager = graph_manager;
-		this.pool = pool;
+		this.ele_factory = ele_factory;
+		this.stmt_factory = stmt_factory;
 		this.super_class_element = super_class_element;
 		this.it = it;
 		this.im = im;
@@ -111,11 +112,11 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		super.postVisit(node);
 	}
 
-	protected ASTNodeHandledInfo PreHandleOneASTNode(ASTNode node, int element_idx) {
+	protected ASTNodeHandledInfo PreHandleOneASTNode(ASTNode node, int element_index) {
 		Document doc = new Document(node.toString());
 		ASTRewrite rewrite = ASTRewrite.create(node.getAST());
-		IRStatementNode irsn = new IRStatementNode(element_idx);
-		IRGeneratorForOneExpression irfoe = new IRGeneratorForOneExpression(java_project, graph_manager, node, rewrite, pool, graph, irsn, super_class_element, it, im);
+		IRStatementNode irsn = stmt_factory.CreateIRStatementNode(element_index);
+		IRGeneratorForOneExpression irfoe = new IRGeneratorForOneExpression(java_project, graph_manager, node, rewrite, ele_factory, stmt_factory, graph, irsn, super_class_element, it, im);
 		node.accept(irfoe);
 		forbid_visit.add(node);
 		// TextEdit edits = ;
@@ -244,7 +245,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 				none_succeed_nodes = new HashSet<IRNoneSucceedNode>();
 				break_continue_wait_handle.put(break_scope, none_succeed_nodes);
 			}
-			IRNoneSucceedNode iirn = new IRNoneSucceedNode(code);
+			IRNoneSucceedNode iirn = stmt_factory.CreateIRNoneSucceedNode();
 			graph.GoForwardAStep(iirn);
 			none_succeed_nodes.add(iirn);
 		}
@@ -255,7 +256,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		Expression expr = node.getExpression();
 		if (expr != null && im != null) {
 			IJavaElement ije = new VirtualMethodReturnElement(im.getKey());
-			IRJavaElementNode f_return = pool.UniversalElement(im.getKey(), ije);
+			IRJavaElementNode f_return = ele_factory.UniversalElement(im.getKey(), ije);
 			graph.AddNonVirtualVariableNode(f_return);
 			ASTNodeHandledInfo info = PreHandleOneASTNode(expr, 1);
 			IRStatementNode iirn = info.GetIRStatementNode();
@@ -280,7 +281,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	protected IIRNode PostHandleMustTwoBranches(ASTNode node) {
 		// Solved. handle situation that there are no branches. in which branch_root
 		// should directly connect to block_over node.
-		IRStatementNode over = new IIRBranchOverNode("Virtual_Branch_Over");
+		IRStatementNode over = stmt_factory.CreateIIRBranchOverNode();
 		StatementBranchInfo sbi = statement_branch_map.remove(node);
 		List<IIRNode> branches = sbi.GetBranches();
 		Iterator<IIRNode> bitr = branches.iterator();
@@ -299,7 +300,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	protected IIRNode PostHandleMultiBranches(ASTNode node) {
 		// Solved. handle situation that there are no branches. in which branch_root should
 		// directly connect to block_over node.
-		IRStatementNode over = new IIRBranchOverNode("Virtual_Branch_Over");
+		IRStatementNode over = stmt_factory.CreateIIRBranchOverNode();
 		StatementBranchInfo sbi = statement_branch_map.remove(node);
 		List<IIRNode> branches = sbi.GetBranches();
 		Iterator<IIRNode> bitr = branches.iterator();
@@ -359,7 +360,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		wait_merge_nodes.add(info.GetIRStatementNode());
 		enh_for.append(info.GetIRStatementNode().GetContent() + ") {}");
 		
-		IRStatementNode branch_root = new IRStatementNode(info.GetIRStatementNode().GetVariableIndex());
+		IRStatementNode branch_root = stmt_factory.CreateIRStatementNode(info.GetIRStatementNode().GetVariableIndex());
 		branch_root.SetContent(enh_for.toString());
 		semantic_block_control.put(node, branch_root);
 		IRGraph.MergeNodesToOne(wait_merge_nodes, branch_root);
@@ -434,7 +435,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		}
 		for_builder.append(") {}");
 		
-		IRStatementNode branch_root = new IRStatementNode(element_index);
+		IRStatementNode branch_root = stmt_factory.CreateIRStatementNode(element_index);
 		branch_root.SetContent(for_builder.toString());
 		semantic_block_control.put(node, branch_root);
 		IRGraph.MergeNodesToOne(wait_merge_nodes, branch_root);
@@ -633,7 +634,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	
 	@Override
 	public void endVisit(SynchronizedStatement node) {
-		IRStatementNode over = new IIRBlockOverNode("Virtual_Block_Over");
+		IRStatementNode over = stmt_factory.CreateIIRBlockOverNode();
 		graph.GoForwardAStep(over);
 	}
 	

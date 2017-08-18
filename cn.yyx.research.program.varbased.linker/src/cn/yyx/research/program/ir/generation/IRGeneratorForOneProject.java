@@ -12,6 +12,7 @@ import cn.yyx.research.program.eclipse.searchutil.EclipseSearchForICompilationUn
 import cn.yyx.research.program.ir.generation.structure.IRForOneProject;
 import cn.yyx.research.program.ir.storage.graph.IRGraphManager;
 import cn.yyx.research.program.ir.storage.node.creation.IRElementFactory;
+import cn.yyx.research.program.ir.storage.node.creation.IRStatementFactory;
 
 public class IRGeneratorForOneProject {
 	
@@ -23,7 +24,8 @@ public class IRGeneratorForOneProject {
 	
 	public IRForOneProject GenerateForOneProject() {
 		IRGraphManager graph_manager = new IRGraphManager();
-		IRElementFactory pool = new IRElementFactory();
+		IRElementFactory ele_factory = new IRElementFactory();
+		IRStatementFactory stmt_factory = new IRStatementFactory();
 		List<ICompilationUnit> units = null;
 		try {
 			units = EclipseSearchForICompilationUnits.SearchForAllICompilationUnits(java_project);
@@ -35,11 +37,11 @@ public class IRGeneratorForOneProject {
 			for (final ICompilationUnit icu : units) {
 				CompilationUnit cu = JDTParser.CreateJDTParser(java_project).ParseICompilationUnit(icu);
 				IRGeneratorForClassesInICompilationUnit irgfcicu = new IRGeneratorForClassesInICompilationUnit(
-						java_project, graph_manager, pool);
+						java_project, graph_manager, ele_factory, stmt_factory);
 				cu.accept(irgfcicu);
 			}
 		}
-		return new IRForOneProject(graph_manager, pool);
+		return new IRForOneProject(graph_manager, ele_factory, stmt_factory);
 	}
 	
 }

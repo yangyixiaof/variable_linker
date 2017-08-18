@@ -1,14 +1,13 @@
 package cn.yyx.research.program.ir.storage.node;
 
-import org.eclipse.jdt.core.IJavaElement;
-
 public class IRSourceMethodParamElementNode extends IRJavaElementNode {
 	
 	protected IRSourceMethodStatementNode irsmsn = null;
 	protected int param_index = 0;
 	
-	public IRSourceMethodParamElementNode(IRSourceMethodStatementNode irsmsn, int param_index, String content, IJavaElement ele) {
-		super(content, ele);
+	public IRSourceMethodParamElementNode(IRSourceMethodStatementNode irsmsn, int param_index) {
+		// , String content, IJavaElement ele
+		super(null, null);
 		this.SetIRSourceMethodStatementNode(irsmsn);
 		this.SetParamIndex(param_index);
 	}

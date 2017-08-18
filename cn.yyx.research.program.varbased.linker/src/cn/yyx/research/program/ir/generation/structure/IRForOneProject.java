@@ -2,15 +2,18 @@ package cn.yyx.research.program.ir.generation.structure;
 
 import cn.yyx.research.program.ir.storage.graph.IRGraphManager;
 import cn.yyx.research.program.ir.storage.node.creation.IRElementFactory;
+import cn.yyx.research.program.ir.storage.node.creation.IRStatementFactory;
 
 public class IRForOneProject {
 	
 	IRGraphManager graph_manager = null;
-	IRElementFactory pool = null;
+	IRElementFactory ele_factory = null;
+	IRStatementFactory stmt_factory = null;
 	
-	public IRForOneProject(IRGraphManager graph_manager, IRElementFactory pool) {
+	public IRForOneProject(IRGraphManager graph_manager, IRElementFactory ele_factory, IRStatementFactory stmt_factory) {
 		this.graph_manager = graph_manager;
-		this.pool = pool;
+		this.ele_factory = ele_factory;
+		this.stmt_factory = stmt_factory;
 	}
 	
 	public IRGraphManager GetIRGraphManager() {
@@ -18,7 +21,7 @@ public class IRForOneProject {
 	}
 	
 	public IRElementFactory GetIRElementPool() {
-		return pool;
+		return ele_factory;
 	}
 	
 }

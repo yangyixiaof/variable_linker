@@ -21,6 +21,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import cn.yyx.research.program.ir.storage.graph.IRGraph;
 import cn.yyx.research.program.ir.storage.graph.IRGraphManager;
 import cn.yyx.research.program.ir.storage.node.creation.IRElementFactory;
+import cn.yyx.research.program.ir.storage.node.creation.IRStatementFactory;
 
 public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 
@@ -28,8 +29,8 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 	private IType it = null;
 
 	public IRGeneratorForOneClass(IType it, IJavaProject java_project, IRGraph graph, IRGraphManager graph_manager,
-			IRElementFactory pool) {
-		super(java_project, graph, graph_manager, pool, null, it, null);
+			IRElementFactory ele_factory, IRStatementFactory stmt_factory) {
+		super(java_project, graph, graph_manager, ele_factory, stmt_factory, null, it, null);
 		this.it = it;
 	}
 
@@ -59,7 +60,7 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 		if (ije instanceof IMethod) {
 			IMethod im = (IMethod) ije;
 			List<SingleVariableDeclaration> para_list = node.parameters();
-			IRGeneratorHelper.HandleMethodDeclaration(java_project, graph_manager, node.getBody(), pool, imb, im, it,
+			IRGeneratorHelper.HandleMethodDeclaration(java_project, graph_manager, node.getBody(), ele_factory, stmt_factory, imb, im, it,
 					para_list, super_class_element);
 		}
 		return false;
@@ -85,13 +86,13 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 					}
 				}
 				if (type_equals) {// && has_element
-					this.super_class_element = pool.UniversalElement(super_it.getElementName(), super_it);
+					this.super_class_element = ele_factory.UniversalElement(super_it.getElementName(), super_it);
 					// IRGeneratorForOneProject.GetInstance().FetchITypeIR((it)).SetFieldLevel((IRForOneField)irc);
 				} else {
 					IRGraph graph = new IRGraph();
 					graph_manager.AddIRGraph(resolved_type, graph);
 					IRGeneratorForOneClass irgfoc = new IRGeneratorForOneClass(resolved_type, java_project, graph,
-							graph_manager, pool);
+							graph_manager, ele_factory, stmt_factory);
 					node.accept(irgfoc);
 				}
 			}

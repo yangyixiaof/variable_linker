@@ -74,6 +74,7 @@ import cn.yyx.research.program.ir.storage.node.IRSourceMethodReturnElementNode;
 import cn.yyx.research.program.ir.storage.node.IRSourceMethodStatementNode;
 import cn.yyx.research.program.ir.storage.node.IRStatementNode;
 import cn.yyx.research.program.ir.storage.node.creation.IRElementFactory;
+import cn.yyx.research.program.ir.storage.node.creation.IRStatementFactory;
 
 public class IRGeneratorForOneExpression extends ASTVisitor {
 
@@ -82,7 +83,8 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	protected ASTNode node = null;
 	protected AST ast = null;
 	protected ASTRewrite rewrite = null;
-	protected IRElementFactory pool = null;
+	protected IRElementFactory ele_factory = null;
+	protected IRStatementFactory stmt_factory = null;
 	protected IRGraph graph = null;
 	protected IRStatementNode iir_stmt_node = null;
 	protected IRJavaElementNode super_class_element = null;
@@ -90,14 +92,15 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	protected IMethod im = null;
 
 	public IRGeneratorForOneExpression(IJavaProject java_project, IRGraphManager graph_manager, ASTNode node,
-			ASTRewrite rewrite, IRElementFactory pool, IRGraph graph, IRStatementNode iir_stmt_node,
+			ASTRewrite rewrite, IRElementFactory ele_factory, IRStatementFactory stmt_factory, IRGraph graph, IRStatementNode iir_stmt_node,
 			IRJavaElementNode super_class_element, IType it, IMethod im) {
 		this.java_project = java_project;
 		this.graph_manager = graph_manager;
 		this.node = node;
 		this.ast = node.getAST();
 		this.rewrite = rewrite;
-		this.pool = pool;
+		this.ele_factory = ele_factory;
+		this.stmt_factory = stmt_factory;
 		this.graph = graph;
 		this.iir_stmt_node = iir_stmt_node;
 		this.super_class_element = super_class_element;
@@ -164,7 +167,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 				HandleITypeElement(it.getElementName(), it, node);
 				handled = true;
 				IRGeneratorForOneClass irgfoc = new IRGeneratorForOneClass(it, java_project, graph, graph_manager,
-						pool);
+						ele_factory, stmt_factory);
 				node.accept(irgfoc);
 			}
 		}
@@ -188,7 +191,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 				handled = true;
 				// take it as a method.
 				List<SingleVariableDeclaration> para_list = node.parameters();
-				IRGeneratorHelper.HandleMethodDeclaration(java_project, graph_manager, node.getBody(), pool, imb, im,
+				IRGeneratorHelper.HandleMethodDeclaration(java_project, graph_manager, node.getBody(), ele_factory, stmt_factory, imb, im,
 						it, para_list, super_class_element);
 				// IRGeneratorForStatements irgfocb = new IRGeneratorForStatements(java_project,
 				// imb, graph_manager, pool, super_class_element);
@@ -387,7 +390,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	}
 
 	protected void HandleCommonIJavaElement(String content, IJavaElement ije, ASTNode node, String symbol) {
-		IRJavaElementNode uni_ele = pool.UniversalElement(content, ije);
+		IRJavaElementNode uni_ele = ele_factory.UniversalElement(content, ije);
 		graph.AddNonVirtualVariableNode(uni_ele);
 		IRGraph.RegistConnection(uni_ele, iir_stmt_node,
 				new VariableConnect(iir_stmt_node.IncreaseAndGetVariableIndex()));
@@ -461,7 +464,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 						graph_manager.AddMemberMethodInvoke(im, new IRMethodInvoke(invokes));
 					}
 					// create the special node for source_method_invocation.
-					IRSourceMethodStatementNode irsmsn = new IRSourceMethodStatementNode(0, methods);
+					IRSourceMethodStatementNode irsmsn = stmt_factory.CreateIRSourceMethodStatementNode(0, methods);
 					graph.AddSourceMethodStatement(irsmsn);
 					// handle argument expressions.
 					int index = 0;
@@ -471,14 +474,14 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 						Expression expr = aitr.next();
 						Document doc = new Document(expr.toString());
 						ASTRewrite expr_rewrite = ASTRewrite.create(expr.getAST());
-						IRStatementNode expr_iirn = new IRStatementNode(1);
+						IRStatementNode expr_iirn = stmt_factory.CreateIRStatementNode(1);
 						IRGeneratorForOneExpression ir_gfoe = new IRGeneratorForOneExpression(java_project,
-								graph_manager, expr, expr_rewrite, pool, graph, expr_iirn, super_class_element, it, im);
+								graph_manager, expr, expr_rewrite, ele_factory, stmt_factory, graph, expr_iirn, super_class_element, it, im);
 						expr.accept(ir_gfoe);
 						expr_rewrite.rewriteAST(doc, null);
 						expr_iirn.SetContent("V=" + doc.toString() + ";");
-						IRSourceMethodParamElementNode irsmpen = new IRSourceMethodParamElementNode(irsmsn, index, null,
-								null);
+						IRSourceMethodParamElementNode irsmpen = ele_factory.CreateIRSourceMethodParamElementNode(irsmsn, index);
+						//		new IRSourceMethodParamElementNode(irsmsn, index);
 						graph.AddSourceMethodParam(irsmpen);
 						IRGraph.RegistConnection(irsmpen, expr_iirn, new VariableConnect(1));
 						irsmsn.AddArgumentStatement(expr_iirn);
@@ -487,8 +490,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 					graph.GoForwardAStep(irsmsn);
 
 					// replace node with return element.
-					IRSourceMethodReturnElementNode ir_mi_return = new IRSourceMethodReturnElementNode(irsmsn, null,
-							null);
+					IRSourceMethodReturnElementNode ir_mi_return = new IRSourceMethodReturnElementNode(irsmsn);
 					graph.AddSourceMethodReturn(ir_mi_return);
 					IRGraph.RegistConnection(ir_mi_return, iir_stmt_node,
 							new VariableConnect(iir_stmt_node.IncreaseAndGetVariableIndex()));
