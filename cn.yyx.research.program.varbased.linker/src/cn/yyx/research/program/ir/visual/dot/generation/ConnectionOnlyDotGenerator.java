@@ -5,6 +5,7 @@ import java.util.Iterator;
 
 import cn.yyx.research.program.fileutil.FileUtil;
 import cn.yyx.research.program.ir.generation.structure.IRForOneProject;
+import cn.yyx.research.program.ir.storage.connection.IIRConnection;
 import cn.yyx.research.program.ir.storage.node.IIRNode;
 import cn.yyx.research.program.ir.storage.node.IRJavaElementNode;
 import cn.yyx.research.program.ir.storage.node.IRStatementNode;
@@ -40,7 +41,12 @@ public class ConnectionOnlyDotGenerator implements DotGenerator {
 		Iterator<? extends IIRNode> nitr = nodes.iterator();
 		while (nitr.hasNext()) {
 			IIRNode iirn = nitr.next();
-			
+			Collection<IIRConnection> outs = iirn.GetAllOutConnections();
+			Iterator<IIRConnection> oitr = outs.iterator();
+			while (oitr.hasNext()) {
+				IIRConnection iirc = oitr.next();
+				
+			}
 		}
 	}
 	
