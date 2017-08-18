@@ -28,4 +28,9 @@ public class VariableConnect extends Connect {
 		return ele_index;
 	}
 	
+	@Override
+	public String toString() {
+		return "V" + ele_index;
+	}
+	
 }

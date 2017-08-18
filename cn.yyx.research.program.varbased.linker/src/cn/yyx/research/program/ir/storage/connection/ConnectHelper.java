@@ -22,4 +22,15 @@ public class ConnectHelper {
 		return false;
 	}
 	
+	public static boolean HasSpecificType(IIRConnection conn, Class<? extends Connect> conn_type) {
+		Iterator<Connect> citr = conn.GetAllConnects().iterator();
+		while (citr.hasNext()) {
+			Connect cnct = citr.next();
+			if (conn_type.isAssignableFrom(cnct.getClass())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 }

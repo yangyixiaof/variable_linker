@@ -4,4 +4,9 @@ public class SuperConnect extends Connect {
 	
 	// do nothing.
 	
+	@Override
+	public String toString() {
+		return "S";
+	}
+	
 }
