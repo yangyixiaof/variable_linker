@@ -36,8 +36,8 @@ public class ConnectionOnlyDotGenerator implements DotGenerator {
 	IRForOneProject one_project = null;
 
 	int idx = 0;
-	
 	Map<IVNode, Integer> ivn_id = new HashMap<IVNode, Integer>();
+	
 	Set<IIRConnection> non_cluster_ivn_conns = new HashSet<IIRConnection>();
 	Map<IVNode, DotCluster> ivn_cluster = new HashMap<IVNode, DotCluster>();
 	Set<DotCluster> clusters = new HashSet<DotCluster>();
