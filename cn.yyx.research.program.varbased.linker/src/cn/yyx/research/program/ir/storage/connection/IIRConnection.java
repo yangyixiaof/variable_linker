@@ -1,6 +1,7 @@
 package cn.yyx.research.program.ir.storage.connection;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import cn.yyx.research.program.ir.storage.node.IIRNode;
@@ -45,6 +46,17 @@ public class IIRConnection {
 	
 	public Set<Connect> GetAllConnects() {
 		return conns;
+	}
+	
+	public boolean HasConnectionType(Class<?> conn_type) {
+		Iterator<Connect> citr = conns.iterator();
+		while (citr.hasNext()) {
+			Connect conn = citr.next();
+			if (conn.getClass().isAssignableFrom(conn_type)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 }
