@@ -188,11 +188,6 @@ public class ConnectionOnlyDotGenerator implements DotGenerator {
 		return id;
 	}
 
-	// Iterate IVGraph to sort each cluster.
-	// Map<Integer, DotCluster> cluster_id = new TreeMap<Integer, DotCluster>();
-	// Map<DotCluster, Map<DotCluster, Integer>> cluster_conn = new
-	// HashMap<DotCluster, Map<DotCluster, Integer>>();
-
 	private DotCluster GetCluster(IIRNode ivn) {
 		DotCluster cluster = ivn_cluster.get(ivn);
 		if (cluster == null) {
