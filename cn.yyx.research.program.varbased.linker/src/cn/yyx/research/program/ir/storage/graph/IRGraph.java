@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import cn.yyx.research.program.ir.storage.connection.Connect;
-import cn.yyx.research.program.ir.storage.connection.FlowConnect;
 import cn.yyx.research.program.ir.storage.connection.IIRConnection;
 import cn.yyx.research.program.ir.storage.node.IIRNode;
 import cn.yyx.research.program.ir.storage.node.IRJavaElementNode;
@@ -89,7 +88,7 @@ public class IRGraph {
 	}
 	
 	public void GoForwardAStep(IRStatementNode iirn) {
-		RegistConnection(active, iirn, new FlowConnect());
+		RegistConnection(active, iirn, new Connect());
 		active = iirn;
 	}
 

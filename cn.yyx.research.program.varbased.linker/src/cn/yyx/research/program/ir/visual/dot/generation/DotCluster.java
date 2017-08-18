@@ -3,13 +3,13 @@ package cn.yyx.research.program.ir.visual.dot.generation;
 import java.util.HashSet;
 import java.util.Set;
 
+import cn.yyx.research.program.ir.storage.connection.IIRConnection;
 import cn.yyx.research.program.ir.visual.node.IVNode;
-import cn.yyx.research.program.ir.visual.node.connection.IVConnection;
 
 public class DotCluster {
 	
 	private Set<IVNode> ivns = new HashSet<IVNode>();
-	private Set<IVConnection> ivn_conns = new HashSet<IVConnection>();
+	private Set<IIRConnection> ivn_conns = new HashSet<IIRConnection>();
 	
 	public DotCluster(IVNode ivn) {
 		GetIvns().add(ivn);
@@ -19,7 +19,7 @@ public class DotCluster {
 		GetIvns().add(ivn);
 	}
 	
-	public void AddIVConnection(IVConnection ivn_conn) {
+	public void AddIVConnection(IIRConnection ivn_conn) {
 		GetIvnConns().add(ivn_conn);
 	}
 	
@@ -32,7 +32,7 @@ public class DotCluster {
 		return ivns;
 	}
 
-	public Set<IVConnection> GetIvnConns() {
+	public Set<IIRConnection> GetIvnConns() {
 		return ivn_conns;
 	}
 	
