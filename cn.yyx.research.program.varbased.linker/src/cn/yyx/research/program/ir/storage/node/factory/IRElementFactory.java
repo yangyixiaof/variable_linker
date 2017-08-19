@@ -37,7 +37,7 @@ public class IRElementFactory {
 		// IRJavaElement irje
 		// String content = irje.getElement().toString();
 		// TODO Here needs to be checked.
-		System.out.println("debugging...element_name:" + ije.getElementName() + ";element_handler:" + ije.getHandleIdentifier());
+		System.out.println("debugging...element_name:" + ije.getElementName() + ";element_handler:" + ije.getHandleIdentifier() + ";element_class:" + ije.getClass());
 		String content = ije.getElementName();
 		IRJavaElementNode ele = pool.get(ije.getElementName());
 		if (ele == null) {
