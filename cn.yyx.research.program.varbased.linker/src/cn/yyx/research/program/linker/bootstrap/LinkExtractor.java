@@ -36,6 +36,8 @@ public class LinkExtractor implements IApplication {
 	
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
+		// waiting to initialize the workbench.
+		SystemUtil.Delay(5000);
 		EnvironmentUtil.Clear();
 		IJavaProject java_project = LoadProjectAccordingToArgs((String[])context.getArguments().get(IApplicationContext.APPLICATION_ARGS));
 		try {
@@ -46,6 +48,7 @@ public class LinkExtractor implements IApplication {
 				TestJavaSearch.TestInAll(java_project);
 			} else {
 				// generate and print each local method.
+				SystemUtil.Delay(5000);
 				IRGeneratorForOneProject irgfop = new IRGeneratorForOneProject(java_project);
 				IRForOneProject one_project = irgfop.GenerateForOneProject();
 				
@@ -64,7 +67,7 @@ public class LinkExtractor implements IApplication {
 			AnalysisEnvironment.DeleteAllAnalysisEnvironment();
 		}
 		SystemUtil.Flush();
-		SystemUtil.Delay(1000);
+		SystemUtil.Delay(2000);
 		return IApplication.EXIT_OK;
 	}
 	
