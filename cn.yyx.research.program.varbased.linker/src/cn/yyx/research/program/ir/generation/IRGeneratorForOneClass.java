@@ -91,7 +91,7 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 					if (super_it != null) {
 						this.super_class_element = ele_factory.UniversalElement(super_it); // super_it.getElementName(),
 					}
-					goon = true;
+					goon = goon && true;
 					// IRGeneratorForOneProject.GetInstance().FetchITypeIR((it)).SetFieldLevel((IRForOneField)irc);
 				} else {
 					IRGraph graph = new IRGraph();
@@ -99,10 +99,10 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 					IRGeneratorForOneClass irgfoc = new IRGeneratorForOneClass(resolved_type, java_project, graph,
 							graph_manager, ele_factory, stmt_factory);
 					node.accept(irgfoc);
-					goon = false;
+					goon = goon && false;
 				}
 			} else {
-				goon = false;
+				goon = goon && false;
 			}
 		}
 		return goon;
