@@ -129,6 +129,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		// TODO debugging.
 		System.err.println("rewrite_error_node:" + node.toString() + ";rewrite:" + rewrite.toString());
 		String doc_new = ASTRewriteHelper.GetRewriteContent(node, rewrite, type_declare_resource, type_declare);
+		System.err.println("doc_new:" + doc_new);
 //		try {
 //			TextEdit edits = rewrite.rewriteAST();
 //			edits.apply(doc);
