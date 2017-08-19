@@ -68,7 +68,7 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 
 	@Override
 	public boolean preVisit2(ASTNode node) {
-		// super.preVisit2(node)
+		boolean goon = super.preVisit2(node) ;
 		if (node instanceof AbstractTypeDeclaration || node instanceof AnonymousClassDeclaration) {
 			IType resolved_type = NodeBinding(node);
 			if (resolved_type != null) {
@@ -91,6 +91,7 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 					if (super_it != null) {
 						this.super_class_element = ele_factory.UniversalElement(super_it); // super_it.getElementName(),
 					}
+					goon = true;
 					// IRGeneratorForOneProject.GetInstance().FetchITypeIR((it)).SetFieldLevel((IRForOneField)irc);
 				} else {
 					IRGraph graph = new IRGraph();
@@ -98,13 +99,13 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 					IRGeneratorForOneClass irgfoc = new IRGeneratorForOneClass(resolved_type, java_project, graph,
 							graph_manager, ele_factory, stmt_factory);
 					node.accept(irgfoc);
+					goon = false;
 				}
+			} else {
+				goon = false;
 			}
-			// else {
-			// return super.preVisit2(node) && false;
-			// }
 		}
-		return false;
+		return goon;
 	}
 
 	// Solved. internal type should be visited.
