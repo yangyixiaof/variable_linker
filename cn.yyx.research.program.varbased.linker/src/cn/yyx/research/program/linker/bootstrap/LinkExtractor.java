@@ -45,15 +45,17 @@ public class LinkExtractor implements IApplication {
 			if (IRControlMeta.test) {
 				TestJavaSearch.TestInAll(java_project);
 			} else {
+				// generate and print each local method.
 				IRGeneratorForOneProject irgfop = new IRGeneratorForOneProject(java_project);
 				IRForOneProject one_project = irgfop.GenerateForOneProject();
-				// generate and print each local method.
+				
 				ConnectionOnlyDotGenerator irproj_local_generation = new ConnectionOnlyDotGenerator(DotMeta.ProjectEachMethodDotDir, DotMeta.ProjectEachMethodPicDir, one_project);
 				irproj_local_generation.GenerateDotsAndPrintToPictures();
 				
 				// generate and print all methods connected.
 				IRGeneratorForFullTrace irgft = new IRGeneratorForFullTrace(one_project.GetIRGraphManager());
 				irgft.GenerateFullTraceOnInitialIRGraphs();
+				
 				ConnectionOnlyDotGenerator irproj_global_generation = new ConnectionOnlyDotGenerator(DotMeta.ProjectFullTraceDotDir, DotMeta.ProjectFullTracePicDir, one_project);
 				irproj_global_generation.GenerateDotsAndPrintToPictures();
 			}
