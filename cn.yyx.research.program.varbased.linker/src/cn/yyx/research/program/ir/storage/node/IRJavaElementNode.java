@@ -32,7 +32,11 @@ public class IRJavaElementNode extends IIRNode {
 	
 	@Override
 	public int hashCode() {
-		return ele.hashCode();
+		int result = super.hashCode();
+		if (ele != null) {
+			result = ele.hashCode();
+		}
+		return result;
 	}
 	
 }
