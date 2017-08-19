@@ -12,12 +12,13 @@ public class ConstantUniqueElement extends VirtualDefinedElement {
 	
 	@Override
 	public String getElementName() {
-		return IRElementMeta.ConstantUniqueElement + "#" + represent;
+		return represent;
+		// IRElementMeta.ConstantUniqueElement + "#" + 
 	}
 	
 	@Override
 	public String getHandleIdentifier() {
-		return IRElementMeta.ConstantUniqueElement + "#" + represent;
+		return IRElementMeta.HumanMadeHandler;
 	}
 	
 }

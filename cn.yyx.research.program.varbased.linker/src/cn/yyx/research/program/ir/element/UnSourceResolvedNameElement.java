@@ -10,12 +10,14 @@ public class UnSourceResolvedNameElement extends VirtualDefinedElement {
 	
 	@Override
 	public String getElementName() {
-		return IRElementMeta.UnresolvedNameOrFieldAccessElement + "#" + represent;
+		return represent;
+		// IRElementMeta.UnresolvedNameOrFieldAccessElement + "#" + 
 	}
 	
 	@Override
 	public String getHandleIdentifier() {
-		return IRElementMeta.UnresolvedNameOrFieldAccessElement + "#" + represent;
+		return IRElementMeta.HumanMadeHandler;
+		// IRElementMeta.UnresolvedNameOrFieldAccessElement + "#" + represent
 	}
 	
 }

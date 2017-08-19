@@ -37,12 +37,13 @@ public class UnSourceResolvedMethodReferenceElement extends VirtualDefinedElemen
 	
 	@Override
 	public String getElementName() {
-		return IRElementMeta.UnresolvedLambdaUniqueElement + "#" + represent;
+		return represent;
+		// IRElementMeta.UnresolvedLambdaUniqueElement + "#" + 
 	}
 	
 	@Override
 	public String getHandleIdentifier() {
-		return IRElementMeta.UnresolvedLambdaUniqueElement + "#" + represent;
+		return IRElementMeta.HumanMadeHandler;
 	}
 
 	@Override

@@ -11,4 +11,6 @@ public class IRElementMeta {
 	public static final String UnresolvedTypeElement = "USToV";
 	public static final String UnresolvedNameOrFieldAccessElement = "UNoFAE";
 	
+	public static final String HumanMadeHandler = "_Human_Made_Handler";
+	
 }

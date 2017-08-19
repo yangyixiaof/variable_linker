@@ -34,12 +34,14 @@ public class UnSourceResolvedTypeElement extends VirtualDefinedElement implement
 	
 	@Override
 	public String getElementName() {
-		return IRElementMeta.UnresolvedTypeElement + "#" + represent;
+		return represent;
+		// IRElementMeta.UnresolvedTypeElement + "#" + 
 	}
 	
 	@Override
 	public String getHandleIdentifier() {
-		return IRElementMeta.UnresolvedTypeElement + "#" + represent;
+		return IRElementMeta.HumanMadeHandler;
+		// IRElementMeta.UnresolvedTypeElement + "#" + represent
 	}
 
 	@Override
