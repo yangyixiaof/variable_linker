@@ -68,7 +68,7 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 
 	@Override
 	public boolean preVisit2(ASTNode node) {
-		boolean goon = super.preVisit2(node) ;
+		boolean goon = super.preVisit2(node);
 		if (node instanceof AbstractTypeDeclaration || node instanceof AnonymousClassDeclaration) {
 			IType resolved_type = NodeBinding(node);
 			if (resolved_type != null) {
