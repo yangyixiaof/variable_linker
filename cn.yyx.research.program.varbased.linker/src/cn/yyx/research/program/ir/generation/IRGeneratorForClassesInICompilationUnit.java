@@ -46,8 +46,8 @@ public class IRGeneratorForClassesInICompilationUnit extends ASTVisitor {
 	public boolean preVisit2(ASTNode node) {
 		if (node instanceof AbstractTypeDeclaration) {
 			IType it = ResolveAbstractType(((AbstractTypeDeclaration)node).resolveBinding());
-			// TODO
-			System.out.println("Debug Info: IType:" + it);
+			// testing.
+			// System.out.println("Debug Info: IType:" + it);
 			if (it != null) {
 				IRGraph graph = new IRGraph();
 				graph_manager.AddIRGraph(it, graph);
