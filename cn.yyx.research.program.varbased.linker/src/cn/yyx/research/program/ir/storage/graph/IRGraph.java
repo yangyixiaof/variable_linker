@@ -112,7 +112,7 @@ public class IRGraph {
 			irc.AddConnect(connect);
 		}
 	}
-
+	// TODO ConcurrentModificationException
 	public static void MergeNodesToOne(Set<IRStatementNode> wait_merge_nodes, IIRNode new_node) {
 		Iterator<IRStatementNode> witr = wait_merge_nodes.iterator();
 		while (witr.hasNext()) {
@@ -130,7 +130,7 @@ public class IRGraph {
 			}
 		}
 	}
-
+	// TODO may be ConcurrentModificationException
 	public static void TransferConnectionFromNodeToNode(IIRNode from, IIRNode to) {
 		{
 			Collection<IIRConnection> out_conns = from.GetAllOutConnections();
