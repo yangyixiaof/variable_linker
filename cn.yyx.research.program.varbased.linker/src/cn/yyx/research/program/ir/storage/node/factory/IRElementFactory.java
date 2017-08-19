@@ -38,11 +38,12 @@ public class IRElementFactory {
 		// String content = irje.getElement().toString();
 		// TODO Here needs to be checked.
 		System.out.println("debugging...element_name:" + ije.getElementName() + ";element_handler:" + ije.getHandleIdentifier() + ";element_class:" + ije.getClass());
-		String content = ije.getElementName();
-		IRJavaElementNode ele = pool.get(ije.getElementName());
+		// String content = ije.getElementName();
+		String pool_key = ije.getElementName() + "#" + ije.getHandleIdentifier();
+		IRJavaElementNode ele = pool.get(pool_key);
 		if (ele == null) {
-			ele = new IRJavaElementNode(content, ije);
-			pool.put(content, ele);
+			ele = new IRJavaElementNode(ije); // content, 
+			pool.put(pool_key, ele);
 		}
 		return ele;
 	}

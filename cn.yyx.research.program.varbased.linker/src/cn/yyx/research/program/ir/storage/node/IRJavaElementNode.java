@@ -6,8 +6,12 @@ public class IRJavaElementNode extends IIRNode {
 	
 	private IJavaElement ele = null;
 	
-	public IRJavaElementNode(String content, IJavaElement ele) {
-		super(content);
+	// String content, 
+	public IRJavaElementNode(IJavaElement ele) {
+		super(null);
+		if (ele != null) {
+			this.SetContent(ele.getElementName());
+		}
 		this.ele = ele;
 	}
 	

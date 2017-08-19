@@ -5,7 +5,7 @@ public class IRSourceMethodReturnElementNode extends IRJavaElementNode {
 	private IRSourceMethodStatementNode irsmsn = null;
 	
 	public IRSourceMethodReturnElementNode(IRSourceMethodStatementNode irsmsn) {
-		super(null, null);
+		super(null);
 		this.SetIRSourceMethodStatementNode(irsmsn);
 	}
 

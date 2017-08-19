@@ -7,7 +7,7 @@ public class IRSourceMethodParamElementNode extends IRJavaElementNode {
 	
 	public IRSourceMethodParamElementNode(IRSourceMethodStatementNode irsmsn, int param_index) {
 		// , String content, IJavaElement ele
-		super(null, null);
+		super(null);
 		this.SetIRSourceMethodStatementNode(irsmsn);
 		this.SetParamIndex(param_index);
 	}
