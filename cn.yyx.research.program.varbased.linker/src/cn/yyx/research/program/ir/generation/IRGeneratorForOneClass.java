@@ -60,8 +60,8 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 		if (ije instanceof IMethod) {
 			IMethod im = (IMethod) ije;
 			List<SingleVariableDeclaration> para_list = node.parameters();
-			IRGeneratorHelper.HandleMethodDeclaration(java_project, graph_manager, node.getBody(), ele_factory, stmt_factory, imb, im, it,
-					para_list, super_class_element);
+			IRGeneratorHelper.HandleMethodDeclaration(java_project, graph_manager, node.getBody(), ele_factory,
+					stmt_factory, imb, im, it, para_list, super_class_element);
 		}
 		return false;
 	}
@@ -72,21 +72,25 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 		if (node instanceof AbstractTypeDeclaration || node instanceof AnonymousClassDeclaration) {
 			IType resolved_type = NodeBinding(node);
 			if (resolved_type != null) {
-				boolean type_equals = resolved_type.equals(it);// resolved_type == null ? false : 
+				boolean type_equals = resolved_type.equals(it);// resolved_type == null ? false :
 				IType super_it = null;
 				// boolean has_element = irc.IsHasElement();
 				if (node instanceof TypeDeclaration) {
 					Type super_type = ((TypeDeclaration) node).getSuperclassType();
-					ITypeBinding itb = super_type.resolveBinding();
-					if (itb != null) {
-						IJavaElement super_ije = itb.getJavaElement();
-						if (super_ije != null) {
-							super_it = (IType) super_ije;
+					if (super_type != null) {
+						ITypeBinding itb = super_type.resolveBinding();
+						if (itb != null) {
+							IJavaElement super_ije = itb.getJavaElement();
+							if (super_ije != null) {
+								super_it = (IType) super_ije;
+							}
 						}
 					}
 				}
 				if (type_equals) {// && has_element
-					this.super_class_element = ele_factory.UniversalElement(super_it); // super_it.getElementName(), 
+					if (super_it != null) {
+						this.super_class_element = ele_factory.UniversalElement(super_it); // super_it.getElementName(),
+					}
 					// IRGeneratorForOneProject.GetInstance().FetchITypeIR((it)).SetFieldLevel((IRForOneField)irc);
 				} else {
 					IRGraph graph = new IRGraph();
@@ -96,9 +100,9 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 					node.accept(irgfoc);
 				}
 			}
-//			else {
-//				return super.preVisit2(node) && false;
-//			}
+			// else {
+			// return super.preVisit2(node) && false;
+			// }
 		}
 		return false;
 	}
