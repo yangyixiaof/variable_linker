@@ -2,6 +2,8 @@ package cn.yyx.research.program.ir.storage.node;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import cn.yyx.research.program.ir.storage.connection.IIRConnection;
@@ -29,7 +31,8 @@ public class IIRNode implements IVNode {
 	}
 	
 	public Collection<IIRConnection> GetAllInConnections() {
-		return ins.values();
+		List<IIRConnection> ir_conn_list = new LinkedList<IIRConnection>(ins.values());
+		return ir_conn_list;
 	}
 	
 	public IIRConnection GetInConnection(IIRNode source) {
@@ -55,7 +58,8 @@ public class IIRNode implements IVNode {
 	}
 	
 	public Collection<IIRConnection> GetAllOutConnections() {
-		return outs.values();
+		List<IIRConnection> ir_conn_list = new LinkedList<IIRConnection>(outs.values());
+		return ir_conn_list;
 	}
 	
 	public IIRConnection GetOutConnection(IIRNode target) {
