@@ -88,7 +88,11 @@ public class IRGraph {
 	}
 	
 	public void GoForwardAStep(IRStatementNode iirn) {
-		RegistConnection(active, iirn, new Connect());
+		if (active == null) {
+			root = iirn;
+		} else {
+			RegistConnection(active, iirn, new Connect());
+		}
 		active = iirn;
 	}
 
