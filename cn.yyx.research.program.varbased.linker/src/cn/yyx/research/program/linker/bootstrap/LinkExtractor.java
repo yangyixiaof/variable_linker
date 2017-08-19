@@ -1,4 +1,4 @@
-package cn.yyx.research.program.snippet.bootstrap;
+package cn.yyx.research.program.linker.bootstrap;
 
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
