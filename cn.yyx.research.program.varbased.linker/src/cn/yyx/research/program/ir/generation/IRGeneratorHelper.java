@@ -4,11 +4,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
@@ -24,7 +26,7 @@ public class IRGeneratorHelper {
 
 	public static void HandleMethodDeclaration(IJavaProject java_project, IRGraphManager graph_manager, ASTNode node,
 			IRElementFactory ele_factory, IRStatementFactory stmt_factory, IMethodBinding imb, IMethod im, IType it,
-			List<SingleVariableDeclaration> para_list, IRJavaElementNode super_class_element) {
+			List<SingleVariableDeclaration> para_list, IRJavaElementNode super_class_element, ICompilationUnit type_declare_resource, CompilationUnit type_declare) {
 		IRJavaElementNode return_element_node = ele_factory
 				.UniversalElement(new VirtualMethodReturnElement(im.getKey())); // im.getKey(),
 		LinkedList<IRJavaElementNode> params = new LinkedList<IRJavaElementNode>();
@@ -43,7 +45,7 @@ public class IRGeneratorHelper {
 		}
 		IRGraphForMethod irgfm = new IRGraphForMethod(params, return_element_node);
 		IRGeneratorForStatements irgfs = new IRGeneratorForStatements(java_project, irgfm, graph_manager, ele_factory,
-				stmt_factory, super_class_element, it, im);
+				stmt_factory, super_class_element, it, im, type_declare_resource, type_declare);
 		graph_manager.AddIRGraph(im, irgfm);
 		graph_manager.AddMemberRelation(it, im);
 		node.accept(irgfs);

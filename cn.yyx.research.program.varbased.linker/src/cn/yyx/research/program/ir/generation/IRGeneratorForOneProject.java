@@ -38,7 +38,7 @@ public class IRGeneratorForOneProject {
 			for (ICompilationUnit icu : units) {
 				CompilationUnit cu = JDTParser.CreateJDTParser(java_project).ParseICompilationUnit(icu);
 				IRGeneratorForClassesInICompilationUnit irgfcicu = new IRGeneratorForClassesInICompilationUnit(
-						java_project, graph_manager, ele_factory, stmt_factory);
+						java_project, graph_manager, ele_factory, stmt_factory, icu, cu);
 				cu.accept(irgfcicu);
 			}
 		}

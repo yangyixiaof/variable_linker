@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
@@ -18,6 +19,7 @@ import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AssertStatement;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.BreakStatement;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ContinueStatement;
 import org.eclipse.jdt.core.dom.DoStatement;
 import org.eclipse.jdt.core.dom.EmptyStatement;
@@ -42,8 +44,8 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.jface.text.Document;
 
+import cn.yyx.research.program.eclipse.jdtutil.ASTRewriteHelper;
 import cn.yyx.research.program.ir.ast.ASTSearch;
 import cn.yyx.research.program.ir.element.VirtualMethodReturnElement;
 import cn.yyx.research.program.ir.generation.structure.ASTNodeHandledInfo;
@@ -75,9 +77,11 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	protected List<ASTNode> forbid_visit = new LinkedList<ASTNode>();
 	protected IType it = null;
 	protected IMethod im = null;
+	protected ICompilationUnit type_declare_resource = null;
+	protected CompilationUnit type_declare = null;
 	
 	public IRGeneratorForStatements(IJavaProject java_project, IRGraph graph, IRGraphManager graph_manager, IRElementFactory ele_factory, IRStatementFactory stmt_factory,
-			IRJavaElementNode super_class_element, IType it, IMethod im) {
+			IRJavaElementNode super_class_element, IType it, IMethod im, ICompilationUnit type_declare_resource, CompilationUnit type_declare) {
 		this.java_project = java_project;
 		this.graph = graph;
 		this.graph_manager = graph_manager;
@@ -86,6 +90,8 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		this.super_class_element = super_class_element;
 		this.it = it;
 		this.im = im;
+		this.type_declare_resource = type_declare_resource;
+		this.type_declare = type_declare;
 		// this.graph_manager.AddIRGraph(graph);
 	}
 
@@ -113,14 +119,25 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	}
 
 	protected ASTNodeHandledInfo PreHandleOneASTNode(ASTNode node, int element_index) {
-		Document doc = new Document(node.toString());
+		// Document doc = new Document(node.toString());
 		ASTRewrite rewrite = ASTRewrite.create(node.getAST());
 		IRStatementNode irsn = stmt_factory.CreateIRStatementNode(element_index);
-		IRGeneratorForOneExpression irfoe = new IRGeneratorForOneExpression(java_project, graph_manager, node, rewrite, ele_factory, stmt_factory, graph, irsn, super_class_element, it, im);
+		IRGeneratorForOneExpression irfoe = new IRGeneratorForOneExpression(java_project, graph_manager, node, rewrite, ele_factory, stmt_factory, graph, irsn, super_class_element, it, im, type_declare_resource, type_declare);
 		node.accept(irfoe);
 		forbid_visit.add(node);
-		// TextEdit edits = ;
-		rewrite.rewriteAST(doc, null);
+		
+		// TODO debugging.
+		System.err.println("rewrite_error_node:" + node.toString() + ";rewrite:" + rewrite.toString());
+		String doc_new = ASTRewriteHelper.GetRewriteContent(node, rewrite, type_declare_resource, type_declare);
+//		try {
+//			TextEdit edits = rewrite.rewriteAST();
+//			edits.apply(doc);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			System.exit(1);
+//		}
+		// rewrite.rewriteAST(doc, null);
+		irsn.SetContent(doc_new);
 		return new ASTNodeHandledInfo(irsn, false);// doc.toString()
 	}
 

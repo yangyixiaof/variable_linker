@@ -2,6 +2,7 @@ package cn.yyx.research.program.ir.generation;
 
 import java.util.List;
 
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
@@ -9,6 +10,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
@@ -29,8 +31,8 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 	private IType it = null;
 
 	public IRGeneratorForOneClass(IType it, IJavaProject java_project, IRGraph graph, IRGraphManager graph_manager,
-			IRElementFactory ele_factory, IRStatementFactory stmt_factory) {
-		super(java_project, graph, graph_manager, ele_factory, stmt_factory, null, it, null);
+			IRElementFactory ele_factory, IRStatementFactory stmt_factory, ICompilationUnit type_declare_resource, CompilationUnit type_declare) {
+		super(java_project, graph, graph_manager, ele_factory, stmt_factory, null, it, null, type_declare_resource, type_declare);
 		this.it = it;
 	}
 
@@ -61,7 +63,7 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 			IMethod im = (IMethod) ije;
 			List<SingleVariableDeclaration> para_list = node.parameters();
 			IRGeneratorHelper.HandleMethodDeclaration(java_project, graph_manager, node.getBody(), ele_factory,
-					stmt_factory, imb, im, it, para_list, super_class_element);
+					stmt_factory, imb, im, it, para_list, super_class_element, type_declare_resource, type_declare);
 		}
 		return false;
 	}
@@ -97,7 +99,7 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 					IRGraph graph = new IRGraph();
 					graph_manager.AddIRGraph(resolved_type, graph);
 					IRGeneratorForOneClass irgfoc = new IRGeneratorForOneClass(resolved_type, java_project, graph,
-							graph_manager, ele_factory, stmt_factory);
+							graph_manager, ele_factory, stmt_factory, type_declare_resource, type_declare);
 					node.accept(irgfoc);
 					goon = goon && false;
 				}

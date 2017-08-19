@@ -7,4 +7,5 @@ public class TodoList {
 	// TODO add connection from statements to souce_resolved_type/souce_resolved_method to help select.
 	// Ignored. how to copy return nodes and connect separate node to its input.
 	
+	// TODO Bug: variables are taken as names. This needs to be fixed.
 }

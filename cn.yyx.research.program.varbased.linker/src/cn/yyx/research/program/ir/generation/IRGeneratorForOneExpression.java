@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
@@ -21,6 +22,7 @@ import org.eclipse.jdt.core.dom.ArrayType;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CharacterLiteral;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ConstructorInvocation;
 import org.eclipse.jdt.core.dom.CreationReference;
 import org.eclipse.jdt.core.dom.Expression;
@@ -54,8 +56,8 @@ import org.eclipse.jdt.core.dom.TypeMethodReference;
 import org.eclipse.jdt.core.dom.UnionType;
 import org.eclipse.jdt.core.dom.WildcardType;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
-import org.eclipse.jface.text.Document;
 
+import cn.yyx.research.program.eclipse.jdtutil.ASTRewriteHelper;
 import cn.yyx.research.program.eclipse.searchutil.EclipseSearchForIMember;
 import cn.yyx.research.program.ir.bind.BindingManager;
 import cn.yyx.research.program.ir.element.ConstantUniqueElement;
@@ -90,10 +92,12 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	protected IRJavaElementNode super_class_element = null;
 	protected IType it = null;
 	protected IMethod im = null;
+	protected ICompilationUnit type_declare_resource = null;
+	protected CompilationUnit type_declare = null;
 
 	public IRGeneratorForOneExpression(IJavaProject java_project, IRGraphManager graph_manager, ASTNode node,
 			ASTRewrite rewrite, IRElementFactory ele_factory, IRStatementFactory stmt_factory, IRGraph graph, IRStatementNode iir_stmt_node,
-			IRJavaElementNode super_class_element, IType it, IMethod im) {
+			IRJavaElementNode super_class_element, IType it, IMethod im, ICompilationUnit type_declare_resource, CompilationUnit type_declare) {
 		this.java_project = java_project;
 		this.graph_manager = graph_manager;
 		this.node = node;
@@ -106,6 +110,8 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		this.super_class_element = super_class_element;
 		this.it = it;
 		this.im = im;
+		this.type_declare_resource = type_declare_resource;
+		this.type_declare = type_declare;
 	}
 
 	@Override
@@ -167,7 +173,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 				HandleITypeElement(it, node); // it.getElementName(), 
 				handled = true;
 				IRGeneratorForOneClass irgfoc = new IRGeneratorForOneClass(it, java_project, graph, graph_manager,
-						ele_factory, stmt_factory);
+						ele_factory, stmt_factory, type_declare_resource, type_declare);
 				node.accept(irgfoc);
 			}
 		}
@@ -192,7 +198,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 				// take it as a method.
 				List<SingleVariableDeclaration> para_list = node.parameters();
 				IRGeneratorHelper.HandleMethodDeclaration(java_project, graph_manager, node.getBody(), ele_factory, stmt_factory, imb, im,
-						it, para_list, super_class_element);
+						it, para_list, super_class_element, type_declare_resource, type_declare);
 				// IRGeneratorForStatements irgfocb = new IRGeneratorForStatements(java_project,
 				// imb, graph_manager, pool, super_class_element);
 				// node.getBody().accept(irgfocb);
@@ -475,14 +481,22 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 					while (aitr.hasNext()) {
 						index++;
 						Expression expr = aitr.next();
-						Document doc = new Document(expr.toString());
+						// Document doc = new Document(expr.toString());
 						ASTRewrite expr_rewrite = ASTRewrite.create(expr.getAST());
 						IRStatementNode expr_iirn = stmt_factory.CreateIRStatementNode(1);
 						IRGeneratorForOneExpression ir_gfoe = new IRGeneratorForOneExpression(java_project,
-								graph_manager, expr, expr_rewrite, ele_factory, stmt_factory, graph, expr_iirn, super_class_element, it, im);
+								graph_manager, expr, expr_rewrite, ele_factory, stmt_factory, graph, expr_iirn, super_class_element, it, im, type_declare_resource, type_declare);
 						expr.accept(ir_gfoe);
-						expr_rewrite.rewriteAST(doc, null);
-						expr_iirn.SetContent("V=" + doc.toString() + ";");
+						String doc_new = ASTRewriteHelper.GetRewriteContent(expr, expr_rewrite, type_declare_resource, type_declare);
+//						try {
+//							TextEdit edits = expr_rewrite.rewriteAST();
+//							edits.apply(doc);
+//						} catch (Exception e) {
+//							e.printStackTrace();
+//							System.exit(1);
+//						}
+						// expr_rewrite.rewriteAST(doc, null);
+						expr_iirn.SetContent("V=" + doc_new + ";"); // doc.get()
 						IRSourceMethodParamElementNode irsmpen = ele_factory.CreateIRSourceMethodParamElementNode(irsmsn, index);
 						//		new IRSourceMethodParamElementNode(irsmsn, index);
 						graph.AddSourceMethodParam(irsmpen);
