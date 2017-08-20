@@ -132,7 +132,7 @@ public class ConnectionOnlyDotGenerator implements DotGenerator {
 
 	public void DrawClusters() {
 		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(dot_file)));
+			BufferedWriter bw = new BufferedWriter(new FileWriter(new File(dot_generation_dir + "/" + dot_file)));
 			bw.write("digraph {");
 			bw.newLine();
 			bw.write("label=\"" + "whole_graph" + "\";");
