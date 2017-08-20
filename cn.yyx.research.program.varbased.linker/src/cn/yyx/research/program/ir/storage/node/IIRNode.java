@@ -86,4 +86,9 @@ public class IIRNode implements IVNode {
 		return content;
 	}
 	
+	@Override
+	public String toString() {
+		return "Content:" + ToVisual() + "@" + hashCode();
+	}
+	
 }

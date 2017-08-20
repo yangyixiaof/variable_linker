@@ -39,4 +39,9 @@ public class IRJavaElementNode extends IIRNode {
 		return result;
 	}
 	
+	@Override
+	public String toString() {
+		return super.toString() + ";Handler:" + ele.getHandleIdentifier();
+	}
+	
 }

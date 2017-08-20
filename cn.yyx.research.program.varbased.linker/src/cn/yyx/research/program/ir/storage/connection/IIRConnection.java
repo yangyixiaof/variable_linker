@@ -59,4 +59,9 @@ public class IIRConnection {
 		return false;
 	}
 	
+	@Override
+	public String toString() {
+		return "source:" + source + ";target:" + target + ";connects:" + conns;
+	}
+	
 }

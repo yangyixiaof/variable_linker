@@ -17,4 +17,9 @@ public class IRStatementNode extends IIRNode {
 		return ++variable_index;
 	}
 	
+	@Override
+	public String toString() {
+		return super.toString() + ";VIndex:" + variable_index;
+	}
+	
 }
