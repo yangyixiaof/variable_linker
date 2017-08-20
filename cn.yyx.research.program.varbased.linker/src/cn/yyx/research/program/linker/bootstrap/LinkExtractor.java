@@ -1,5 +1,8 @@
 package cn.yyx.research.program.linker.bootstrap;
 
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jdt.core.IJavaProject;
@@ -37,8 +40,20 @@ public class LinkExtractor implements IApplication {
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		// waiting to initialize the workbench.
-		SystemUtil.Delay(5000);
+		SystemUtil.Delay(1000);
 		EnvironmentUtil.Clear();
+		IWorkspace work_space = ResourcesPlugin.getWorkspace();
+		if (work_space != null) {
+			IWorkspaceRoot root = work_space.getRoot();
+			if (root != null) {
+				SystemUtil.Delay(2000);
+			} else {
+				SystemUtil.Delay(2000);
+			}
+		} else {
+			SystemUtil.Delay(2000);
+		}
+		// load and execute the project.
 		IJavaProject java_project = LoadProjectAccordingToArgs((String[])context.getArguments().get(IApplicationContext.APPLICATION_ARGS));
 		try {
 			// DebugLogger.Log("Start is invoked!");
@@ -48,7 +63,7 @@ public class LinkExtractor implements IApplication {
 				TestJavaSearch.TestInAll(java_project);
 			} else {
 				// generate and print each local method.
-				SystemUtil.Delay(5000);
+				SystemUtil.Delay(1000);
 				IRGeneratorForOneProject irgfop = new IRGeneratorForOneProject(java_project);
 				IRForOneProject one_project = irgfop.GenerateForOneProject();
 				
