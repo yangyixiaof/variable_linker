@@ -41,7 +41,6 @@ public class LinkExtractor implements IApplication {
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		// waiting to initialize the workbench.
-		SystemUtil.Delay(1000);
 		EnvironmentUtil.Clear();
 		Display display = PlatformUI.createDisplay();
 		new Thread(new Runnable() {
@@ -49,7 +48,7 @@ public class LinkExtractor implements IApplication {
 			public void run() {
 				while (!PlatformUI.isWorkbenchRunning()) {
 					DebugLogger.Log("Waiting the creation of the workbench.");
-					SystemUtil.Delay(2000);
+					SystemUtil.Delay(1000);
 				}
 				// load and execute the project.
 				IJavaProject java_project = null;
@@ -91,7 +90,7 @@ public class LinkExtractor implements IApplication {
 					}
 				}
 				SystemUtil.Flush();
-				SystemUtil.Delay(2000);
+				SystemUtil.Delay(1000);
 				display.syncExec(new Runnable() {
 					@Override
 					public void run() {
