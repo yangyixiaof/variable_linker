@@ -12,7 +12,7 @@
       </application>
    </extension>
    <extension
-         id="linker"
+         id="linker_perspective"
          point="org.eclipse.ui.perspectives">
       <perspective
             class="cn.yyx.research.program.linker.bootstrap.UI.ApplicationWorkbenchPerspective"

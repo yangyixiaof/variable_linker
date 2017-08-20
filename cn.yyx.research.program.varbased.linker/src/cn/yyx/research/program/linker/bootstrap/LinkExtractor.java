@@ -1,8 +1,10 @@
 package cn.yyx.research.program.linker.bootstrap;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
 import cn.yyx.research.logger.DebugLogger;
@@ -41,56 +43,72 @@ public class LinkExtractor implements IApplication {
 		// waiting to initialize the workbench.
 		SystemUtil.Delay(1000);
 		EnvironmentUtil.Clear();
-		// IWorkbench workbench = PlatformUI.getWorkbench();
-		PlatformUI.createAndRunWorkbench(PlatformUI.createDisplay(), new ApplicationWorkbenchAdvisor());
-		while (!PlatformUI.isWorkbenchRunning()) {
-			System.out.println("waiting the creation of the workbench.");
-			SystemUtil.Delay(2000);
-		}
-		// IWorkspace work_space = ResourcesPlugin.getWorkspace();
-		// if (work_space != null) {
-		// IWorkspaceRoot root = work_space.getRoot();
-		// if (root != null) {
-		// SystemUtil.Delay(2000);
-		// } else {
-		// SystemUtil.Delay(2000);
-		// }
-		// } else {
-		// SystemUtil.Delay(2000);
-		// }
-		// load and execute the project.
-		IJavaProject java_project = LoadProjectAccordingToArgs(
-				(String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS));
-		try {
-			// DebugLogger.Log("Start is invoked!");
-			// SystemUtil.Delay(1000);
-			// testing.
-			if (IRControlMeta.test) {
-				TestJavaSearch.TestInAll(java_project);
-			} else {
-				// generate and print each local method.
-				SystemUtil.Delay(1000);
-				IRGeneratorForOneProject irgfop = new IRGeneratorForOneProject(java_project);
-				IRForOneProject one_project = irgfop.GenerateForOneProject();
+		Display display = PlatformUI.createDisplay();
+		display.asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				while (!PlatformUI.isWorkbenchRunning()) {
+					DebugLogger.Log("Waiting the creation of the workbench.");
+					SystemUtil.Delay(2000);
+				}
+				DebugLogger.Log("Workbench created!");
+				// IWorkspace work_space = ResourcesPlugin.getWorkspace();
+				// if (work_space != null) {
+				// IWorkspaceRoot root = work_space.getRoot();
+				// if (root != null) {
+				// SystemUtil.Delay(2000);
+				// } else {
+				// SystemUtil.Delay(2000);
+				// }
+				// } else {
+				// SystemUtil.Delay(2000);
+				// }
+				// load and execute the project.
+				IJavaProject java_project = null;
+				try {
+					java_project = LoadProjectAccordingToArgs(
+							(String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS));
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}
+				try {
+					// DebugLogger.Log("Start is invoked!");
+					// SystemUtil.Delay(1000);
+					// testing.
+					if (IRControlMeta.test) {
+						TestJavaSearch.TestInAll(java_project);
+					} else {
+						// generate and print each local method.
+						SystemUtil.Delay(1000);
+						IRGeneratorForOneProject irgfop = new IRGeneratorForOneProject(java_project);
+						IRForOneProject one_project = irgfop.GenerateForOneProject();
+						ConnectionOnlyDotGenerator irproj_local_generation = new ConnectionOnlyDotGenerator(
+								DotMeta.ProjectEachMethodDotDir, DotMeta.ProjectEachMethodPicDir, one_project);
+						irproj_local_generation.GenerateDotsAndPrintToPictures();
 
-				ConnectionOnlyDotGenerator irproj_local_generation = new ConnectionOnlyDotGenerator(
-						DotMeta.ProjectEachMethodDotDir, DotMeta.ProjectEachMethodPicDir, one_project);
-				irproj_local_generation.GenerateDotsAndPrintToPictures();
-
-				// generate and print all methods connected.
-				IRGeneratorForFullTrace irgft = new IRGeneratorForFullTrace(one_project.GetIRGraphManager());
-				irgft.GenerateFullTraceOnInitialIRGraphs();
-
-				ConnectionOnlyDotGenerator irproj_global_generation = new ConnectionOnlyDotGenerator(
-						DotMeta.ProjectFullTraceDotDir, DotMeta.ProjectFullTracePicDir, one_project);
-				irproj_global_generation.GenerateDotsAndPrintToPictures();
+						// generate and print all methods connected.
+						IRGeneratorForFullTrace irgft = new IRGeneratorForFullTrace(
+								one_project.GetIRGraphManager());
+						irgft.GenerateFullTraceOnInitialIRGraphs();
+						ConnectionOnlyDotGenerator irproj_global_generation = new ConnectionOnlyDotGenerator(
+								DotMeta.ProjectFullTraceDotDir, DotMeta.ProjectFullTracePicDir, one_project);
+						irproj_global_generation.GenerateDotsAndPrintToPictures();
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					try {
+						AnalysisEnvironment.DeleteAllAnalysisEnvironment();
+					} catch (CoreException e1) {
+						e1.printStackTrace();
+					}
+				}
+				SystemUtil.Flush();
+				SystemUtil.Delay(2000);
+				PlatformUI.getWorkbench().close();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			AnalysisEnvironment.DeleteAllAnalysisEnvironment();
-		}
-		SystemUtil.Flush();
-		SystemUtil.Delay(2000);
+		});
+		PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
+		display.dispose();
 		return IApplication.EXIT_OK;
 	}
 
