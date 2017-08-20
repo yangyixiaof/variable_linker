@@ -12,6 +12,11 @@ public class VirtualMethodReturnElement extends VirtualDefinedElement implements
 	public VirtualMethodReturnElement(String represent) {
 		super(represent);
 	}
+	
+	@Override
+	public String getElementName() {
+		return "%MadeMReturn:" + represent;
+	}
 
 	@Override
 	public String getSource() throws JavaModelException {
