@@ -44,25 +44,13 @@ public class LinkExtractor implements IApplication {
 		SystemUtil.Delay(1000);
 		EnvironmentUtil.Clear();
 		Display display = PlatformUI.createDisplay();
-		display.asyncExec(new Runnable() {
+		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				while (!PlatformUI.isWorkbenchRunning()) {
 					DebugLogger.Log("Waiting the creation of the workbench.");
 					SystemUtil.Delay(2000);
 				}
-				DebugLogger.Log("Workbench created!");
-				// IWorkspace work_space = ResourcesPlugin.getWorkspace();
-				// if (work_space != null) {
-				// IWorkspaceRoot root = work_space.getRoot();
-				// if (root != null) {
-				// SystemUtil.Delay(2000);
-				// } else {
-				// SystemUtil.Delay(2000);
-				// }
-				// } else {
-				// SystemUtil.Delay(2000);
-				// }
 				// load and execute the project.
 				IJavaProject java_project = null;
 				try {
@@ -104,9 +92,15 @@ public class LinkExtractor implements IApplication {
 				}
 				SystemUtil.Flush();
 				SystemUtil.Delay(2000);
-				PlatformUI.getWorkbench().close();
+				display.syncExec(new Runnable() {
+					@Override
+					public void run() {
+						PlatformUI.getWorkbench().close();
+					}
+				});
 			}
-		});
+		}).start();
+		DebugLogger.Log("Workbench created!");
 		PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
 		display.dispose();
 		return IApplication.EXIT_OK;
