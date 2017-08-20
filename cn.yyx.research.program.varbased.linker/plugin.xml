@@ -11,4 +11,13 @@
       	<run class="cn.yyx.research.program.linker.bootstrap.LinkExtractor"/>
       </application>
    </extension>
+   <extension
+         id="linker"
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="cn.yyx.research.program.linker.bootstrap.UI.ApplicationWorkbenchPerspective"
+            id="cn.yyx.research.program.varbased.linker.app_perspective"
+            name="linker_perspective">
+      </perspective>
+   </extension>
 </plugin>

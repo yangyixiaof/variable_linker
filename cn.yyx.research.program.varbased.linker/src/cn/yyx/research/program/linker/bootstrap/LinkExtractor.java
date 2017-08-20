@@ -1,11 +1,9 @@
 package cn.yyx.research.program.linker.bootstrap;
 
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.ui.PlatformUI;
 
 import cn.yyx.research.logger.DebugLogger;
 import cn.yyx.research.program.analysis.fulltrace.generation.IRGeneratorForFullTrace;
@@ -17,47 +15,55 @@ import cn.yyx.research.program.ir.generation.structure.IRForOneProject;
 import cn.yyx.research.program.ir.meta.IRControlMeta;
 import cn.yyx.research.program.ir.visual.dot.generation.ConnectionOnlyDotGenerator;
 import cn.yyx.research.program.ir.visual.meta.DotMeta;
+import cn.yyx.research.program.linker.bootstrap.UI.ApplicationWorkbenchAdvisor;
 import cn.yyx.research.program.systemutil.EnvironmentUtil;
 import cn.yyx.research.program.systemutil.SystemUtil;
 import cn.yyx.research.test.TestJavaSearch;
 
 public class LinkExtractor implements IApplication {
-	
-	public static IJavaProject LoadProjectAccordingToArgs(String[] args) throws Exception 
-	{
+
+	public static IJavaProject LoadProjectAccordingToArgs(String[] args) throws Exception {
 		if (args.length != 2) {
 			throw new WrongArgumentException();
 		}
 		DebugLogger.Log("Just for test, this is the args:", args);
-		
+
 		// load projects
-		ProjectInfo epi = new ProjectInfo(args[0], args[1]);//args[0]:no_use args[1]:D:/eclipse-workspace-pool/eclipse-rcp-neon-codecompletion/cn.yyx.research.program.snippet.extractor
+		ProjectInfo epi = new ProjectInfo(args[0], args[1]);// args[0]:no_use
+															// args[1]:D:/eclipse-workspace-pool/eclipse-rcp-neon-codecompletion/cn.yyx.research.program.snippet.extractor
 		IJavaProject jproj = AnalysisEnvironment.CreateAnalysisEnvironment(epi);
-		
+
 		return jproj;
 	}
-	
+
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		// waiting to initialize the workbench.
 		SystemUtil.Delay(1000);
 		EnvironmentUtil.Clear();
-		IWorkspace work_space = ResourcesPlugin.getWorkspace();
-		if (work_space != null) {
-			IWorkspaceRoot root = work_space.getRoot();
-			if (root != null) {
-				SystemUtil.Delay(2000);
-			} else {
-				SystemUtil.Delay(2000);
-			}
-		} else {
+		// IWorkbench workbench = PlatformUI.getWorkbench();
+		PlatformUI.createAndRunWorkbench(PlatformUI.createDisplay(), new ApplicationWorkbenchAdvisor());
+		while (!PlatformUI.isWorkbenchRunning()) {
+			System.out.println("waiting the creation of the workbench.");
 			SystemUtil.Delay(2000);
 		}
+		// IWorkspace work_space = ResourcesPlugin.getWorkspace();
+		// if (work_space != null) {
+		// IWorkspaceRoot root = work_space.getRoot();
+		// if (root != null) {
+		// SystemUtil.Delay(2000);
+		// } else {
+		// SystemUtil.Delay(2000);
+		// }
+		// } else {
+		// SystemUtil.Delay(2000);
+		// }
 		// load and execute the project.
-		IJavaProject java_project = LoadProjectAccordingToArgs((String[])context.getArguments().get(IApplicationContext.APPLICATION_ARGS));
+		IJavaProject java_project = LoadProjectAccordingToArgs(
+				(String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS));
 		try {
 			// DebugLogger.Log("Start is invoked!");
-			// SystemUtil.Delay(1000);	
+			// SystemUtil.Delay(1000);
 			// testing.
 			if (IRControlMeta.test) {
 				TestJavaSearch.TestInAll(java_project);
@@ -66,15 +72,17 @@ public class LinkExtractor implements IApplication {
 				SystemUtil.Delay(1000);
 				IRGeneratorForOneProject irgfop = new IRGeneratorForOneProject(java_project);
 				IRForOneProject one_project = irgfop.GenerateForOneProject();
-				
-				ConnectionOnlyDotGenerator irproj_local_generation = new ConnectionOnlyDotGenerator(DotMeta.ProjectEachMethodDotDir, DotMeta.ProjectEachMethodPicDir, one_project);
+
+				ConnectionOnlyDotGenerator irproj_local_generation = new ConnectionOnlyDotGenerator(
+						DotMeta.ProjectEachMethodDotDir, DotMeta.ProjectEachMethodPicDir, one_project);
 				irproj_local_generation.GenerateDotsAndPrintToPictures();
-				
+
 				// generate and print all methods connected.
 				IRGeneratorForFullTrace irgft = new IRGeneratorForFullTrace(one_project.GetIRGraphManager());
 				irgft.GenerateFullTraceOnInitialIRGraphs();
-				
-				ConnectionOnlyDotGenerator irproj_global_generation = new ConnectionOnlyDotGenerator(DotMeta.ProjectFullTraceDotDir, DotMeta.ProjectFullTracePicDir, one_project);
+
+				ConnectionOnlyDotGenerator irproj_global_generation = new ConnectionOnlyDotGenerator(
+						DotMeta.ProjectFullTraceDotDir, DotMeta.ProjectFullTracePicDir, one_project);
 				irproj_global_generation.GenerateDotsAndPrintToPictures();
 			}
 		} catch (Exception e) {
@@ -85,15 +93,15 @@ public class LinkExtractor implements IApplication {
 		SystemUtil.Delay(2000);
 		return IApplication.EXIT_OK;
 	}
-	
+
 	@Override
 	public void stop() {
-//		DebugLogger.Log("Force Stop is invoked!");
-//		try {
-//			AnalysisEnvironment.DeleteAllAnalysisEnvironment();
-//		} catch (CoreException e) {
-//			e.printStackTrace();
-//		}
+		// DebugLogger.Log("Force Stop is invoked!");
+		// try {
+		// AnalysisEnvironment.DeleteAllAnalysisEnvironment();
+		// } catch (CoreException e) {
+		// e.printStackTrace();
+		// }
 	}
-	
+
 }
