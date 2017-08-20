@@ -1,4 +1,4 @@
-package cn.yyx.research.program.ir.visual;
+package cn.yyx.research.program.ir.visual.test;
 
 import java.io.File;
 import java.lang.ProcessBuilder.Redirect;
