@@ -41,6 +41,9 @@ public class IRJavaElementNode extends IIRNode {
 	
 	@Override
 	public String toString() {
+		if (ele == null) {
+			return "Null&Empty";
+		}
 		return super.toString() + ";Handler:" + ele.getHandleIdentifier();
 	}
 	

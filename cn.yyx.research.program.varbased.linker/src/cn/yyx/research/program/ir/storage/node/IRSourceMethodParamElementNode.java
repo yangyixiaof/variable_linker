@@ -28,4 +28,9 @@ public class IRSourceMethodParamElementNode extends IRJavaElementNode {
 		this.param_index = param_index;
 	}
 	
+	@Override
+	public String toString() {
+		return "SMParamNode:" + super.toString() + ";ParamIndex:" + param_index + ";SM:" + irsmsn.toString();
+	}
+	
 }
