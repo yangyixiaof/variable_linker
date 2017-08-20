@@ -8,4 +8,5 @@ public class TodoList {
 	// Ignored. how to copy return nodes and connect separate node to its input.
 	
 	// TODO Bug: variables are taken as names. This needs to be fixed.
+	// TODO Bug: translated invalid forms such as "V;" are not eliminated.
 }
