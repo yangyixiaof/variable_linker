@@ -26,6 +26,7 @@ import cn.yyx.research.program.ir.storage.node.factory.IRElementFactory;
 import cn.yyx.research.program.ir.storage.node.factory.IRStatementFactory;
 import cn.yyx.research.program.ir.visual.dot.DotGenerator;
 import cn.yyx.research.program.ir.visual.node.IVNode;
+import cn.yyx.research.program.ir.visual.picture.generation.DotView;
 
 public class ConnectionOnlyDotGenerator implements DotGenerator {
 
@@ -58,6 +59,8 @@ public class ConnectionOnlyDotGenerator implements DotGenerator {
 		IRStatementFactory stmt_pool = one_project.GetIRStatementPool();
 		Collection<IRStatementNode> stmts = stmt_pool.GetAllIRStatementNodes();
 		HandleOutConnectionsFromIIRNodes(stmts);
+		DrawClusters();
+		DotView.HandleAllDotsInDirectory(dot_generation_dir, dot_pic_dir);
 	}
 
 	public void HandleOutConnectionsFromIIRNodes(Collection<? extends IIRNode> nodes) {
