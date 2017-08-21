@@ -228,10 +228,10 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		if (BindingManager.SourceResolvedBinding(ib)) {
 			IJavaElement ije = ib.getJavaElement();
 			// TODO
-			HandleCommonIJavaElement(ije, node, "N"); // ije.getElementName(), 
+			HandleCommonIJavaElementByTypeSpecifically(ije, node, "N");
 		} else {
 			String content = node.toString();
-			HandleCommonIJavaElement(new UnSourceResolvedNameElement(content), node, "N"); // content, 
+			HandleCommonIJavaElementByTypeSpecifically(new UnSourceResolvedNameElement(content), node, "N"); // content, 
 		}
 	}
 
@@ -240,7 +240,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		IVariableBinding ib = node.resolveFieldBinding();
 		if (BindingManager.SourceResolvedBinding(ib)) {
 			IJavaElement jele = ib.getJavaElement();
-			HandleCommonIJavaElement(jele, node, "V"); // jele.getElementName(), 
+			HandleIFieldElement((IField)jele, node); // jele.getElementName(), , "V"
 			return false;
 		}
 		// else {
@@ -256,7 +256,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		IVariableBinding ib = node.resolveFieldBinding();
 		if (BindingManager.SourceResolvedBinding(ib)) {
 			IJavaElement jele = ib.getJavaElement();
-			HandleCommonIJavaElement(jele, node, "V"); // jele.getElementName(), 
+			HandleIFieldElement((IField)jele, node); // jele.getElementName(), , "V"
 			return false;
 		} else {
 			// String content = node.toString();
