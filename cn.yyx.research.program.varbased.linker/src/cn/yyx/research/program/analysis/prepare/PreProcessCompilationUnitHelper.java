@@ -12,15 +12,9 @@ import cn.yyx.research.program.eclipse.jdtutil.JDTParser;
 
 public class PreProcessCompilationUnitHelper {
 	
-	public static TextEdit EntirePreProcessCompilationUnit(CompilationUnit cu, JDTParser parser)
-	{
-		IDocument doc = new Document(cu.toString());
-		cu.recordModifications();
-		final ASTRewrite rewrite = ASTRewrite.create(cu.getAST());
-		cu.accept(new ParameterizedTypeEliminator(rewrite));
-		cu.accept(new AssignmentTransformer(rewrite));
-		TextEdit edits = rewrite.rewriteAST(doc, null);
-		return edits;
+//	public static TextEdit EntirePreProcessCompilationUnit(CompilationUnit cu, JDTParser parser)
+//	{
+//		return EntirePreProcessCompilationUnit(cu);
 //		try {
 //			edits.apply(doc);
 //		} catch (MalformedTreeException e) {
@@ -30,16 +24,21 @@ public class PreProcessCompilationUnitHelper {
 //		}
 //		CompilationUnit modified_cu = parser.ParseJavaFile(doc);
 //		return modified_cu;
-	}
+//	}
 	
 	public static TextEdit EntirePreProcessCompilationUnit(ICompilationUnit icu, IJavaProject java_project)
 	{
 		CompilationUnit cu = JDTParser.CreateJDTParser(java_project).ParseICompilationUnit(icu);
+		return EntirePreProcessCompilationUnit(cu);
+	}
+	
+	private static TextEdit EntirePreProcessCompilationUnit(CompilationUnit cu) {
 		IDocument doc = new Document(cu.toString());
 		cu.recordModifications();
 		final ASTRewrite rewrite = ASTRewrite.create(cu.getAST());
 		cu.accept(new ParameterizedTypeEliminator(rewrite));
 		cu.accept(new AssignmentTransformer(rewrite));
+		cu.accept(new CommentRemover(rewrite));
 		TextEdit edits = rewrite.rewriteAST(doc, null);
 		return edits;
 	}
