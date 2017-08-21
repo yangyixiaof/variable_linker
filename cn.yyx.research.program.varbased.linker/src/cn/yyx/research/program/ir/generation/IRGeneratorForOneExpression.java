@@ -213,8 +213,8 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 
 	@Override
 	public boolean visit(QualifiedName node) {
-		TreatName(node);
-		return super.visit(node);
+		boolean go_on = TreatName(node);
+		return super.visit(node) && go_on;
 	}
 
 	@Override
@@ -223,14 +223,20 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		return super.visit(node);
 	}
 
-	protected void TreatName(Name node) {
+	protected boolean TreatName(Name node) {
 		IBinding ib = node.resolveBinding();
 		if (BindingManager.SourceResolvedBinding(ib)) {
 			IJavaElement ije = ib.getJavaElement();
 			HandleCommonIJavaElementByTypeSpecifically(ije, node, "N");
+			return false;
 		} else {
-			String content = node.toString();
-			HandleCommonIJavaElementByTypeSpecifically(new UnSourceResolvedNameElement(content), node, "N"); // content, 
+			if (node instanceof SimpleName) {
+				String content = node.toString();
+				HandleCommonIJavaElementByTypeSpecifically(new UnSourceResolvedNameElement(content), node, "N"); // content, 
+				return false;
+			} else {
+				return true;
+			}
 		}
 	}
 
