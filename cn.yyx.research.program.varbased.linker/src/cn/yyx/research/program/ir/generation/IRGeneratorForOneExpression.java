@@ -90,6 +90,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	protected IRGraph graph = null;
 	protected IRStatementNode iir_stmt_node = null;
 	protected IRJavaElementNode super_class_element = null;
+	protected List<ASTNode> forbid_visit = new LinkedList<ASTNode>();
 	protected IType it = null;
 	protected IMethod im = null;
 	protected ICompilationUnit type_declare_resource = null;
@@ -112,6 +113,14 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		this.im = im;
 		this.type_declare_resource = type_declare_resource;
 		this.type_declare = type_declare;
+	}
+	
+	@Override
+	public boolean preVisit2(ASTNode node) {
+		if (forbid_visit.contains(node)) {
+			return false;
+		}
+		return super.preVisit2(node);
 	}
 
 	@Override
@@ -213,14 +222,25 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 
 	@Override
 	public boolean visit(QualifiedName node) {
-		boolean go_on = TreatName(node);
-		return super.visit(node) && go_on;
+		if (!TreatName(node)) {
+			forbid_visit.add(node.getName());
+		}
+		return super.visit(node);
+	}
+	
+	@Override
+	public void endVisit(QualifiedName node) {
+		forbid_visit.remove(node.getName());
+		super.endVisit(node);
 	}
 
 	@Override
 	public boolean visit(SimpleName node) {
-		boolean go_on = TreatName(node);
-		return super.visit(node) && go_on;
+		if (!TreatName(node)) {
+			String content = node.toString();
+			HandleCommonIJavaElementByTypeSpecifically(new UnSourceResolvedNameElement(content), node, "N"); // content, 
+		}
+		return super.visit(node);
 	}
 
 	protected boolean TreatName(Name node) {
@@ -228,16 +248,9 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		if (BindingManager.SourceResolvedBinding(ib)) {
 			IJavaElement ije = ib.getJavaElement();
 			HandleCommonIJavaElementByTypeSpecifically(ije, node, "N");
-			return false;
-		} else {
-			if (node instanceof SimpleName) {
-				String content = node.toString();
-				HandleCommonIJavaElementByTypeSpecifically(new UnSourceResolvedNameElement(content), node, "N"); // content, 
-				return false;
-			} else {
-				return true;
-			}
+			return true;
 		}
+		return false;
 	}
 
 	@Override
