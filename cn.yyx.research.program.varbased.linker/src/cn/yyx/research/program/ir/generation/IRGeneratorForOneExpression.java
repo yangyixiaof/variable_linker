@@ -219,8 +219,8 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 
 	@Override
 	public boolean visit(SimpleName node) {
-		TreatName(node);
-		return super.visit(node);
+		boolean go_on = TreatName(node);
+		return super.visit(node) && go_on;
 	}
 
 	protected boolean TreatName(Name node) {
