@@ -227,7 +227,6 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		IBinding ib = node.resolveBinding();
 		if (BindingManager.SourceResolvedBinding(ib)) {
 			IJavaElement ije = ib.getJavaElement();
-			// TODO
 			HandleCommonIJavaElementByTypeSpecifically(ije, node, "N");
 		} else {
 			String content = node.toString();
