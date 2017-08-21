@@ -62,7 +62,6 @@ import cn.yyx.research.program.eclipse.searchutil.EclipseSearchForIMember;
 import cn.yyx.research.program.ir.bind.BindingManager;
 import cn.yyx.research.program.ir.element.ConstantUniqueElement;
 import cn.yyx.research.program.ir.element.UnSourceResolvedLambdaElement;
-import cn.yyx.research.program.ir.element.UnSourceResolvedNameElement;
 import cn.yyx.research.program.ir.element.UnSourceResolvedTypeElement;
 import cn.yyx.research.program.ir.search.IRSearchMethodRequestor;
 import cn.yyx.research.program.ir.storage.connection.SuperConnect;
@@ -222,24 +221,23 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 
 	@Override
 	public boolean visit(QualifiedName node) {
-		if (!TreatName(node)) {
-			forbid_visit.add(node.getName());
-		}
+		TreatName(node);
+		// if (!TreatName(node)) {
+		//	forbid_visit.add(node.getName());
+		// }
 		return super.visit(node);
-	}
-	
-	@Override
-	public void endVisit(QualifiedName node) {
-		forbid_visit.remove(node.getName());
-		super.endVisit(node);
 	}
 
 	@Override
 	public boolean visit(SimpleName node) {
-		if (!TreatName(node)) {
-			String content = node.toString();
-			HandleCommonIJavaElementByTypeSpecifically(new UnSourceResolvedNameElement(content), node, "N"); // content, 
-		}
+		TreatName(node);
+//		if (!TreatName(node)) {
+//			String content = node.toString();
+//			HandleCommonIJavaElementByTypeSpecifically(new UnSourceResolvedNameElement(content), node, "N"); // content, 
+//		}
+//		else {
+//			System.err.println("SimpleName:" + node + ";" + node.resolveBinding().getJavaElement());
+//		}
 		return super.visit(node);
 	}
 
