@@ -36,16 +36,21 @@ public class IRElementFactory {
 		// String content, 
 		// IRJavaElement irje
 		// String content = irje.getElement().toString();
-		// TODO Here needs to be checked.
-		System.out.println("debugging...element_name:" + ije.getElementName() + ";element_handler:" + ije.getHandleIdentifier() + ";element_class:" + ije.getClass());
+		// testing.
+		// System.out.println("debugging...element_name:" + ije.getElementName() + ";element_handler:" + ije.getHandleIdentifier() + ";element_class:" + ije.getClass());
 		// String content = ije.getElementName();
-		String pool_key = ije.getElementName() + "#" + ije.getHandleIdentifier();
+		String pool_key = GetIJavaElementKey(ije);
 		IRJavaElementNode ele = pool.get(pool_key);
 		if (ele == null) {
 			ele = new IRJavaElementNode(ije); // content, 
 			pool.put(pool_key, ele);
 		}
 		return ele;
+	}
+	
+	public static String GetIJavaElementKey(IJavaElement ije) {
+		String pool_key = ije.getElementName() + "#" + ije.getHandleIdentifier();
+		return pool_key;
 	}
 	
 	public Collection<IRJavaElementNode> GetAllIRJavaElementNodes() {
