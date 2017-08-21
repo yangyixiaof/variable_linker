@@ -2,6 +2,7 @@ package cn.yyx.research.program.analysis.prepare;
 
 import java.util.List;
 
+import org.eclipse.jdt.core.IBuffer;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
@@ -15,18 +16,25 @@ public class PreProcessHelper {
 		List<ICompilationUnit> units = EclipseSearchForICompilationUnits.SearchForAllICompilationUnits(java_project);
 		// System.err.println("unit_size:" + units.size());
 		for (final ICompilationUnit compilation_resource : units) {
-			TextEdit edit = PreProcessCompilationUnitHelper.EntirePreProcessCompilationUnit(compilation_resource,
+			TextEdit edit1 = PreProcessCompilationUnitHelper.PreProcessTransformer(compilation_resource,
 					java_project);
-			compilation_resource.applyTextEdit(edit, null);
+			compilation_resource.applyTextEdit(edit1, null);
 			compilation_resource.reconcile(ICompilationUnit.NO_AST, false, compilation_resource.getOwner(), null);
+			compilation_resource.save(null, false);
+			
+			String changed_class = PreProcessCompilationUnitHelper.PreProcessDeleter(compilation_resource,
+					java_project);
+			IBuffer ibuf = compilation_resource.getBuffer();
+			ibuf.setContents(changed_class);
+			compilation_resource.reconcile(ICompilationUnit.NO_AST, false, compilation_resource.getOwner(), null);
+			compilation_resource.save(null, false);
+			
 //			CompilationUnit cu = 
 //			if (cu == null)
 //			{
 //				System.err.println("ModifiedCompilationUnit is null, something must be wrong!");
 //				System.exit(1);
 //			}
-			compilation_resource.save(null, false);
-			
 			// testing
 			// System.out.println("CompilationUnit:" + cu);
 			// testing

@@ -1,35 +1,44 @@
 package cn.yyx.research.program.analysis.prepare;
 
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.BlockComment;
 import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.LineComment;
-import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 public class CommentRemover extends ASTVisitor {
 	
-	ASTRewrite rewrite = null;
-	
-	public CommentRemover(ASTRewrite rewrite) {
-		this.rewrite = rewrite;
+	public CommentRemover() {
 	}
 	
 	@Override
-	public void endVisit(Javadoc node) {
-		rewrite.remove(node, null);
-		super.endVisit(node);
+	public boolean visit(Javadoc node) {
+		ASTNode alt_root = node.getAlternateRoot();
+		if (alt_root != null) {
+			alt_root.delete();
+		}
+		node.delete();
+		return super.visit(node) && false;
 	}
 	
 	@Override
-	public void endVisit(BlockComment node) {
-		rewrite.remove(node, null);
-		super.endVisit(node);
+	public boolean visit(BlockComment node) {
+		ASTNode alt_root = node.getAlternateRoot();
+		if (alt_root != null) {
+			alt_root.delete();
+		}
+		node.delete();
+		return super.visit(node) && false;
 	}
 	
 	@Override
-	public void endVisit(LineComment node) {
-		rewrite.remove(node, null);
-		super.endVisit(node);
+	public boolean visit(LineComment node) {
+		ASTNode alt_root = node.getAlternateRoot();
+		if (alt_root != null) {
+			alt_root.delete();
+		}
+		node.delete();
+		return super.visit(node) && false;
 	}
 	
 }
