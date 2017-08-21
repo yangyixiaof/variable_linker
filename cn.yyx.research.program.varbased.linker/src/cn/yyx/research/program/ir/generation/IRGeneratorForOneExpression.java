@@ -227,6 +227,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		IBinding ib = node.resolveBinding();
 		if (BindingManager.SourceResolvedBinding(ib)) {
 			IJavaElement ije = ib.getJavaElement();
+			// TODO
 			HandleCommonIJavaElement(ije, node, "N"); // ije.getElementName(), 
 		} else {
 			String content = node.toString();
@@ -394,6 +395,33 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 			IRGraph.RegistConnection(super_class_element, iir_stmt_node, new SuperConnect());
 		}
 	}
+	
+	protected void HandleCommonIJavaElementByTypeSpecifically(IJavaElement ije, ASTNode node, String symbol) {
+		boolean handle = false;
+		if (ije instanceof ConstantUniqueElement) {
+			handle = true;
+			HandleIConstantElement((ConstantUniqueElement)ije, node);
+		}
+		if (ije instanceof IMethod) {
+			handle = true;
+			HandleIMethodElement((IMethod)ije, node);
+		}
+		if (ije instanceof IType) {
+			handle = true;
+			HandleITypeElement((IType)ije, node);
+		}
+		if (ije instanceof ILocalVariable) {
+			handle = true;
+			HandleILocalVariableElement((ILocalVariable)ije, node);
+		}
+		if (ije instanceof IField) {
+			handle = true;
+			HandleIFieldElement((IField)ije, node);
+		}
+		if (!handle) {
+			HandleCommonIJavaElement(ije, node, symbol);
+		}
+	}
 
 	protected void HandleCommonIJavaElement(IJavaElement ije, ASTNode node, String symbol) {
 		// String content, 
@@ -427,7 +455,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		HandleCommonIJavaElement(it, node, "T");
 	}
 
-	protected void HandleIVariableElement(ILocalVariable ilv, ASTNode node) {
+	protected void HandleILocalVariableElement(ILocalVariable ilv, ASTNode node) {
 		HandleCommonIJavaElement(ilv, node, "V");
 	}
 
