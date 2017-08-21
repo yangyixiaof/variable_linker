@@ -16,7 +16,7 @@ public class IIRNode implements IVNode {
 	private Map<IIRNode, IIRConnection> outs = new HashMap<IIRNode, IIRConnection>();
 	
 	public IIRNode(String content) {
-		this.SetContent(content.trim());
+		this.SetContent(content == null ? null : content.trim());
 	}
 	
 	public void AddInConnection(IIRConnection in_conn) {
