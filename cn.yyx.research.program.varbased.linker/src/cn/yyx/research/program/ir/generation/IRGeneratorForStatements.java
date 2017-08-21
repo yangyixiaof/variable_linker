@@ -278,7 +278,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 			graph.AddNonVirtualVariableNode(f_return);
 			ASTNodeHandledInfo info = PreHandleOneASTNode(expr, 1);
 			IRStatementNode iirn = info.GetIRStatementNode();
-			iirn.SetContent("V=" + iirn.GetContent());
+			iirn.SetContent("V=" + iirn.GetContent() + ";");
 			graph.GoForwardAStep(iirn);
 			IRGraph.RegistConnection(f_return, iirn, new VariableConnect(1));
 		}
