@@ -504,10 +504,14 @@ public class IRGeneratorForStatements extends ASTVisitor {
 
 	@Override
 	public boolean visit(IfStatement node) {
+//		if (node.toString().startsWith("if (x")) {
+//			System.err.println("heihei");
+//		}
 		ASTNodeHandledInfo info = PreHandleOneASTNode(node.getExpression(), 0);
 		// String hdoc = info.GetNodeHandledDoc();
 		// IIRNode branch_root = new IIRNode("if (" + hdoc + ") {}");
 		IRStatementNode branch_root = info.GetIRStatementNode();
+		// System.err.println("If_Node:" + node + ";branch_root:" + branch_root.GetContent());
 		branch_root.SetContent("if (" + branch_root.GetContent() + ") {}");
 		semantic_block_control.put(node, branch_root);
 		graph.GoForwardAStep(branch_root);
