@@ -117,7 +117,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	@Override
 	public boolean preVisit2(ASTNode node) {
 		if (forbid_visit.contains(node)) {
-			return false;
+			return super.preVisit2(node) && false;
 		}
 		return super.preVisit2(node);
 	}
@@ -189,7 +189,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 			String content = node.toString();
 			HandleITypeElement(new UnSourceResolvedTypeElement(content), node); // content, 
 		}
-		return super.visit(node);
+		return super.visit(node) && false;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -216,7 +216,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 			String content = node.toString();
 			HandleIMethodElement(new UnSourceResolvedLambdaElement(content), node); // content, 
 		}
-		return false;
+		return super.visit(node) && false;
 	}
 
 	@Override
@@ -257,7 +257,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		if (BindingManager.SourceResolvedBinding(ib)) {
 			IJavaElement jele = ib.getJavaElement();
 			HandleIFieldElement((IField)jele, node); // jele.getElementName(), , "V"
-			return false;
+			return super.visit(node) && false;
 		}
 		// else {
 		// String content = node.toString();
@@ -273,7 +273,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		if (BindingManager.SourceResolvedBinding(ib)) {
 			IJavaElement jele = ib.getJavaElement();
 			HandleIFieldElement((IField)jele, node); // jele.getElementName(), , "V"
-			return false;
+			return super.visit(node) && false;
 		} else {
 			// String content = node.toString();
 			// UnSourceResolvedNameElement usrnofae = new
@@ -325,8 +325,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	@Override
 	public boolean visit(PrimitiveType node) {
 		HandleType(node.resolveBinding(), node);
-		super.visit(node);
-		return false;
+		return super.visit(node) && false;
 	}
 
 	protected void HandleType(ITypeBinding ib, ASTNode node) {
@@ -343,64 +342,56 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	public boolean visit(SimpleType node) {
 		ITypeBinding ib = node.resolveBinding();
 		HandleType(ib, node);
-		super.visit(node);
-		return false;
+		return super.visit(node) && false;
 	}
 
 	@Override
 	public boolean visit(QualifiedType node) {
 		ITypeBinding ib = node.resolveBinding();
 		HandleType(ib, node);
-		super.visit(node);
-		return false;
+		return super.visit(node) && false;
 	}
 
 	@Override
 	public boolean visit(NameQualifiedType node) {
 		ITypeBinding ib = node.resolveBinding();
 		HandleType(ib, node);
-		super.visit(node);
-		return false;
+		return super.visit(node) && false;
 	}
 
 	@Override
 	public boolean visit(WildcardType node) {
 		ITypeBinding ib = node.resolveBinding();
 		HandleType(ib, node);
-		super.visit(node);
-		return false;
+		return super.visit(node) && false;
 	}
 
 	@Override
 	public boolean visit(ArrayType node) {
 		ITypeBinding ib = node.resolveBinding();
 		HandleType(ib, node);
-		super.visit(node);
-		return false;
+		return super.visit(node) && false;
 	}
 
 	@Override
 	public boolean visit(ParameterizedType node) {
 		ITypeBinding ib = node.getType().resolveBinding();
 		HandleType(ib, node);
-		super.visit(node);
-		return false;
+		return super.visit(node) && false;
 	}
 
 	@Override
 	public boolean visit(UnionType node) {
 		ITypeBinding ib = node.resolveBinding();
 		HandleType(ib, node);
-		super.visit(node);
-		return false;
+		return super.visit(node) && false;
 	}
 
 	@Override
 	public boolean visit(IntersectionType node) {
 		ITypeBinding ib = node.resolveBinding();
 		HandleType(ib, node);
-		super.visit(node);
-		return false;
+		return super.visit(node) && false;
 	}
 
 	protected void HandleSuperConnect() {
@@ -457,16 +448,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		// String content, 
 		HandleCommonIJavaElement(imd, node, "M");
 	}
-
-	// protected void HandleINameElement(String content, UnSourceResolvedNameElement
-	// usrne, ASTNode node) {
-	// HandleCommonIJavaElement(content, usrne, node, "N");
-	// }
-
-	// protected void HandleISuperElement(String content, IType it, ASTNode node) {
-	// HandleCommonIJavaElement(content, it, node, "S");
-	// }
-
+	
 	protected void HandleITypeElement(IType it, ASTNode node) {
 		HandleCommonIJavaElement(it, node, "T");
 	}
