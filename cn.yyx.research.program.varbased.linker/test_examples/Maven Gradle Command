@@ -1,0 +1,3 @@
+Just give a pom file and type the following command:
+mvn dependency:copy-dependencies
+
