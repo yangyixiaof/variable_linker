@@ -1,14 +1,22 @@
 package cn.yyx.research.program.eclipse.project;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
+import org.eclipse.jdt.launching.IVMInstall;
+import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.jdt.launching.LibraryLocation;
 
 import cn.yyx.research.program.analysis.prepare.PreProcessHelper;
 import cn.yyx.research.program.eclipse.exception.NoAnalysisSourceException;
@@ -82,32 +90,42 @@ public class AnalysisEnvironment {
 			JavaImportOperation.ImportFileSystem(java_project, dir_files_map);
 		}
 
+		List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>();
+		IVMInstall vmInstall = JavaRuntime.getDefaultVMInstall();
+		LibraryLocation[] locations = JavaRuntime.getLibraryLocations(vmInstall);
+		for (LibraryLocation element : locations) {
+			entries.add(JavaCore.newLibraryEntry(element.getSystemLibraryPath(), null, null));
+		}
+		
 		{
 			FileIterator fi = new FileIterator(dir.getAbsolutePath(), ".+\\.gradle$");
 			Iterator<File> fitr = fi.EachFileIterator();
 			while (fitr.hasNext()) {
 				File f = fitr.next();
-				
+
 			}
 		}
-		
+
 		{
 			FileIterator fi = new FileIterator(dir.getAbsolutePath(), "^pom\\.xml$");
 			Iterator<File> fitr = fi.EachFileIterator();
 			while (fitr.hasNext()) {
 				File f = fitr.next();
-				
+
 			}
 		}
-		
+
 		{
 			FileIterator fi = new FileIterator(dir.getAbsolutePath(), ".+\\.jar$");
 			Iterator<File> fitr = fi.EachFileIterator();
 			while (fitr.hasNext()) {
 				File f = fitr.next();
-				
+				entries.add(JavaCore.newLibraryEntry(new Path(f.getAbsolutePath()), null, null));
 			}
 		}
+		
+		// add libs to project class path
+		java_project.setRawClasspath(entries.toArray(new IClasspathEntry[entries.size()]), null);
 		
 		PreProcessHelper.EliminateAllParameterizedTypeAndReformAssignment(java_project);
 		return java_project;
