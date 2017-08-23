@@ -151,6 +151,7 @@ public class AnalysisEnvironment {
 				}
 				CommandLineUtil.ExecuteCommand(f_dir, "gradle download");
 			}
+			IterateAllJarsToFillEntries(gradle_dir, entries);
 		}
 
 		{
@@ -160,21 +161,17 @@ public class AnalysisEnvironment {
 			while (fitr.hasNext()) {
 				File f = fitr.next();
 				index++;
-				File f_dir = new File(gradle_dir.getAbsolutePath() + "/" + index);
+				File f_dir = new File(maven_dir.getAbsolutePath() + "/" + index);
 				f_dir.mkdirs();
 				File pom = new File(f_dir.getAbsolutePath() + "/" + "pom.xml");
 				FileUtil.CopyFile(f, pom);
-				
+				CommandLineUtil.ExecuteCommand(f_dir, "mvn dependency:copy-dependencies");
 			}
+			IterateAllJarsToFillEntries(maven_dir, entries);
 		}
 
 		{
-			FileIterator fi = new FileIterator(dir.getAbsolutePath(), ".+\\.jar$");
-			Iterator<File> fitr = fi.EachFileIterator();
-			while (fitr.hasNext()) {
-				File f = fitr.next();
-				entries.add(JavaCore.newLibraryEntry(new Path(f.getAbsolutePath()), null, null));
-			}
+			IterateAllJarsToFillEntries(dir, entries);
 		}
 
 		// add libs to project class path
@@ -182,6 +179,15 @@ public class AnalysisEnvironment {
 
 		PreProcessHelper.EliminateAllParameterizedTypeAndReformAssignment(java_project);
 		return java_project;
+	}
+	
+	private static void IterateAllJarsToFillEntries(File dir, List<IClasspathEntry> entries) {
+		FileIterator fi = new FileIterator(dir.getAbsolutePath(), ".+\\.jar$");
+		Iterator<File> fitr = fi.EachFileIterator();
+		while (fitr.hasNext()) {
+			File f = fitr.next();
+			entries.add(JavaCore.newLibraryEntry(new Path(f.getAbsolutePath()), null, null));
+		}
 	}
 
 	public static void DeleteAnalysisEnvironment(ProjectInfo pi) throws CoreException {
