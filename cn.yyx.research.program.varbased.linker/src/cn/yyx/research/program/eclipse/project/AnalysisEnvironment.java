@@ -23,16 +23,31 @@ import cn.yyx.research.program.eclipse.exception.NoAnalysisSourceException;
 import cn.yyx.research.program.eclipse.exception.ProjectAlreadyExistsException;
 import cn.yyx.research.program.eclipse.jdtutil.JDTParser;
 import cn.yyx.research.program.fileutil.FileIterator;
+import cn.yyx.research.program.fileutil.FileUtil;
+import cn.yyx.research.program.ir.meta.IRResourceMeta;
 
 public class AnalysisEnvironment {
 
 	public static IJavaProject CreateAnalysisEnvironment(ProjectInfo pi)
 			throws NoAnalysisSourceException, ProjectAlreadyExistsException, CoreException {
+		String user_home = System.getProperty("user.home");
+		File dependency_dir = new File(user_home + "/" + IRResourceMeta.ProjectDependencyDirectory);
+		if (dependency_dir.exists()) {
+			FileUtil.DeleteFile(dependency_dir);
+		}
+		dependency_dir.mkdir();
+		File gradle_dir = new File(dependency_dir + "/gradle_dependencies");
+		if (!gradle_dir.exists()) {
+			gradle_dir.mkdirs();
+		}
+		File maven_dir = new File(dependency_dir + "/maven_dependencies");
+		if (!maven_dir.exists()) {
+			maven_dir.mkdirs();
+		}
 		IJavaProject java_project = null;
 		File dir = null;
 		{
-			// Map<String, String> all_need_handle_files = new TreeMap<String, String>();
-			// Iterate all files to fill the specific structure.
+			// import legal .java files into IJavaProject.
 			Map<String, TreeMap<String, String>> dir_files_map = new TreeMap<String, TreeMap<String, String>>();
 			dir = new File(pi.getBasedir());
 			if (!dir.exists() || !dir.isDirectory()) {
@@ -43,10 +58,8 @@ public class AnalysisEnvironment {
 			while (fitr.hasNext()) {
 				File f = fitr.next();
 				String f_norm_path = f.getAbsolutePath().trim().replace('\\', '/');
-
 				// testing
 				System.out.println("f_norm_path:" + f_norm_path);
-
 				JDTParser unique_parser = JDTParser.GetUniqueEmptyParser();
 				CompilationUnit cu = unique_parser.ParseJavaFile(f);
 				PackageDeclaration pack = cu.getPackage();
@@ -100,18 +113,24 @@ public class AnalysisEnvironment {
 		{
 			FileIterator fi = new FileIterator(dir.getAbsolutePath(), ".+\\.gradle$");
 			Iterator<File> fitr = fi.EachFileIterator();
+			int index = 0;
 			while (fitr.hasNext()) {
 				File f = fitr.next();
-
+				index++;
+				File f_dir = new File(gradle_dir.getAbsolutePath() + "/" + index);
+				f_dir.mkdirs();
+				
 			}
 		}
 
 		{
 			FileIterator fi = new FileIterator(dir.getAbsolutePath(), "^pom\\.xml$");
 			Iterator<File> fitr = fi.EachFileIterator();
+			int index = 0;
 			while (fitr.hasNext()) {
 				File f = fitr.next();
-
+				index++;
+				
 			}
 		}
 

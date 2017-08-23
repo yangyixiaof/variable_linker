@@ -3,6 +3,7 @@ package cn.yyx.research.program.systemutil;
 import java.io.File;
 
 import cn.yyx.research.program.fileutil.FileUtil;
+import cn.yyx.research.program.ir.meta.IRResourceMeta;
 import cn.yyx.research.program.ir.visual.meta.DotMeta;
 
 public class EnvironmentUtil {
@@ -35,6 +36,11 @@ public class EnvironmentUtil {
 		f = new File(DotMeta.DebugPicDir);
 		if (f.exists()) {
 			FileUtil.DeleteFile(f);
+		}
+		String user_home = System.getProperty("user.home");
+		File dependency_dir = new File(user_home + "/" + IRResourceMeta.ProjectDependencyDirectory);
+		if (dependency_dir.exists()) {
+			FileUtil.DeleteFile(dependency_dir);
 		}
 	}
 	
