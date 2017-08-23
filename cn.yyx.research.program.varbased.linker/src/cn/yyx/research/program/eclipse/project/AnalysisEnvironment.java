@@ -29,6 +29,7 @@ import cn.yyx.research.program.eclipse.jdtutil.JDTParser;
 import cn.yyx.research.program.fileutil.FileIterator;
 import cn.yyx.research.program.fileutil.FileUtil;
 import cn.yyx.research.program.ir.meta.IRResourceMeta;
+import cn.yyx.research.program.systemutil.CommandLineUtil;
 
 public class AnalysisEnvironment {
 
@@ -148,7 +149,7 @@ public class AnalysisEnvironment {
 						}
 					}
 				}
-				
+				CommandLineUtil.ExecuteCommand(f_dir, "gradle download");
 			}
 		}
 
@@ -159,7 +160,11 @@ public class AnalysisEnvironment {
 			while (fitr.hasNext()) {
 				File f = fitr.next();
 				index++;
-
+				File f_dir = new File(gradle_dir.getAbsolutePath() + "/" + index);
+				f_dir.mkdirs();
+				File pom = new File(f_dir.getAbsolutePath() + "/" + "pom.xml");
+				FileUtil.CopyFile(f, pom);
+				
 			}
 		}
 
