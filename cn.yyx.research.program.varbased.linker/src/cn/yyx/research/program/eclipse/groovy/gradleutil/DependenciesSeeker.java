@@ -1,28 +1,38 @@
 package cn.yyx.research.program.eclipse.groovy.gradleutil;
 
-import org.codehaus.groovy.ast.GroovyCodeVisitor;
+import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.codehaus.groovy.ast.MethodNode;
 import org.codehaus.groovy.control.SourceUnit;
+
+import cn.yyx.research.program.fileutil.FileUtil;
 
 public class DependenciesSeeker {
 
 	public DependenciesSeeker() {
 	}
 
-	public void SeekDepemdemcies(String gradle_file_string) {
-		SourceUnit unit = SourceUnit.create("gradle", gradle_file_string);
+	public List<GradleDependency> SeekDepemdemcies(File gradle_file) {
+		String gradle_file_content = FileUtil.ReadFromFile(gradle_file);
+		SourceUnit unit = SourceUnit.create("gradle", gradle_file_content);
 		unit.parse();
 		unit.completePhase();
 		unit.convert();
-		VisitScriptCode(unit, new GradleParser());
+		return VisitScriptCode(unit);
 	}
 
-	protected void VisitScriptCode(SourceUnit source, GroovyCodeVisitor transformer) {
-		source.getAST().getStatementBlock().visit(transformer);
+	protected List<GradleDependency> VisitScriptCode(SourceUnit source) {
+		List<GradleDependency> dependencies = new LinkedList<GradleDependency>();
+		// source.getAST().getStatementBlock().visit(transformer);
 		for (Object method : source.getAST().getMethods()) {
 			MethodNode methodNode = (MethodNode) method;
-			methodNode.getCode().visit(transformer);
+			GradleParser gp = new GradleParser();
+			methodNode.getCode().visit(gp);
+			dependencies.addAll(gp.GetAllDependencies());
 		}
+		return dependencies;
 	}
 
 }

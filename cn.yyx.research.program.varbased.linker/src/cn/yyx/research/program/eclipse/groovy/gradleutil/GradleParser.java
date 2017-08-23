@@ -35,5 +35,9 @@ public class GradleParser extends CodeVisitorSupport {
 		}
 		super.visitArgumentlistExpression(ale);
 	}
+	
+	public List<GradleDependency> GetAllDependencies() {
+		return dependencies;
+	}
 
 }

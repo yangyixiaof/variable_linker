@@ -1,6 +1,8 @@
 package cn.yyx.research.program.eclipse.project;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -21,6 +23,8 @@ import org.eclipse.jdt.launching.LibraryLocation;
 import cn.yyx.research.program.analysis.prepare.PreProcessHelper;
 import cn.yyx.research.program.eclipse.exception.NoAnalysisSourceException;
 import cn.yyx.research.program.eclipse.exception.ProjectAlreadyExistsException;
+import cn.yyx.research.program.eclipse.groovy.gradleutil.DependenciesSeeker;
+import cn.yyx.research.program.eclipse.groovy.gradleutil.GradleDependency;
 import cn.yyx.research.program.eclipse.jdtutil.JDTParser;
 import cn.yyx.research.program.fileutil.FileIterator;
 import cn.yyx.research.program.fileutil.FileUtil;
@@ -109,7 +113,7 @@ public class AnalysisEnvironment {
 		for (LibraryLocation element : locations) {
 			entries.add(JavaCore.newLibraryEntry(element.getSystemLibraryPath(), null, null));
 		}
-		
+
 		{
 			FileIterator fi = new FileIterator(dir.getAbsolutePath(), ".+\\.gradle$");
 			Iterator<File> fitr = fi.EachFileIterator();
@@ -119,6 +123,31 @@ public class AnalysisEnvironment {
 				index++;
 				File f_dir = new File(gradle_dir.getAbsolutePath() + "/" + index);
 				f_dir.mkdirs();
+				File gradle = new File(f_dir.getAbsolutePath() + "/" + "build.gradle");
+				DependenciesSeeker seeker = new DependenciesSeeker();
+				List<GradleDependency> depds = seeker.SeekDepemdemcies(f);
+				if (!depds.isEmpty()) {
+					FileWriter fw = null;
+					try {
+						fw = new FileWriter(gradle);
+						fw.append("apply plugin: 'java'\n" + "repositories { mavenCentral() }\n" + "dependencies {\n");
+						Iterator<GradleDependency> ditr = depds.iterator();
+						while (ditr.hasNext()) {
+							GradleDependency gdepd = ditr.next();
+							fw.write("comple" + " group: '" + gdepd.getGroup() + "', name: '" + gdepd.getName() + "', version: '" + gdepd.getVersion() + "'\n");
+						}
+						fw.write("}\n" + "task download(type: Copy) {\n" + "  from configurations.runtime\n"
+								+ "  into 'target'\n" + "}");
+					} catch (Exception e) {
+						e.printStackTrace();
+					} finally {
+						try {
+							fw.close();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				}
 				
 			}
 		}
@@ -130,7 +159,7 @@ public class AnalysisEnvironment {
 			while (fitr.hasNext()) {
 				File f = fitr.next();
 				index++;
-				
+
 			}
 		}
 
@@ -142,10 +171,10 @@ public class AnalysisEnvironment {
 				entries.add(JavaCore.newLibraryEntry(new Path(f.getAbsolutePath()), null, null));
 			}
 		}
-		
+
 		// add libs to project class path
 		java_project.setRawClasspath(entries.toArray(new IClasspathEntry[entries.size()]), null);
-		
+
 		PreProcessHelper.EliminateAllParameterizedTypeAndReformAssignment(java_project);
 		return java_project;
 	}
