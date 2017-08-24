@@ -26,6 +26,12 @@ public class GradleParser extends CodeVisitorSupport {
 	public void visitArgumentlistExpression(ArgumentListExpression ale) {
 		System.out.println("unknown arg exprs:" + ale);
 		List<Expression> expressions = ale.getExpressions();
+		StringBuilder sb = new StringBuilder("");
+		sb.append("OneArgExpression:");
+		for (Expression expr : expressions) {
+			sb.append(expr + ";");
+		}
+		sb.append("\n");
 		if (expressions.size() == 1 && expressions.get(0) instanceof ConstantExpression) {
 			String depStr = expressions.get(0).getText();
 			String[] deps = depStr.split(":");
