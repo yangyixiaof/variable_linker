@@ -36,4 +36,22 @@ public class GradleDependency {
 		this.version = version;
 	}
 	
+	@Override
+	public String toString() {
+		return "group:" + group + ";name:" + name + ";version:" + version;
+	}
+	
+	@Override
+	public int hashCode() {
+		return toString().hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof GradleDependency) {
+			return toString().trim().equals((obj + "").trim());
+		}
+		return super.equals(obj);
+	}
+	
 }
