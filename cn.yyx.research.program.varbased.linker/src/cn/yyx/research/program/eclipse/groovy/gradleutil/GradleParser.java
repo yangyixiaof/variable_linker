@@ -15,6 +15,7 @@ public class GradleParser extends CodeVisitorSupport {
 
 	@Override
 	public void visitMethodCallExpression(MethodCallExpression call) {
+		// System.err.println("VisitMethodCall:" + call);
 		if (!(call.getMethodAsString().equals("buildscript"))) {
 			if (call.getMethodAsString().equals("dependencies")) {
 				super.visitMethodCallExpression(call);
@@ -32,6 +33,7 @@ public class GradleParser extends CodeVisitorSupport {
 			sb.append(expr + ";");
 		}
 		sb.append("\n");
+		System.err.println(sb.toString());
 		if (expressions.size() == 1 && expressions.get(0) instanceof ConstantExpression) {
 			String depStr = expressions.get(0).getText();
 			String[] deps = depStr.split(":");
