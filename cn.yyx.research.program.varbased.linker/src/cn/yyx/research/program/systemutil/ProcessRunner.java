@@ -1,5 +1,6 @@
 package cn.yyx.research.program.systemutil;
 
+import java.io.File;
 import java.lang.ProcessBuilder.Redirect;
 import java.util.LinkedList;
 import java.util.List;
@@ -7,7 +8,7 @@ import java.util.List;
 
 public class ProcessRunner {
 	
-	public static void RunOneProcess(String cmd, int max_run_time) {
+	public static void RunOneProcess(File working_directory, String cmd, int max_run_time) {
 		try {
 			List<String> commands = new LinkedList<String>();
 			if (EnvironmentUtil.IsWindows()) {
@@ -23,6 +24,7 @@ public class ProcessRunner {
 				commands.add(cmd);
 			}
 			ProcessBuilder pb = new ProcessBuilder(commands);
+			pb.directory(working_directory);
 			pb.redirectInput(Redirect.INHERIT);
 			pb.redirectOutput(Redirect.INHERIT);
 			pb.redirectError(Redirect.INHERIT);

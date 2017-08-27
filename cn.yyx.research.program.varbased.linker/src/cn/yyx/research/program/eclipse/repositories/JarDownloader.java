@@ -34,7 +34,7 @@ public class JarDownloader {
 			}
 			fw.write("}\n");
 			fw.write("dependencies {\n");
-			fw.write(gap + "compile group: '" + jdepd.GetGroup().trim() + "', name: '" + jdepd.GetName().trim() + "', version: '+'");
+			fw.write(gap + "compile group: '" + jdepd.GetGroup().trim() + "', name: '" + jdepd.GetName().trim() + "', version: '+'\n");
 			fw.write("}\n");
 			fw.write("task download(type: Copy) {\n");
 			fw.write(gap + "from configurations.runtime\n");
