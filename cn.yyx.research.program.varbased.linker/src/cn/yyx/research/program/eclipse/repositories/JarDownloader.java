@@ -22,10 +22,15 @@ public class JarDownloader {
 			fw.write("apply plugin: 'java'\n");
 			fw.write("repositories {\n");
 			fw.write(gap + "mavenCentral()\n");
+			fw.write(gap + "mavenLocal()\n");
 			Iterator<RepositoryDependency> ritr = repo_depds.iterator();
 			while (ritr.hasNext()) {
 				RepositoryDependency rdepd = ritr.next();
-				fw.write(gap + rdepd.GetRepositoryType().trim() + " { url \"" + rdepd.GetAddress().trim() + "\" }\n");
+				if (rdepd.GetAddress() != null) {
+					fw.write(gap + rdepd.GetRepositoryType().trim() + " { url \"" + rdepd.GetAddress().trim() + "\" }\n");
+				} else {
+					fw.write(gap + rdepd.GetRepositoryType().trim() + " ()\n");
+				}
 			}
 			fw.write("}\n");
 			fw.write("dependencies {\n");
@@ -37,12 +42,14 @@ public class JarDownloader {
 			fw.write("}\n");
 			fw.flush();
 		} catch (Exception e) {
+			e.printStackTrace();
 		} finally {
 			try {
 				if (fw != null) {
 					fw.close();
 				}
 			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 		CommandLineUtil.ExecuteCommand(to_dir, "gradle download"); // mvn dependency:copy-dependencies
@@ -50,7 +57,7 @@ public class JarDownloader {
 	
 	public static void DownloadOverAllJar(File to_dir, OverAllDependency overall_depend) {
 		// testing.
-		System.err.println("OverAllDependencies:" + overall_depend);
+		// System.err.println("OverAllDependencies:" + overall_depend);
 		List<JarDependency> jars = overall_depend.GetJars();
 		Iterator<JarDependency> jar_itr = jars.iterator();
 		int index = 0;
@@ -58,7 +65,7 @@ public class JarDownloader {
 			JarDependency jdepd = jar_itr.next();
 			File dir = new File(to_dir.getAbsolutePath() + "/" + index);
 			dir.mkdir();
-//			DownloadJar(dir, overall_depend.GetUrls(), jdepd);
+			DownloadJar(dir, overall_depend.GetUrls(), jdepd);
 			index++;
 		}
 	}

@@ -13,6 +13,7 @@ import org.codehaus.groovy.ast.expr.MethodCallExpression;
 import cn.yyx.research.program.eclipse.repositories.JarDependency;
 import cn.yyx.research.program.eclipse.repositories.OverAllDependency;
 import cn.yyx.research.program.eclipse.repositories.RepositoryDependency;
+import cn.yyx.research.program.systemutil.URLUtil;
 
 public class GradleParser extends CodeVisitorSupport {
 	
@@ -38,16 +39,25 @@ public class GradleParser extends CodeVisitorSupport {
 						Expression expr = exprs.get(0);
 						if (expr instanceof ConstantExpression) {
 							String url = ((ConstantExpression)expr).getText();
-							overall_dependencies.AddUrl(new RepositoryDependency(type, url));
+							if (URLUtil.IsURLValid(url)) {
+								overall_dependencies.AddUrl(new RepositoryDependency(type, url));
+							}
 						}
 					}
 				}
 			}
 		}
 		if (in_repositories) {
-			if (call.getMethodAsString().equals("jcenter") || call.getMethodAsString().equals("maven") || call.getMethodAsString().equals("ivy") || call.getMethodAsString().equals("ivy")) {
-				in_repository_types = true;
+			// System.err.println("known args:" + call.getArguments().getText() + ";method:" + call.getMethodAsString());
+			if (call.getMethodAsString().equals("jcenter") || call.getMethodAsString().equals("maven") || call.getMethodAsString().equals("ivy")) {
+				// System.err.println("unknown args:" + call.getArguments().getText());
 				type = call.getMethodAsString();
+				// System.err.println("type:" + type + ";args:" + call.getArguments() + ";");
+				if (call.getArguments().getText().equals("()")) {
+					overall_dependencies.AddUrl(new RepositoryDependency(type, null));
+				} else {
+					in_repository_types = true;
+				}
 			}
 		}
 		if (call.getMethodAsString().equals("repositories")) {
