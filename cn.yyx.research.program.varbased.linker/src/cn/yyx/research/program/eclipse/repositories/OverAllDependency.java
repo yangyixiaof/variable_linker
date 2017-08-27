@@ -7,8 +7,8 @@ import java.util.Set;
 
 public class OverAllDependency {
 	
-	List<RepositoryDependency> urls = new LinkedList<RepositoryDependency>();
-	List<JarDependency> jars = new LinkedList<JarDependency>();
+	protected List<RepositoryDependency> urls = new LinkedList<RepositoryDependency>();
+	protected List<JarDependency> jars = new LinkedList<JarDependency>();
 	
 	public OverAllDependency() {
 	}

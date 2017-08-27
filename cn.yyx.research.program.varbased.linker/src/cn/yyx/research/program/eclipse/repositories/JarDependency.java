@@ -2,8 +2,8 @@ package cn.yyx.research.program.eclipse.repositories;
 
 public class JarDependency {
 	
-	private String group = null;
-	private String name = null;
+	protected String group = null;
+	protected String name = null;
 	// private String version = null;
 	
 	public JarDependency(String group, String name) {
