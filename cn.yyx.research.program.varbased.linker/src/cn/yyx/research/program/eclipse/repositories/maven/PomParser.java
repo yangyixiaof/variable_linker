@@ -13,6 +13,7 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import cn.yyx.research.program.eclipse.repositories.JarDependency;
 import cn.yyx.research.program.eclipse.repositories.OverAllDependency;
 import cn.yyx.research.program.eclipse.repositories.RepositoryDependency;
+import cn.yyx.research.program.systemutil.URLUtil;
 
 public class PomParser {
 	
@@ -29,7 +30,7 @@ public class PomParser {
 			List<Repository> repos = model.getRepositories();
 			for (Repository repo : repos) {
 				// System.err.println("Repository:" + repo);
-				if (!(new URL(repo.getUrl()).getHost().equals(new URL("http://central.maven.org/maven2/").getHost()))) {
+				if (URLUtil.IsURLValid(repo.getUrl()) && !(new URL(repo.getUrl()).getHost().equals(new URL("http://central.maven.org/maven2/").getHost()))) {
 					overall_dependencies.AddUrl(new RepositoryDependency("maven", repo.getUrl()));
 				}
 			}
