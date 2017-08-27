@@ -12,22 +12,59 @@ import org.codehaus.groovy.ast.expr.MethodCallExpression;
 
 import cn.yyx.research.program.eclipse.repositories.JarDependency;
 import cn.yyx.research.program.eclipse.repositories.OverAllDependency;
+import cn.yyx.research.program.eclipse.repositories.RepositoryDependency;
 
 public class GradleParser extends CodeVisitorSupport {
 	
 	protected OverAllDependency overall_dependencies = new OverAllDependency();
 	
 	protected boolean in_dependencies = false;
+	protected boolean in_repositories = false;
+	protected boolean in_repository_types = false;
+	protected String type = null;
 
 	@Override
 	public void visitMethodCallExpression(MethodCallExpression call) {
-		// System.err.println("InDependency:" + in_dependencies + ";MethodCallExpression:" + call);
+		// System.err.println("in_repositories:" + in_repositories + ";MethodCallExpression:" + call);
 		if (call.getMethodAsString().equals("dependencies")) {
 			in_dependencies = true;
+		}
+		if (in_repository_types) {
+			if (call.getMethodAsString().equals("url")) {
+				Expression args = call.getArguments();
+				if (args instanceof ArgumentListExpression) {
+					List<Expression> exprs = ((ArgumentListExpression)args).getExpressions();
+					if (exprs != null && exprs.size() == 1) {
+						Expression expr = exprs.get(0);
+						if (expr instanceof ConstantExpression) {
+							String url = ((ConstantExpression)expr).getText();
+							overall_dependencies.AddUrl(new RepositoryDependency(type, url));
+						}
+					}
+				}
+			}
+		}
+		if (in_repositories) {
+			if (call.getMethodAsString().equals("jcenter") || call.getMethodAsString().equals("maven") || call.getMethodAsString().equals("ivy") || call.getMethodAsString().equals("ivy")) {
+				in_repository_types = true;
+				type = call.getMethodAsString();
+			}
+		}
+		if (call.getMethodAsString().equals("repositories")) {
+			in_repositories = true;
 		}
 		super.visitMethodCallExpression(call);
 		if (call.getMethodAsString().equals("dependencies")) {
 			in_dependencies = false;
+		}
+		if (in_repositories) {
+			if (call.getMethodAsString().equals("jcenter") || call.getMethodAsString().equals("maven") || call.getMethodAsString().equals("ivy") || call.getMethodAsString().equals("ivy")) {
+				in_repository_types = false;
+				type = null;
+			}
+		}
+		if (call.getMethodAsString().equals("repositories")) {
+			in_repositories = false;
 		}
 	}
 	
@@ -60,7 +97,7 @@ public class GradleParser extends CodeVisitorSupport {
 	
 	@Override
 	public void visitArgumentlistExpression(ArgumentListExpression ale) {
-		// System.err.println("InDependency:" + in_dependencies + ";ArgumentListExpression:" + ale);
+		// System.err.println(";ArgumentListExpression:" + ale); // "InDependency:" + in_dependencies + 
 		if (in_dependencies) {
 			List<Expression> expressions = ale.getExpressions();
 //			System.err.println("OneArgExpression:\n");

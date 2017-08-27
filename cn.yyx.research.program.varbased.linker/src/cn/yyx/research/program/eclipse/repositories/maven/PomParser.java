@@ -2,6 +2,7 @@ package cn.yyx.research.program.eclipse.repositories.maven;
 
 import java.io.File;
 import java.io.FileReader;
+import java.net.URL;
 import java.util.List;
 
 import org.apache.maven.model.Dependency;
@@ -28,7 +29,9 @@ public class PomParser {
 			List<Repository> repos = model.getRepositories();
 			for (Repository repo : repos) {
 				// System.err.println("Repository:" + repo);
-				overall_dependencies.AddUrl(new RepositoryDependency("maven", "url", repo.getUrl()));
+				if (!(new URL(repo.getUrl()).getHost().equals(new URL("http://central.maven.org/maven2/").getHost()))) {
+					overall_dependencies.AddUrl(new RepositoryDependency("maven", repo.getUrl()));
+				}
 			}
 			List<Dependency> depds = model.getDependencies();
 			for (Dependency depd : depds) {

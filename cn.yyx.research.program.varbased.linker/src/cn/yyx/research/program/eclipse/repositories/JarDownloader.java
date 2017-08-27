@@ -20,9 +20,16 @@ public class JarDownloader {
 			fw = new FileWriter(gradle);
 			final String gap = "  ";
 			fw.write("apply plugin: 'java'\n");
-			fw.write("repositories { mavenCentral() }\n");
+			fw.write("repositories {\n");
+			fw.write(gap + "mavenCentral()\n");
+			Iterator<RepositoryDependency> ritr = repo_depds.iterator();
+			while (ritr.hasNext()) {
+				RepositoryDependency rdepd = ritr.next();
+				fw.write(gap + rdepd.GetRepositoryType().trim() + " { url \"" + rdepd.GetAddress().trim() + "\" }\n");
+			}
+			fw.write("}\n");
 			fw.write("dependencies {\n");
-			fw.write(gap + "compile group: '" + jdepd.GetGroup() + "', name: '" + jdepd.GetName() + "', version: '+'");
+			fw.write(gap + "compile group: '" + jdepd.GetGroup().trim() + "', name: '" + jdepd.GetName().trim() + "', version: '+'");
 			fw.write("}\n");
 			fw.write("task download(type: Copy) {\n");
 			fw.write(gap + "from configurations.runtime\n");
@@ -49,7 +56,7 @@ public class JarDownloader {
 			JarDependency jdepd = jar_itr.next();
 			File dir = new File(to_dir.getAbsolutePath() + "/" + index);
 			dir.mkdir();
-			JarDownloader.DownloadJar(dir, overall_depend.GetUrls(), jdepd);
+//			DownloadJar(dir, overall_depend.GetUrls(), jdepd);
 			index++;
 		}
 	}
