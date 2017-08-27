@@ -21,7 +21,7 @@ public class JarDependency {
 
 	@Override
 	public String toString() {
-		return "group:" + group + ";name:" + name;
+		return "$group:" + group + ";name:" + name;
 	}
 	
 	@Override

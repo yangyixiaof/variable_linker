@@ -17,5 +17,10 @@ public class RepositoryDependency {
 	public String GetAddress() {
 		return address;
 	}
+	
+	@Override
+	public String toString() {
+		return "$repo_type:" + repository_type + ";addr:" + address;
+	}
 
 }
