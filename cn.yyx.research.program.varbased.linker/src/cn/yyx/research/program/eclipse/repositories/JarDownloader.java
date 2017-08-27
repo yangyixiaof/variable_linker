@@ -49,6 +49,8 @@ public class JarDownloader {
 	}
 	
 	public static void DownloadOverAllJar(File to_dir, OverAllDependency overall_depend) {
+		// testing.
+		System.err.println("OverAllDependencies:" + overall_depend);
 		List<JarDependency> jars = overall_depend.GetJars();
 		Iterator<JarDependency> jar_itr = jars.iterator();
 		int index = 0;
