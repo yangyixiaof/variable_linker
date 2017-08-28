@@ -19,19 +19,33 @@ public class ASTRewriteHelper {
 			ASTNode parent = replace_happen.getParent();
 			final ITrackedNodePosition position_parent = rewriter.track(parent);
 			final ITrackedNodePosition position = rewriter.track(replace_happen);
-			final IDocument document= new Document(type_declare_resource.getBuffer().getText(type_declare.getStartPosition(), type_declare.getLength()));
-			// int track_parent_start_before = position_parent.getStartPosition();
+			final IDocument document = new Document(type_declare_resource.getBuffer().getText(0, type_declare_resource.getBuffer().getLength())); // type_declare.getStartPosition(), type_declare.getLength()
+			// final IDocument document_before = new Document(type_declare_resource.getBuffer().getText(0, type_declare_resource.getBuffer().getLength())); // type_declare.getStartPosition(), type_declare.getLength()
+			int track_parent_start_before = position_parent.getStartPosition();
 			int track_parent_length_before = position_parent.getLength();
 			int position_length_before = position.getLength();
 			rewriter.rewriteAST(document, type_declare_resource.getJavaProject().getOptions(true)).apply(document, TextEdit.UPDATE_REGIONS);
+			int track_parent_start_after = position_parent.getStartPosition();
+			int track_parent_length_after = position_parent.getLength();
 			int position_length_after = position.getLength();
+			int start_parent_gap = track_parent_start_after - track_parent_start_before;
 			int origin_gap = position_length_after - position_length_before;
-			// int track_parent_start_after = position_parent.getStartPosition();
- 			int track_parent_length_after = position_parent.getLength();
-			int replaced_gap = track_parent_length_after - track_parent_length_before;
+			int replaced_parent_gap = track_parent_length_after - track_parent_length_before;
 			int track_start = position.getStartPosition();
-			int track_length = position.getLength();
-			text= document.get(track_start, track_length + replaced_gap - origin_gap);
+//			if (replace_happen.toString().trim().startsWith("GreaterThanTen")) {
+//				System.err.println("Replace_Node:" + replace_happen.toString());
+//				System.err.println("Replace_Node:" + replace_happen.getParent().toString());
+//				System.err.println("Rewriter:" + rewriter);
+//				System.err.println("position_parent_length_before:" + track_parent_length_before);
+//				System.err.println("position_parent_length_after:" + track_parent_length_after);
+//				System.err.println("position_length_before:" + position_length_before);
+//				System.err.println("position_length_after:" + position_length_after);
+//				System.err.println("track_parent_start_before:" + track_parent_start_before);
+//				System.err.println("track_parent_start_after:" + track_parent_start_after);
+//				System.err.println("document_before:" + document_before.get());
+//				System.err.println("document_after:" + document.get());
+//			}
+			text= document.get(track_start, position_length_after + start_parent_gap + replaced_parent_gap - origin_gap);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);
