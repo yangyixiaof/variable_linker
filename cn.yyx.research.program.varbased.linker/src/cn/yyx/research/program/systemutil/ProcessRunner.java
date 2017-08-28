@@ -27,12 +27,12 @@ public class ProcessRunner {
 			pb.directory(working_directory);
 			if (redirect_standard_out_stream) {
 				// pb.redirectInput(Redirect.INHERIT);
-				pb.redirectOutput(Redirect.INHERIT);
 				pb.redirectError(Redirect.INHERIT);
+				pb.redirectOutput(Redirect.INHERIT);
 			} else {
 				if (log_file != null) {
-					pb.redirectError(log_file);
-					pb.redirectOutput(log_file);
+					pb.redirectError(Redirect.appendTo(log_file));
+					pb.redirectOutput(Redirect.appendTo(log_file));
 				}
 			}
 			Process process = pb.start();
