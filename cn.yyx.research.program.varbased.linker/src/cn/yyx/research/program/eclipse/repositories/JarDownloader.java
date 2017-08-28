@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
+import cn.yyx.research.logger.DebugLogger;
 import cn.yyx.research.program.ir.meta.IRResourceMeta;
 import cn.yyx.research.program.systemutil.CommandLineUtil;
 
@@ -53,6 +54,7 @@ public class JarDownloader {
 				e.printStackTrace();
 			}
 		}
+		DebugLogger.Log("Downloading:" + jdepd);
 		CommandLineUtil.ExecuteCommand(to_dir, "gradle download", false, new File(System.getProperty("user.home") + "/" + IRResourceMeta.ProjectDependencyDirectory + "/" + IRResourceMeta.DependencyLog)); // mvn dependency:copy-dependencies
 	}
 	
