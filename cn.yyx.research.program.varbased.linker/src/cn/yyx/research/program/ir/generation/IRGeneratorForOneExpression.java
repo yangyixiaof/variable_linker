@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IField;
@@ -157,7 +158,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	@Override
 	public boolean visit(StringLiteral node) {
 		String content = node.toString();
-		HandleIConstantElement(new ConstantUniqueElement(content), node); // content, 
+		HandleIConstantElement(new ConstantUniqueElement(StringEscapeUtils.escapeHtml4(content)), node); // content, 
 		// IRConstantMeta.StringConstant + "$" +
 		return super.visit(node);
 	}
