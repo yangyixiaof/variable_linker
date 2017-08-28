@@ -24,8 +24,6 @@ import cn.yyx.research.program.ir.storage.node.IRJavaElementNode;
 import cn.yyx.research.program.ir.storage.node.IRStatementNode;
 import cn.yyx.research.program.ir.storage.node.factory.IRElementFactory;
 import cn.yyx.research.program.ir.storage.node.factory.IRStatementFactory;
-import cn.yyx.research.program.ir.visual.dot.DotGenerator;
-import cn.yyx.research.program.ir.visual.node.IVNode;
 import cn.yyx.research.program.ir.visual.picture.generation.DotView;
 
 public class ConnectionOnlyDotGenerator implements DotGenerator {
@@ -37,10 +35,10 @@ public class ConnectionOnlyDotGenerator implements DotGenerator {
 	IRForOneProject one_project = null;
 
 	int idx = 0;
-	Map<IVNode, Integer> ivn_id = new HashMap<IVNode, Integer>();
+	Map<IIRNode, Integer> ivn_id = new HashMap<IIRNode, Integer>();
 	
 	Set<IIRConnection> non_cluster_ivn_conns = new HashSet<IIRConnection>();
-	Map<IVNode, DotCluster> ivn_cluster = new HashMap<IVNode, DotCluster>();
+	Map<IIRNode, DotCluster> ivn_cluster = new HashMap<IIRNode, DotCluster>();
 	Set<DotCluster> clusters = new HashSet<DotCluster>();
 
 	public ConnectionOnlyDotGenerator(String dot_generation_dir, String dot_pic_dir, IRForOneProject one_project) {
@@ -80,10 +78,10 @@ public class ConnectionOnlyDotGenerator implements DotGenerator {
 					if (!source_cluster.equals(target_cluster)) {
 						clusters.remove(target_cluster);
 						source_cluster.Merge(target_cluster);
-						Set<IVNode> target_ivns = target_cluster.GetIvns();
-						Iterator<IVNode> titr = target_ivns.iterator();
+						Set<IIRNode> target_ivns = target_cluster.GetIvns();
+						Iterator<IIRNode> titr = target_ivns.iterator();
 						while (titr.hasNext()) {
-							IVNode tivn = titr.next();
+							IIRNode tivn = titr.next();
 							ivn_cluster.put(tivn, source_cluster);
 						}
 					}
@@ -163,13 +161,13 @@ public class ConnectionOnlyDotGenerator implements DotGenerator {
 			bw.write(share_bw.toString());
 
 			StringBuffer node_bf = new StringBuffer();
-			Set<IVNode> iv_keys = ivn_id.keySet();
-			Iterator<IVNode> iitr = iv_keys.iterator();
+			Set<IIRNode> iv_keys = ivn_id.keySet();
+			Iterator<IIRNode> iitr = iv_keys.iterator();
 			while (iitr.hasNext()) {
-				IVNode ivn = iitr.next();
+				IIRNode ivn = iitr.next();
 				int ivn_id = GetNodeID(ivn);
 				String ivn_node = "n" + ivn_id;
-				node_bf.append(ivn_node + "[label=\"" + ivn.ToVisual() + "\"];" + line_seperator);
+				node_bf.append(ivn_node + "[label=\"" + ivn.toString() + "\"];" + line_seperator);
 			}
 			bw.write(node_bf.toString() + line_seperator);
 
@@ -182,7 +180,7 @@ public class ConnectionOnlyDotGenerator implements DotGenerator {
 		}
 	}
 
-	private int GetNodeID(IVNode node) {
+	private int GetNodeID(IIRNode node) {
 		Integer id = ivn_id.get(node);
 		if (id == null) {
 			id = idx++;

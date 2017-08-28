@@ -4,18 +4,18 @@ import java.util.HashSet;
 import java.util.Set;
 
 import cn.yyx.research.program.ir.storage.connection.IIRConnection;
-import cn.yyx.research.program.ir.visual.node.IVNode;
+import cn.yyx.research.program.ir.storage.node.IIRNode;
 
 public class DotCluster {
 	
-	private Set<IVNode> ivns = new HashSet<IVNode>();
+	private Set<IIRNode> ivns = new HashSet<IIRNode>();
 	private Set<IIRConnection> ivn_conns = new HashSet<IIRConnection>();
 	
-	public DotCluster(IVNode ivn) {
+	public DotCluster(IIRNode ivn) {
 		GetIvns().add(ivn);
 	}
 	
-	public void AddIVNode(IVNode ivn) {
+	public void AddIVNode(IIRNode ivn) {
 		GetIvns().add(ivn);
 	}
 	
@@ -28,7 +28,7 @@ public class DotCluster {
 		GetIvnConns().addAll(cluster.GetIvnConns());
 	}
 
-	public Set<IVNode> GetIvns() {
+	public Set<IIRNode> GetIvns() {
 		return ivns;
 	}
 

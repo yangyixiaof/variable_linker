@@ -6,8 +6,7 @@ import java.util.Set;
 
 import cn.yyx.research.program.fileutil.FileUtil;
 import cn.yyx.research.program.ir.storage.graph.IRGraphManager;
-import cn.yyx.research.program.ir.visual.dot.DotGenerator;
-import cn.yyx.research.program.ir.visual.node.IVNode;
+import cn.yyx.research.program.ir.storage.node.IIRNode;
 
 public class DataControlFlowDotGenerator implements DotGenerator {
 	
@@ -16,13 +15,13 @@ public class DataControlFlowDotGenerator implements DotGenerator {
 	IRGraphManager graph_manager = null;
 	
 	String dot_file = null;
-	Set<IVNode> pc = null;
+	Set<IIRNode> pc = null;
 //	IVNodeContainer ivc = null;
 	int idx = 0;
-	Map<IVNode, Integer> ivn_id = new HashMap<IVNode, Integer>();
+	Map<IIRNode, Integer> ivn_id = new HashMap<IIRNode, Integer>();
 	String description = null;
 	
-	public DataControlFlowDotGenerator(String dot_generation_dir, String dot_pic_dir, IRGraphManager graph_manager, Set<IVNode> pc, String dot_file, String description) {
+	public DataControlFlowDotGenerator(String dot_generation_dir, String dot_pic_dir, IRGraphManager graph_manager, Set<IIRNode> pc, String dot_file, String description) {
 		// IVNodeContainer ivc, 
 		this.dot_generation_dir = dot_generation_dir;
 		this.dot_pic_dir = dot_pic_dir;

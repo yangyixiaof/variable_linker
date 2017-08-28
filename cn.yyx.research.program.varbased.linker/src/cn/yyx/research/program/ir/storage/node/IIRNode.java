@@ -7,9 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import cn.yyx.research.program.ir.storage.connection.IIRConnection;
-import cn.yyx.research.program.ir.visual.node.IVNode;
 
-public class IIRNode implements IVNode {
+public class IIRNode {
 	
 	private String content = null;
 	private Map<IIRNode, IIRConnection> ins = new HashMap<IIRNode, IIRConnection>();
@@ -82,13 +81,8 @@ public class IIRNode implements IVNode {
 	}
 
 	@Override
-	public String ToVisual() {
-		return content;
-	}
-	
-	@Override
 	public String toString() {
-		return "Content:" + ToVisual() + "@" + hashCode();
+		return "Content:" + content + "@" + hashCode();
 	}
 	
 }
