@@ -83,7 +83,8 @@ public class GradleParser extends CodeVisitorSupport {
 		// System.err.println("InDependency:" + in_dependencies + ";MapExpression:" + expression);
 		if (in_dependencies) {
 			List<MapEntryExpression> map_entries = expression.getMapEntryExpressions();
-			if (map_entries.size() == 3 && MapEntryExpressionKeyValueAreConstantExpressionCondition(map_entries.get(0), "group") && MapEntryExpressionKeyValueAreConstantExpressionCondition(map_entries.get(1), "name") && MapEntryExpressionKeyValueAreConstantExpressionCondition(map_entries.get(2), "version")) {
+			if (map_entries.size() >= 2 && MapEntryExpressionKeyValueAreConstantExpressionCondition(map_entries.get(0), "group") && MapEntryExpressionKeyValueAreConstantExpressionCondition(map_entries.get(1), "name")) {
+				// && MapEntryExpressionKeyValueAreConstantExpressionCondition(map_entries.get(2), "version")
 				overall_dependencies.AddJar(new JarDependency(((ConstantExpression)map_entries.get(0).getValueExpression()).getText(), ((ConstantExpression)map_entries.get(1).getValueExpression()).getText()));
 			}
 		}

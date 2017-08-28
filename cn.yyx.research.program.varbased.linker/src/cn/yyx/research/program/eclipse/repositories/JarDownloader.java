@@ -52,7 +52,7 @@ public class JarDownloader {
 				e.printStackTrace();
 			}
 		}
-		CommandLineUtil.ExecuteCommand(to_dir, "gradle download"); // mvn dependency:copy-dependencies
+		CommandLineUtil.ExecuteCommand(to_dir, "gradle download", false); // mvn dependency:copy-dependencies
 	}
 	
 	public static void DownloadOverAllJar(File to_dir, OverAllDependency overall_depend) {

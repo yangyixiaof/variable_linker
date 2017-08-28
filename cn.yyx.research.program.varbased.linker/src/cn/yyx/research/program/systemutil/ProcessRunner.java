@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ProcessRunner {
 	
-	public static void RunOneProcess(File working_directory, String cmd, int max_run_time) {
+	public static void RunOneProcess(File working_directory, String cmd, int max_run_time, boolean redirect_standard_stream) {
 		try {
 			List<String> commands = new LinkedList<String>();
 			if (EnvironmentUtil.IsWindows()) {
@@ -25,9 +25,11 @@ public class ProcessRunner {
 			}
 			ProcessBuilder pb = new ProcessBuilder(commands);
 			pb.directory(working_directory);
-			pb.redirectInput(Redirect.INHERIT);
-			pb.redirectOutput(Redirect.INHERIT);
-			pb.redirectError(Redirect.INHERIT);
+			if (redirect_standard_stream) {
+				pb.redirectInput(Redirect.INHERIT);
+				pb.redirectOutput(Redirect.INHERIT);
+				pb.redirectError(Redirect.INHERIT);
+			}
 			Process process = pb.start();
 			if (max_run_time <= 0) {
 				process.waitFor();

@@ -4,11 +4,11 @@ import java.io.File;
 
 public class CommandLineUtil {
 
-	public static void ExecuteCommand(File dir, String command) {
+	public static void ExecuteCommand(File dir, String command, boolean redirect_standard_stream) {
 		try {
 			// String command="netstat -an";
 			// String command = "c:\\windows\\system32\\cmd.exe /c netstat -an";
-			ProcessRunner.RunOneProcess(dir, command, -1);
+			ProcessRunner.RunOneProcess(dir, command, -1, redirect_standard_stream);
 //			Runtime r = Runtime.getRuntime();
 //			Process p = r.exec(command, null, dir);
 //			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
