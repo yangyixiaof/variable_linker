@@ -25,7 +25,7 @@ public class DotView {
 		}
 	}
 	
-	private static void HandleOneDot(File f, String pic_directory) {
+	protected static void HandleOneDot(File f, String pic_directory) {
 		String fname = f.getName();
 		String dotname = fname.substring(0, fname.lastIndexOf(".dot"));
 		String cmd = IRVisualMeta.DOT_EXE + " -Tjpg " + f.getAbsolutePath() + " -o " + pic_directory + "/" + dotname + ".jpg";
