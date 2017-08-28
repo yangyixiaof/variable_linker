@@ -94,11 +94,11 @@ public class AnalysisEnvironment {
 		}
 
 		{
-			Iterator<IClasspathEntry> eitr = entries.iterator();
-			while (eitr.hasNext()) {
-				IClasspathEntry ice = eitr.next();
-				System.err.println(ice.toString());
-			}
+//			Iterator<IClasspathEntry> eitr = entries.iterator();
+//			while (eitr.hasNext()) {
+//				IClasspathEntry ice = eitr.next();
+//				System.err.println(ice.toString());
+//			}
 			IterateAllJarsToFillEntries(dir, entries);
 		}
 		
