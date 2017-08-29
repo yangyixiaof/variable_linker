@@ -62,9 +62,9 @@ import cn.yyx.research.program.eclipse.jdtutil.ASTRewriteHelper;
 import cn.yyx.research.program.eclipse.searchutil.EclipseSearchForIMember;
 import cn.yyx.research.program.ir.bind.BindingManager;
 import cn.yyx.research.program.ir.element.ConstantUniqueElement;
+import cn.yyx.research.program.ir.element.IRElementKind;
 import cn.yyx.research.program.ir.element.UnSourceResolvedLambdaElement;
 import cn.yyx.research.program.ir.element.UnSourceResolvedTypeElement;
-import cn.yyx.research.program.ir.meta.IRElementKind;
 import cn.yyx.research.program.ir.parse.ConstantElementParser;
 import cn.yyx.research.program.ir.search.IRSearchMethodRequestor;
 import cn.yyx.research.program.ir.storage.connection.SuperConnect;
@@ -224,16 +224,16 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 
 	@Override
 	public boolean visit(QualifiedName node) {
-		TreatName(node);
+		boolean is_source_resolved = TreatName(node);
 		// if (!TreatName(node)) {
 		//	forbid_visit.add(node.getName());
 		// }
-		return super.visit(node);
+		return super.visit(node) && !is_source_resolved;
 	}
 
 	@Override
 	public boolean visit(SimpleName node) {
-		TreatName(node);
+		boolean is_source_resolved = TreatName(node);
 //		if (!TreatName(node)) {
 //			String content = node.toString();
 //			HandleCommonIJavaElementByTypeSpecifically(new UnSourceResolvedNameElement(content), node, IRElementMeta.NumericValue); // content, 
@@ -241,14 +241,14 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 //		else {
 //			System.err.println("SimpleName:" + node + ";" + node.resolveBinding().getJavaElement());
 //		}
-		return super.visit(node);
+		return super.visit(node) && !is_source_resolved;
 	}
 
 	protected boolean TreatName(Name node) {
 		IBinding ib = node.resolveBinding();
 		if (BindingManager.SourceResolvedBinding(ib)) {
 			IJavaElement ije = ib.getJavaElement();
-			HandleCommonIJavaElementByTypeSpecifically(ije, node, IRElementKind.QualifiedName.Value());
+			HandleCommonIJavaElementByTypeSpecifically(ije, node); // , IRElementKind.QualifiedName.Value()
 			return true;
 		}
 		return false;
@@ -406,7 +406,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		}
 	}
 	
-	protected void HandleCommonIJavaElementByTypeSpecifically(IJavaElement ije, ASTNode node, String symbol) {
+	protected void HandleCommonIJavaElementByTypeSpecifically(IJavaElement ije, ASTNode node) { // , String symbol
 		boolean handle = false;
 		if (ije instanceof ConstantUniqueElement) {
 			handle = true;
@@ -436,7 +436,9 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 			HandleIFieldElement((IField)ije, node);
 		}
 		if (!handle) {
-			HandleICommonJavaElement(ije, node, symbol);
+			// HandleICommonJavaElement(ije, node, symbol);
+			System.err.println("Source_resolved common element is not consant nor IMethod nor IType nor ILocalVariable nor IField.");
+			System.exit(1);
 		}
 	}
 
@@ -585,7 +587,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		super.visit(node);
 		return PreHandleMethodInvocation(node.resolveConstructorBinding(), node, nlist);
 	}
-// TODO
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean visit(SuperMethodInvocation node) {

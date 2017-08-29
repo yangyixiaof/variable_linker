@@ -1,15 +1,16 @@
-package cn.yyx.research.program.ir.meta;
+package cn.yyx.research.program.ir.element;
 
 public enum IRElementKind {
 	
-	Unknown("U"),
-	
+	// literals
 	NumericValue("N"),
 	NullValue("E"),
 	CharacterValue("C"),
 	BooleanValue("B"),
 	StringValue ("S"),
-	QualifiedName("Q"),
+	
+	// 
+	// QualifiedName("Q"),
 	Variable("V"),
 	Type("T"),
 	Method("M");

@@ -1,6 +1,6 @@
 package cn.yyx.research.program.ir.parse;
 
-import cn.yyx.research.program.ir.meta.IRElementKind;
+import cn.yyx.research.program.ir.element.IRElementKind;
 
 public class ConstantElementParser {
 	
