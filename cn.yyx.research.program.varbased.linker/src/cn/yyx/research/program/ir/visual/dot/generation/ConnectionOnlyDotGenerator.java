@@ -99,10 +99,13 @@ public class ConnectionOnlyDotGenerator implements DotGenerator {
 			IIRConnection conn = conitr.next();
 			String color = "black";
 			if (ConnectHelper.HasSpecificType(conn, VariableConnect.class)) {
-				color = "pink";
+				color = "red";
 			}
 			if (ConnectHelper.HasSpecificType(conn, MethodJumpConnect.class)) {
 				color = "green";
+			}
+			if (ConnectHelper.HasSpecificType(conn, SuperConnect.class)) {
+				color = "purple";
 			}
 			if (ConnectHelper.HasSpecificType(conn, SuperConnect.class)) {
 				color = "blue";
