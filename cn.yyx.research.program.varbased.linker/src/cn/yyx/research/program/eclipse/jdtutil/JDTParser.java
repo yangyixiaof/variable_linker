@@ -9,6 +9,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jface.text.IDocument;
 
@@ -28,6 +29,11 @@ public class JDTParser {
 		return new JDTParser(java_project);
 	}
 	
+	public static JDTParser CreateJDTStatementParserWithManualEnvironment()
+	{
+		return new JDTParser();
+	}
+	
 	private JDTParser(IJavaProject javaProject) {// , Set<String> source_classes
 		this.javaProject = javaProject;
 //		if (source_classes != null)
@@ -42,6 +48,18 @@ public class JDTParser {
 		parser.setCompilerOptions(options);
 		parser.setProject(javaProject);
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
+	}
+	
+	private JDTParser() {// , Set<String> source_classes
+		parser = ASTParser.newParser(AST.JLS8);
+		parser.setResolveBindings(true);
+		parser.setBindingsRecovery(true);
+		Map<String, String> options = JavaCore.getOptions();
+		options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
+		parser.setCompilerOptions(options);
+		// parser.setProject(javaProject);
+		// TODO set environment manually.
+		parser.setKind(ASTParser.K_STATEMENTS);
 	}
 	
 	public CompilationUnit ParseICompilationUnit(ICompilationUnit icu)
@@ -71,6 +89,13 @@ public class JDTParser {
 		parser.setSource(f.getClassFile());
 		CompilationUnit compilationUnit = (CompilationUnit) parser.createAST(null);
 		return compilationUnit;
+	}
+	
+	public Block ParseStatements(String statements)
+	{
+		parser.setSource(statements.toCharArray());
+		Block block = (Block) parser.createAST(null);
+		return block;
 	}
 
 	public static JDTParser GetUniqueEmptyParser() {
