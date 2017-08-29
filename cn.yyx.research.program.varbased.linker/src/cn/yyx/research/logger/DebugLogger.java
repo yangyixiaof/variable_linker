@@ -8,12 +8,12 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.search.SearchMatch;
 
 import cn.yyx.research.program.eclipse.jdtutil.JDTParser;
-import cn.yyx.research.program.ir.meta.IRControlMeta;
+import cn.yyx.research.program.ir.meta.IRExecutionMeta;
 
 public class DebugLogger {
 
 	public static void Log(String additioninfo, String[] infos) {
-		if (IRControlMeta.debug) {
+		if (IRExecutionMeta.debug) {
 			StringBuffer sb = new StringBuffer();
 			for (int i = 0; i < infos.length; i++) {
 				sb.append("arr[" + i + "]" + ":" + infos[i] + ";");
@@ -23,25 +23,25 @@ public class DebugLogger {
 	}
 	
 	public static void Error(String info) {
-		if (IRControlMeta.debug) {
+		if (IRExecutionMeta.debug) {
 			System.err.println(info);
 		}
 	}
 	
 	public static void Debug(String info) {
-		if (IRControlMeta.debug) {
+		if (IRExecutionMeta.debug) {
 			System.err.println(info);
 		}
 	}
 
 	public static void Log(String info) {
-		if (IRControlMeta.debug) {
+		if (IRExecutionMeta.debug) {
 			System.out.println(info);
 		}
 	}
 
 	public static void Log(SearchMatch match, IJavaProject java_project) {
-		if (IRControlMeta.debug) {
+		if (IRExecutionMeta.debug) {
 			System.out.println("================== search start ==================");
 			Object ele = match.getElement();
 			if (ele instanceof IMember)

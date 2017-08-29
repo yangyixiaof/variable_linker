@@ -14,7 +14,7 @@ import cn.yyx.research.program.eclipse.project.AnalysisEnvironment;
 import cn.yyx.research.program.eclipse.project.ProjectInfo;
 import cn.yyx.research.program.ir.generation.IRGeneratorForOneProject;
 import cn.yyx.research.program.ir.generation.structure.IRForOneProject;
-import cn.yyx.research.program.ir.meta.IRControlMeta;
+import cn.yyx.research.program.ir.meta.IRExecutionMeta;
 import cn.yyx.research.program.ir.visual.dot.generation.ConnectionOnlyDotGenerator;
 import cn.yyx.research.program.ir.visual.meta.DotMeta;
 import cn.yyx.research.program.linker.bootstrap.UI.ApplicationWorkbenchAdvisor;
@@ -62,7 +62,7 @@ public class LinkExtractor implements IApplication {
 					// DebugLogger.Log("Start is invoked!");
 					// SystemUtil.Delay(1000);
 					// testing.
-					if (IRControlMeta.test) {
+					if (IRExecutionMeta.test) {
 						TestJavaSearch.TestInAll(java_project);
 					} else {
 						// generate and print each local method.
