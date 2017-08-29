@@ -3,6 +3,7 @@ package cn.yyx.research.program.ir.generation;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -16,6 +17,8 @@ import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 
 import cn.yyx.research.program.ir.element.VirtualMethodReturnElement;
+import cn.yyx.research.program.ir.storage.connection.ContainerConnect;
+import cn.yyx.research.program.ir.storage.graph.IRGraph;
 import cn.yyx.research.program.ir.storage.graph.IRGraphForMethod;
 import cn.yyx.research.program.ir.storage.graph.IRGraphManager;
 import cn.yyx.research.program.ir.storage.node.IRJavaElementNode;
@@ -27,6 +30,10 @@ public class IRGeneratorHelper {
 	public static void HandleMethodDeclaration(IJavaProject java_project, IRGraphManager graph_manager, ASTNode node,
 			IRElementFactory ele_factory, IRStatementFactory stmt_factory, IMethodBinding imb, IMethod im, IType it,
 			List<SingleVariableDeclaration> para_list, IRJavaElementNode super_class_element, ICompilationUnit type_declare_resource, CompilationUnit type_declare) {
+		IRJavaElementNode im_node = ele_factory.UniversalElement(im);
+		IRJavaElementNode it_node = ele_factory.UniversalElement(it);
+		IRGraph.RegistConnection(im_node, it_node, new ContainerConnect());
+		
 		IRJavaElementNode return_element_node = ele_factory
 				.UniversalElement(new VirtualMethodReturnElement(im.getKey())); // im.getKey(),
 		LinkedList<IRJavaElementNode> params = new LinkedList<IRJavaElementNode>();
@@ -49,6 +56,18 @@ public class IRGeneratorHelper {
 		graph_manager.AddIRGraph(im, irgfm);
 		graph_manager.AddMemberRelation(it, im);
 		node.accept(irgfs);
+		
+		Set<IRJavaElementNode> vars = irgfm.GetVariableNodes();
+		HandleVariablesContainerConnectToIMember(vars, im_node);
+	}
+	
+	public static void HandleVariablesContainerConnectToIMember(Set<IRJavaElementNode> vars, IRJavaElementNode imember) {
+		// add connection from im_node to it_node.
+		Iterator<IRJavaElementNode> vitr = vars.iterator();
+		while (vitr.hasNext()) {
+			IRJavaElementNode irjen = vitr.next();
+			IRGraph.RegistConnection(irjen, imember, new ContainerConnect());
+		}
 	}
 
 }

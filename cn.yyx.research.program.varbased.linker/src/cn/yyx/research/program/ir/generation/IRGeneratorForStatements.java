@@ -92,7 +92,6 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		this.im = im;
 		this.type_declare_resource = type_declare_resource;
 		this.type_declare = type_declare;
-		// this.graph_manager.AddIRGraph(graph);
 	}
 
 	@Override

@@ -123,6 +123,7 @@ public class IRGeneratorForOneClass extends IRGeneratorForStatements {
 					this.initial_node.accept(this);
 				}
 				// IRGeneratorForOneProject.GetInstance().FetchITypeIR((it)).SetFieldLevel((IRForOneField)irc);
+				IRGeneratorHelper.HandleVariablesContainerConnectToIMember(graph.GetVariableNodes(), ele_factory.UniversalElement(it));
 			}
 		}
 		super.postVisit(node);
