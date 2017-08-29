@@ -2,7 +2,7 @@ package cn.yyx.research.program.ir.storage.node;
 
 public class IRStatementNode extends IIRNode {
 	
-	int variable_index = 0;
+	int variable_index = 0; // also length for number of variables in a statement.
 	
 	public IRStatementNode(int variable_index) {
 		super("");

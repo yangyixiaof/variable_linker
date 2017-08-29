@@ -509,7 +509,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 						graph_manager.AddMemberMethodInvoke(im, new IRMethodInvoke(invokes));
 					}
 					// create the special node for source_method_invocation.
-					IRSourceMethodStatementNode irsmsn = stmt_factory.CreateIRSourceMethodStatementNode(0, methods);
+					IRSourceMethodStatementNode irsmsn = stmt_factory.CreateIRSourceMethodStatementNode(methods); // 0, 
 					graph.AddSourceMethodStatement(irsmsn);
 					// handle argument expressions.
 					int index = 0;
@@ -585,7 +585,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		super.visit(node);
 		return PreHandleMethodInvocation(node.resolveConstructorBinding(), node, nlist);
 	}
-
+// TODO
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean visit(SuperMethodInvocation node) {

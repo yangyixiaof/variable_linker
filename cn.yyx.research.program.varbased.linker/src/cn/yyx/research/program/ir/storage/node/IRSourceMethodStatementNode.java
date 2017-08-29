@@ -13,8 +13,8 @@ public class IRSourceMethodStatementNode extends IRStatementNode {
 	protected Collection<IMethod> methods = null;
 	protected List<IRStatementNode> argument_stmts = new LinkedList<IRStatementNode>();
 	
-	public IRSourceMethodStatementNode(int variable_index, Collection<IMethod> methods) {
-		super(variable_index);
+	public IRSourceMethodStatementNode(Collection<IMethod> methods) { // int variable_index, 
+		super(0); // variable_index
 		this.SetContent(IRStatementMeta.SourceMethodInvoke);
 		this.methods = methods;
 	}

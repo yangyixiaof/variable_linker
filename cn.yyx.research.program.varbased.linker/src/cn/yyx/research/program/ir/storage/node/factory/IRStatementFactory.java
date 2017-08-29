@@ -20,8 +20,9 @@ public class IRStatementFactory {
 	public IRStatementFactory() {
 	}
 	
-	public IRSourceMethodStatementNode CreateIRSourceMethodStatementNode(int variable_index, Collection<IMethod> methods) {
-		IRSourceMethodStatementNode result = new IRSourceMethodStatementNode(variable_index, methods);
+	public IRSourceMethodStatementNode CreateIRSourceMethodStatementNode(Collection<IMethod> methods) {
+		// int variable_index, 
+		IRSourceMethodStatementNode result = new IRSourceMethodStatementNode(methods); // variable_index, 
 		statements.add(result);
 		return result;
 	}
