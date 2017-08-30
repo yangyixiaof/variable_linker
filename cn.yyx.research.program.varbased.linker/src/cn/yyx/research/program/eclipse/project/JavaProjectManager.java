@@ -54,13 +54,6 @@ public class JavaProjectManager {
 			binFolder.create(false, true, null);
 			javaProject.setOutputLocation(binFolder.getFullPath(), null);
 
-//			List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>();
-//			IVMInstall vmInstall = JavaRuntime.getDefaultVMInstall();
-//			LibraryLocation[] locations = JavaRuntime.getLibraryLocations(vmInstall);
-//			for (LibraryLocation element : locations) {
-//				entries.add(JavaCore.newLibraryEntry(element.getSystemLibraryPath(), null, null));
-//			}
-			// add libs to project class path
 			javaProject.setRawClasspath(entries.toArray(new IClasspathEntry[entries.size()]), null);
 
 			IFolder sourceFolder = project.getFolder("src");

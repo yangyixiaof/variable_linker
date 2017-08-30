@@ -36,7 +36,7 @@ public class IRGeneratorForOneProject {
 		DebugLogger.Log("ICompilationUnit_size:" + units.size());
 		if (units != null) {
 			for (ICompilationUnit icu : units) {
-				CompilationUnit cu = JDTParser.CreateJDTParser(java_project).ParseICompilationUnit(icu);
+				CompilationUnit cu = JDTParser.CreateJDTParserWithJavaProject(java_project).ParseICompilationUnit(icu);
 				IRGeneratorForClassesInICompilationUnit irgfcicu = new IRGeneratorForClassesInICompilationUnit(
 						java_project, graph_manager, ele_factory, stmt_factory, icu, cu);
 				cu.accept(irgfcicu);

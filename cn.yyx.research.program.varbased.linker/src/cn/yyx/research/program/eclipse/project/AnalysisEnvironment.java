@@ -23,6 +23,7 @@ import cn.yyx.research.program.analysis.prepare.PreProcessHelper;
 import cn.yyx.research.program.eclipse.exception.NoAnalysisSourceException;
 import cn.yyx.research.program.eclipse.exception.ProjectAlreadyExistsException;
 import cn.yyx.research.program.eclipse.jdtutil.JDTParser;
+import cn.yyx.research.program.eclipse.project.meta.FakedProjectEnvironmentMeta;
 import cn.yyx.research.program.eclipse.repositories.gradle.GradleTransformer;
 import cn.yyx.research.program.eclipse.repositories.maven.PomTransformer;
 import cn.yyx.research.program.fileutil.FileIterator;
@@ -38,20 +39,26 @@ public class AnalysisEnvironment {
 		if (!dir.exists() || !dir.isDirectory()) {
 			throw new NoAnalysisSourceException();
 		}
-		String user_home = System.getProperty("user.home");
-		File dependency_dir = new File(user_home + "/" + IRResourceMeta.ProjectDependencyDirectory);
+		File dependency_dir = new File(IRResourceMeta.GetAbsolutePathOfProjectDependencyDirectory());
 		if (dependency_dir.exists()) {
 			FileUtil.DeleteFile(dependency_dir);
 		}
 		dependency_dir.mkdir();
+		File faked_proj_dir = new File(FakedProjectEnvironmentMeta.GetFakedEnvironment());
+		if (faked_proj_dir.exists()) {
+			FileUtil.DeleteFile(faked_proj_dir);
+		}
+		faked_proj_dir.mkdir();
 		File gradle_dir = new File(dependency_dir + "/gradle_dependencies");
-		if (!gradle_dir.exists()) {
-			gradle_dir.mkdirs();
+		if (gradle_dir.exists()) {
+			FileUtil.DeleteFile(gradle_dir);
 		}
+		gradle_dir.mkdirs();
 		File maven_dir = new File(dependency_dir + "/maven_dependencies");
-		if (!maven_dir.exists()) {
-			maven_dir.mkdirs();
+		if (maven_dir.exists()) {
+			FileUtil.DeleteFile(maven_dir);
 		}
+		maven_dir.mkdirs();
 		
 		List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>();
 		IVMInstall vmInstall = JavaRuntime.getDefaultVMInstall();
@@ -111,9 +118,9 @@ public class AnalysisEnvironment {
 			Iterator<File> fitr = fi.EachFileIterator();
 			while (fitr.hasNext()) {
 				File f = fitr.next();
-				String f_norm_path = f.getAbsolutePath().trim().replace('\\', '/');
+				String f_norm_path = f.getAbsolutePath().trim(); // .replace('\\', '/')
 				DebugLogger.Log("f_norm_path:" + f_norm_path);
-				JDTParser unique_parser = JDTParser.GetUniqueEmptyParser();
+				JDTParser unique_parser = JDTParser.GetUniquePrimitiveParser();
 				CompilationUnit cu = unique_parser.ParseJavaFile(f);
 				PackageDeclaration pack = cu.getPackage();
 				if (pack != null) {

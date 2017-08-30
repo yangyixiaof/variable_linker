@@ -16,8 +16,8 @@ public class VariableResolveCheckVisitor extends ASTVisitor {
 	
 	@Override
 	public boolean visit(SimpleName node) {
-		System.err.println("SimpleName:" + node);
 		IBinding nbinding = node.resolveBinding();
+		System.err.println("SimpleName:" + node + ";Binding:" + nbinding);
 		if (nbinding != null) {
 			IJavaElement ije = nbinding.getJavaElement();
 			// if (ije != null) {

@@ -57,7 +57,7 @@ public class DebugLogger {
 				IMethod im = (IMethod)ele;
 				System.out.println("method matches:" + match.toString());
 				System.out.println("method match element class:" + match.getElement().getClass());
-				CompilationUnit cu = JDTParser.CreateJDTParser(java_project).ParseICompilationUnit(im.getCompilationUnit());
+				CompilationUnit cu = JDTParser.CreateJDTParserWithJavaProject(java_project).ParseICompilationUnit(im.getCompilationUnit());
 				String searched_content = "#Unknown#";
 				try {
 					searched_content = cu.getTypeRoot().getBuffer().getText(match.getOffset(), match.getLength());

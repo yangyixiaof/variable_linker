@@ -20,7 +20,7 @@ import cn.yyx.research.program.ir.visual.meta.DotMeta;
 import cn.yyx.research.program.linker.bootstrap.UI.ApplicationWorkbenchAdvisor;
 import cn.yyx.research.program.systemutil.EnvironmentUtil;
 import cn.yyx.research.program.systemutil.SystemUtil;
-import cn.yyx.research.test.TestJavaSearch;
+import cn.yyx.research.test.TestRoot;
 
 public class LinkExtractor implements IApplication {
 
@@ -63,7 +63,8 @@ public class LinkExtractor implements IApplication {
 					// SystemUtil.Delay(1000);
 					// testing.
 					if (IRExecutionMeta.test) {
-						TestJavaSearch.TestInAll(java_project);
+						TestRoot.TestInAll();
+						// TestJavaSearch.TestInAll(java_project);
 					} else {
 						// generate and print each local method.
 						SystemUtil.Delay(1000);

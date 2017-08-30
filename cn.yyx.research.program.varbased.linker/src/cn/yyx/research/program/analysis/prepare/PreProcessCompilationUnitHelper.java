@@ -31,7 +31,7 @@ public class PreProcessCompilationUnitHelper {
 	// }
 
 	public static TextEdit PreProcessTransformer(ICompilationUnit icu, IJavaProject java_project) {
-		CompilationUnit cu = JDTParser.CreateJDTParser(java_project).ParseICompilationUnit(icu);
+		CompilationUnit cu = JDTParser.CreateJDTParserWithJavaProject(java_project).ParseICompilationUnit(icu);
 		IDocument doc = new Document(cu.toString());
 		cu.recordModifications();
 		final ASTRewrite rewrite = ASTRewrite.create(cu.getAST());
@@ -43,7 +43,7 @@ public class PreProcessCompilationUnitHelper {
 	}
 	
 	public static String PreProcessDeleter(ICompilationUnit icu, IJavaProject java_project) {
-		CompilationUnit cu = JDTParser.CreateJDTParser(java_project).ParseICompilationUnit(icu);
+		CompilationUnit cu = JDTParser.CreateJDTParserWithJavaProject(java_project).ParseICompilationUnit(icu);
 		cu.recordModifications();
 		@SuppressWarnings("unchecked")
 		List<Comment> comments = cu.getCommentList();
