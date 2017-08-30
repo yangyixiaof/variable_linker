@@ -21,6 +21,7 @@ public class FileUtil {
 
 	public static String ReadFromFile(File f) {
 		BufferedReader reader = null;
+		String source = null;
 		try {
 			reader = new BufferedReader(new FileReader(f));
 			StringBuilder content = new StringBuilder();
@@ -29,15 +30,20 @@ public class FileUtil {
 				content.append(tmp);
 				content.append("\n");
 			}
-			reader.close();
-			reader = null;
-			String source = content.toString();
-			return source;
+			source = content.toString();
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);
+		} finally {
+			try {
+				if (reader != null) {
+					reader.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-		return null;
+		return source;
 	}
 
 	public static void WriteToFile(String filename, String filecontent, String directory) {
@@ -49,6 +55,7 @@ public class FileUtil {
 		if (directory.endsWith("/") || directory.endsWith("\\")) {
 			filepath = directory + filename;
 		}
+		BufferedWriter bw = null;
 		try {
 			if (!directory.equals("")) {
 				File diret = new File(directory);
@@ -61,35 +68,54 @@ public class FileUtil {
 				f.createNewFile();
 			}
 			FileWriter fw = new FileWriter(f.getAbsoluteFile());
-			BufferedWriter bw = new BufferedWriter(fw);
+			bw = new BufferedWriter(fw);
 			bw.write(filecontent);
-			bw.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.err.println("There are errors in creating files or directories.");
 			System.exit(1);
+		} finally {
+			try {
+				if (bw != null) {
+					bw.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
 	public static void CopyFile(File f1, File f2) {
 		int length = 2048;
+		FileInputStream in = null;
+		FileOutputStream out = null;
 		try {
-			FileInputStream in = new FileInputStream(f1);
-			FileOutputStream out = new FileOutputStream(f2);
+			in = new FileInputStream(f1);
+			out = new FileOutputStream(f2);
 			byte[] buffer = new byte[length];
 			while (true) {
 				int ins = in.read(buffer);
 				if (ins == -1) {
-					in.close();
-					out.flush();
-					out.close();
-				} else
+					break;
+				} else {
 					out.write(buffer, 0, ins);
+				}
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				if (in != null) {
+					in.close();
+				}
+				if (out != null) {
+					out.flush();
+					out.close();
+				}
+			} catch (Exception e2) {
+			}
 		}
 	}
 
