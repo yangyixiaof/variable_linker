@@ -23,8 +23,8 @@ public class JDTParser {
 	
 	private ASTParser parser = null;
 	
-	private IJavaProject javaProject = null;
-	// private Set<String> source_classes = new HashSet<String>();
+//	private IJavaProject java_project = null;
+//	private Set<String> source_classes = new HashSet<String>();
 	
 	public static JDTParser CreateJDTParserWithJavaProject(IJavaProject java_project)
 	{
@@ -37,7 +37,7 @@ public class JDTParser {
 	}
 	
 	private JDTParser(IJavaProject javaProject) {// , Set<String> source_classes
-		this.javaProject = javaProject;
+//		this.java_project = javaProject;
 //		if (source_classes != null)
 //		{
 //			this.source_classes.addAll(source_classes);
@@ -48,8 +48,8 @@ public class JDTParser {
 		Map<String, String> options = JavaCore.getOptions();
 		options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
 		parser.setCompilerOptions(options);
-		parser.setProject(javaProject);
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
+		parser.setProject(javaProject);
 	}
 	
 	private JDTParser() {// , Set<String> source_classes
@@ -59,16 +59,14 @@ public class JDTParser {
 		Map<String, String> options = JavaCore.getOptions();
 		options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
 		parser.setCompilerOptions(options);
-		String faked_env_path = System.getProperty("user.home") + "/" + FakedProjectEnvironmentMeta.FakedEnvironment;
+		parser.setKind(ASTParser.K_COMPILATION_UNIT);
+		String faked_env_path = FakedProjectEnvironmentMeta.GetFakedEnvironment();
 		// set class_path of ASTParser.
 		List<String> entries = new ArrayList<String>();
 		String jre_home = System.getProperty("java.home");
 		entries.add(jre_home + "/lib/rt.jar");
 		String[] classpath_array = entries.toArray(new String[entries.size()]);
 		parser.setEnvironment(classpath_array, new String[]{faked_env_path}, new String[]{"UTF-8"}, true);
-		// parser.setProject(javaProject);
-		// TODO set environment manually.
-		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 	}
 	
 	public CompilationUnit ParseICompilationUnit(ICompilationUnit icu)
@@ -116,8 +114,8 @@ public class JDTParser {
 		return Unique_Primitive_Parser;
 	}
 
-	public IJavaProject GetJavaProject() {
-		return javaProject;
-	}
-		
+//	public IJavaProject GetJavaProject() {
+//		return java_project;
+//	}
+	
 }
