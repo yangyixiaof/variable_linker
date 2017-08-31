@@ -5,6 +5,7 @@ public class TestResolveTemplate {
 	public TestResolveTemplate() {
 	}
 	
+	@SuppressWarnings("unused")
 	public void test() {
 		Integer N = 0;
 		Object E = null;
