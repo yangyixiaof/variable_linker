@@ -35,21 +35,23 @@ public class IRStatementParser {
 		build.append("}\n");
 		// build.append("V = V = V;\n");
 		// testing.
-		System.err.println("Parse-Content:" + build.toString());
-		
-		CompilationUnit cu = parser.ParseJavaContent("", "ParseEnv.java", new Document(build.toString()));
-		@SuppressWarnings("unchecked")
-		List<AbstractTypeDeclaration> types = cu.types();
-		TypeDeclaration td = (TypeDeclaration)types.get(0);
-		MethodDeclaration[] mds = td.getMethods();
-		Block block = mds[0].getBody();
-		// "int i = 9; \n int j = i+1;"
-		Statement last_stmt = (Statement) block.statements().get(block.statements().size() - 1);
-		// testing.
-		// String str = block.statements().get(0).toString();
-		// System.out.println("First statement:" + str);
-		ASTVisitor visitor = new VariableResolveCheckVisitor(info.GetAmountOfVariables());
-		last_stmt.accept(visitor);
+		System.err.println("Parse-Content:\n" + build.toString());
+
+		CompilationUnit cu = parser.ParseJavaContent("", "ParseEnv", new Document(build.toString()));
+		if (cu != null) {
+			@SuppressWarnings("unchecked")
+			List<AbstractTypeDeclaration> types = cu.types();
+			TypeDeclaration td = (TypeDeclaration) types.get(0);
+			MethodDeclaration[] mds = td.getMethods();
+			Block block = mds[0].getBody();
+			// "int i = 9; \n int j = i+1;"
+			Statement last_stmt = (Statement) block.statements().get(block.statements().size() - 1);
+			// testing.
+			// String str = block.statements().get(0).toString();
+			// System.out.println("First statement:" + str);
+			ASTVisitor visitor = new VariableResolveCheckVisitor(info.GetAmountOfVariables());
+			last_stmt.accept(visitor);
+		}
 	}
 
 }

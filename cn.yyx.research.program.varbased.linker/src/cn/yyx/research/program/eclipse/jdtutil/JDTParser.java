@@ -6,12 +6,14 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jface.text.IDocument;
 
 import cn.yyx.research.program.eclipse.project.AnalysisEnvironment;
+import cn.yyx.research.program.eclipse.project.resource.FakeResourceCreationHelper;
 
 public class JDTParser {
 	
@@ -67,42 +69,34 @@ public class JDTParser {
 		return compilationUnit;
 	}
 	
-	public CompilationUnit ParseJavaContent(String package_name, String file_unit_name, IDocument doc)
-	{
-//		String[] dirs = package_name.split("\\.");
-//		String base_dir = FakedProjectEnvironmentMeta.GetFakedEnvironment();
-//		if (dirs != null && dirs.length > 0) {
-//			for (int i=0;i<dirs.length;i++) {
-//				String one = dirs[i];
-//				String one_dir = base_dir + "/" + one;
-//				File file_one_dir = new File(one_dir);
-//				if (!file_one_dir.exists()) {
-//					file_one_dir.mkdirs();
-//				}
-//			}
-//		}
-//		File dest = new File(base_dir + "/" + file_unit_name);
-//		FileUtil.WriteToFile(dest, doc.get());
-//		Map<String, TreeMap<String, String>> dir_files_map = new TreeMap<String, TreeMap<String, String>>();
-//		TreeMap<String, String> pack_unit = new TreeMap<String, String>();
-//		pack_unit.put(package_name, file_unit_name);
-//		dir_files_map.put(project_name, pack_unit);
-//		IJavaProject proj = JavaProjectManager.UniqueManager().GetJavaProject(project_name);
-//		try {
-//			JavaImportOperation.ImportFileSystem(proj, dir_files_map);
-//		} catch (JavaModelException e) {
-//			e.printStackTrace();
-//		}
-		parser.setUnitName("/" + java_project.getElementName() + "/src/" + package_name.replace('.', '/') + (package_name.equals("") ? "" : "/") + file_unit_name);
-		parser.setSource(doc.get().toCharArray());
-		CompilationUnit compilationUnit = (CompilationUnit) parser.createAST(null);
-		return compilationUnit;
-	}
-	
 	public CompilationUnit ParseOneClass(IType f)
 	{
 		parser.setSource(f.getClassFile());
 		CompilationUnit compilationUnit = (CompilationUnit) parser.createAST(null);
+		return compilationUnit;
+	}
+	
+	public CompilationUnit ParseJavaContent(String package_name, String unit_name, IDocument doc)
+	{
+		String file_unit_name = unit_name + ".java";
+		String proj_name = java_project.getElementName();
+		FakeResourceCreationHelper.CreateAndImportFakeJavaFile(proj_name, package_name, file_unit_name, doc);
+		IType it = null;
+		String full_qualified_name = package_name + (package_name.equals("") ? "" : ".") + unit_name;
+		try {
+			it = java_project.findType(full_qualified_name);
+		} catch (JavaModelException e) {
+			e.printStackTrace();
+		}
+		CompilationUnit compilationUnit = null;
+		if (it != null && it.getCompilationUnit() != null) {
+			// parser.setUnitName("/" + proj_name + "/src/" + package_name.replace('.', '/') + (package_name.equals("") ? "" : "/") + file_unit_name);
+			// parser.setSource(doc.get().toCharArray());
+			parser.setSource(it.getCompilationUnit());
+			compilationUnit = (CompilationUnit) parser.createAST(null);
+		} else {
+			System.err.println("Warning: " + full_qualified_name + " can not be founded!");
+		}
 		return compilationUnit;
 	}
 	
