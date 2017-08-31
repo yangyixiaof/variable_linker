@@ -19,7 +19,7 @@ public class IRStatementParser {
 
 	public static void ParseAStatement(IRStatementInfo info) {
 		String gap = "	";
-		JDTParser parser = JDTParser.CreateJDTParserWithPrimitiveEnvironment();
+		JDTParser parser = JDTParser.GetUniquePrimitiveParser();
 		StringBuilder build = new StringBuilder("");
 		build.append("public class ParseEnv {\n");
 		build.append(gap + "public void test() {\n");
@@ -37,7 +37,7 @@ public class IRStatementParser {
 		// testing.
 		System.err.println("Parse-Content:" + build.toString());
 		
-		CompilationUnit cu = parser.ParseJavaContent(new Document(build.toString()), "ParseEnv.java");
+		CompilationUnit cu = parser.ParseJavaContent("", "ParseEnv.java", new Document(build.toString()));
 		@SuppressWarnings("unchecked")
 		List<AbstractTypeDeclaration> types = cu.types();
 		TypeDeclaration td = (TypeDeclaration)types.get(0);

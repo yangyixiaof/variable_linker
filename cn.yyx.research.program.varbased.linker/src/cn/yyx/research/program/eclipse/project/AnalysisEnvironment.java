@@ -22,7 +22,7 @@ import cn.yyx.research.logger.DebugLogger;
 import cn.yyx.research.program.analysis.prepare.PreProcessHelper;
 import cn.yyx.research.program.eclipse.exception.NoAnalysisSourceException;
 import cn.yyx.research.program.eclipse.exception.ProjectAlreadyExistsException;
-import cn.yyx.research.program.eclipse.jdtutil.JDTParser;
+import cn.yyx.research.program.eclipse.jdtutil.ASTLexicalParser;
 import cn.yyx.research.program.eclipse.project.meta.FakedProjectEnvironmentMeta;
 import cn.yyx.research.program.eclipse.repositories.gradle.GradleTransformer;
 import cn.yyx.research.program.eclipse.repositories.maven.PomTransformer;
@@ -31,6 +31,28 @@ import cn.yyx.research.program.fileutil.FileUtil;
 import cn.yyx.research.program.ir.meta.IRResourceMeta;
 
 public class AnalysisEnvironment {
+	
+	public static void InitializeClassPathWithDefaultJRE(List<IClasspathEntry> entries) {
+		IVMInstall vmInstall = JavaRuntime.getDefaultVMInstall();
+		LibraryLocation[] locations = JavaRuntime.getLibraryLocations(vmInstall);
+		for (LibraryLocation element : locations) {
+			entries.add(JavaCore.newLibraryEntry(element.getSystemLibraryPath(), null, null));
+		}
+	}
+	
+	public static IJavaProject CreateDefaultAnalysisEnironment() {
+		List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>();
+		InitializeClassPathWithDefaultJRE(entries);
+		IJavaProject java_project = null;
+		try {
+			java_project = JavaProjectManager.UniqueManager().CreateJavaProject(FakedProjectEnvironmentMeta.FakedProject, entries);
+		} catch (ProjectAlreadyExistsException e) {
+			e.printStackTrace();
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+		return java_project;
+	}
 
 	public static IJavaProject CreateAnalysisEnvironment(ProjectInfo pi)
 			throws NoAnalysisSourceException, ProjectAlreadyExistsException, CoreException {
@@ -61,12 +83,7 @@ public class AnalysisEnvironment {
 		maven_dir.mkdirs();
 		
 		List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>();
-		IVMInstall vmInstall = JavaRuntime.getDefaultVMInstall();
-		LibraryLocation[] locations = JavaRuntime.getLibraryLocations(vmInstall);
-		for (LibraryLocation element : locations) {
-			entries.add(JavaCore.newLibraryEntry(element.getSystemLibraryPath(), null, null));
-		}
-
+		InitializeClassPathWithDefaultJRE(entries);
 		{
 			FileIterator fi = new FileIterator(dir.getAbsolutePath(), ".+\\.gradle$");
 			Iterator<File> fitr = fi.EachFileIterator();
@@ -82,7 +99,6 @@ public class AnalysisEnvironment {
 			}
 			IterateAllJarsToFillEntries(gradle_dir, entries);
 		}
-
 		{
 			FileIterator fi = new FileIterator(dir.getAbsolutePath(), "^pom\\.xml$");
 			Iterator<File> fitr = fi.EachFileIterator();
@@ -99,7 +115,6 @@ public class AnalysisEnvironment {
 			}
 			IterateAllJarsToFillEntries(maven_dir, entries);
 		}
-
 		{
 //			Iterator<IClasspathEntry> eitr = entries.iterator();
 //			while (eitr.hasNext()) {
@@ -108,20 +123,18 @@ public class AnalysisEnvironment {
 //			}
 			IterateAllJarsToFillEntries(dir, entries);
 		}
+		IJavaProject java_project = JavaProjectManager.UniqueManager().CreateJavaProject(pi.getName(), entries);
 		
-		JavaProjectManager manager = JavaProjectManager.UniqueManager();
-		IJavaProject java_project = manager.CreateJavaProject(pi.getName(), entries);
+		Map<String, TreeMap<String, String>> dir_files_map = new TreeMap<String, TreeMap<String, String>>();
 		{
 			// import legal .java files into IJavaProject.
-			Map<String, TreeMap<String, String>> dir_files_map = new TreeMap<String, TreeMap<String, String>>();
 			FileIterator fi = new FileIterator(dir.getAbsolutePath(), ".+(?<!-yyx-copy)\\.java$");
 			Iterator<File> fitr = fi.EachFileIterator();
 			while (fitr.hasNext()) {
 				File f = fitr.next();
 				String f_norm_path = f.getAbsolutePath().trim(); // .replace('\\', '/')
 				DebugLogger.Log("f_norm_path:" + f_norm_path);
-				JDTParser unique_parser = JDTParser.GetUniquePrimitiveParser();
-				CompilationUnit cu = unique_parser.ParseJavaFile(f);
+				CompilationUnit cu = ASTLexicalParser.GetUniqueParser().ParseJavaFile(f);
 				PackageDeclaration pack = cu.getPackage();
 				if (pack != null) {
 					String fname = f.getName();
@@ -156,9 +169,8 @@ public class AnalysisEnvironment {
 				}
 			}
 			// Fill the source folder of the project.
-			JavaImportOperation.ImportFileSystem(java_project, dir_files_map);
 		}
-
+		JavaImportOperation.ImportFileSystem(java_project, dir_files_map);
 		PreProcessHelper.EliminateAllParameterizedTypeAndReformAssignment(java_project);
 		return java_project;
 	}
