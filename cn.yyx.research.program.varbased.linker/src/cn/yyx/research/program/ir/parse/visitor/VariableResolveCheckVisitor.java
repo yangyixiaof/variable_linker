@@ -32,4 +32,8 @@ public class VariableResolveCheckVisitor extends ASTVisitor {
 		return current_variable_amount == variable_amount;
 	}
 	
+	public int GetCurrentVariableAmount() {
+		return current_variable_amount;
+	}
+	
 }

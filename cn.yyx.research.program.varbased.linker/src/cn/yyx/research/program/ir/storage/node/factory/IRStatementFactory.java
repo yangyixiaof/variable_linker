@@ -9,6 +9,7 @@ import org.eclipse.jdt.core.IMethod;
 
 import cn.yyx.research.program.ir.meta.IRStatementMeta;
 import cn.yyx.research.program.ir.parse.IRStatementParser;
+import cn.yyx.research.program.ir.parse.structure.IRStatementCheckResult;
 import cn.yyx.research.program.ir.storage.node.IIRBlockOverNode;
 import cn.yyx.research.program.ir.storage.node.IIRBranchOverNode;
 import cn.yyx.research.program.ir.storage.node.IRNoneSucceedNode;
@@ -83,9 +84,9 @@ public class IRStatementFactory {
 		Iterator<IRStatementNode> sitr = statements.iterator();
 		while (sitr.hasNext()) {
 			IRStatementNode irsn = sitr.next();
-			boolean right = IRStatementParser.CheckTheStatementContainsRightAmountOfVariables(new IRStatementInfo(irsn.GetVariableIndex(), irsn.GetContent()));
-			if (!right) {
-				System.err.println("Wrong content is: " + irsn.GetContent());
+			IRStatementCheckResult check_result = IRStatementParser.CheckTheStatementContainsRightAmountOfVariables(new IRStatementInfo(irsn.GetVariableIndex(), irsn.GetContent()));
+			if (!check_result.IsStatementValid()) {
+				System.err.println("Wrong content is: " + irsn.GetContent() + ";expected amount:" + irsn.GetVariableIndex() + ";actual amount:" + check_result.GetActualAmountOfVariable());
 				System.exit(1);
 			}
 		}

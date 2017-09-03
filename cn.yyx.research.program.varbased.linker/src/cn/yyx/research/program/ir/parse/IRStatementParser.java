@@ -11,6 +11,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 import org.eclipse.jface.text.Document;
 
 import cn.yyx.research.program.eclipse.jdtutil.JDTParser;
+import cn.yyx.research.program.ir.parse.structure.IRStatementCheckResult;
 import cn.yyx.research.program.ir.parse.visitor.VariableResolveCheckVisitor;
 import cn.yyx.research.program.ir.storage.node.info.IRStatementInfo;
 
@@ -50,7 +51,7 @@ public class IRStatementParser {
 		return last_stmt;
 	}
 
-	public static boolean CheckTheStatementContainsRightAmountOfVariables(IRStatementInfo info) {
+	public static IRStatementCheckResult CheckTheStatementContainsRightAmountOfVariables(IRStatementInfo info) {
 		CompilationUnit cu = ParseToCompilationUnit(info);
 		Statement last_stmt = ObtainConcernedStatementFromCompilationUnit(cu);
 		// testing.
@@ -58,7 +59,7 @@ public class IRStatementParser {
 		// System.out.println("First statement:" + str);
 		VariableResolveCheckVisitor visitor = new VariableResolveCheckVisitor(info.GetAmountOfVariables());
 		last_stmt.accept(visitor);
-		return visitor.IsVariableAmountConsistent();
+		return new IRStatementCheckResult(visitor.IsVariableAmountConsistent(), visitor.GetCurrentVariableAmount());
 	}
 
 }
