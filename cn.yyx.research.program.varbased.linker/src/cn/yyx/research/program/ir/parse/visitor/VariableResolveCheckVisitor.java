@@ -1,6 +1,5 @@
 package cn.yyx.research.program.ir.parse.visitor;
 
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.SimpleName;
@@ -19,11 +18,11 @@ public class VariableResolveCheckVisitor extends ASTVisitor {
 		IBinding nbinding = node.resolveBinding();
 		// System.err.println("SimpleName:" + node + ";Binding:" + nbinding);
 		if (nbinding != null) {
-			IJavaElement ije = nbinding.getJavaElement();
-			if (ije != null) {
-				// System.err.println("NullIJE SimpleName:" + node.toString() + ";Element:" + ije);
-				current_variable_amount++;
-			}
+			// IJavaElement ije = nbinding.getJavaElement();
+			// if (ije != null) {
+			//	System.err.println("NullIJE SimpleName:" + node.toString() + ";Element:" + ije);
+			current_variable_amount++;
+			// }
 		}
 		return super.visit(node);
 	}

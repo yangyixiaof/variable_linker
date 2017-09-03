@@ -42,7 +42,6 @@ import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.core.dom.TryStatement;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclarationStatement;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
@@ -170,38 +169,42 @@ public class IRGeneratorForStatements extends ASTVisitor {
 
 	@Override
 	public boolean visit(VariableDeclarationStatement node) {
-		@SuppressWarnings("unchecked")
-		List<VariableDeclarationFragment> frags = node.fragments();
-		Iterator<VariableDeclarationFragment> fitr = frags.iterator();
-		while (fitr.hasNext()) {
-			Set<IRStatementNode> wait_merge_nodes = new HashSet<IRStatementNode>();
-			Type tp = node.getType();
-			ASTNodeHandledInfo info_tp = PreHandleOneASTNode(tp, 0);
-			IRStatementNode tp_stmt = info_tp.GetIRStatementNode();
-			wait_merge_nodes.add(tp_stmt);
-			int element_idx = tp_stmt.GetVariableIndex();
-			VariableDeclarationFragment vd = fitr.next();
-			ASTNodeHandledInfo info = PreHandleOneASTNode(vd, element_idx);
-			IRStatementNode irsn = info.GetIRStatementNode();
-			wait_merge_nodes.add(irsn);
-			IRStatementNode ir_stmt = stmt_factory.CreateIRStatementNode(irsn.GetVariableIndex());
-			ir_stmt.SetContent(tp_stmt.GetContent() + " " + irsn.GetContent() + ";");
-			IRGraph.MergeNodesToOne(wait_merge_nodes, ir_stmt);
-			graph.GoForwardAStep(ir_stmt);
-		}
-		return false;
+		ASTNodeHandledInfo info = PreHandleOneASTNode(node, 0);
+		HandleExpressionAsStatement(info);
+		return super.visit(node) && false;
+//		@SuppressWarnings("unchecked")
+//		List<VariableDeclarationFragment> frags = node.fragments();
+//		Iterator<VariableDeclarationFragment> fitr = frags.iterator();
+//		while (fitr.hasNext()) {
+//			Set<IRStatementNode> wait_merge_nodes = new HashSet<IRStatementNode>();
+//			Type tp = node.getType();
+//			ASTNodeHandledInfo info_tp = PreHandleOneASTNode(tp, 0);
+//			IRStatementNode tp_stmt = info_tp.GetIRStatementNode();
+//			wait_merge_nodes.add(tp_stmt);
+//			int element_idx = tp_stmt.GetVariableIndex();
+//			VariableDeclarationFragment vd = fitr.next();
+//			ASTNodeHandledInfo info = PreHandleOneASTNode(vd, element_idx);
+//			IRStatementNode irsn = info.GetIRStatementNode();
+//			wait_merge_nodes.add(irsn);
+//			IRStatementNode ir_stmt = stmt_factory.CreateIRStatementNode(irsn.GetVariableIndex());
+//			ir_stmt.SetContent(tp_stmt.GetContent() + " " + irsn.GetContent() + ";");
+//			IRGraph.MergeNodesToOne(wait_merge_nodes, ir_stmt);
+//			graph.GoForwardAStep(ir_stmt);
+//		}
+//		return false;
 	}
 
 	@Override
 	public void endVisit(VariableDeclarationStatement node) {
-		PostHandleOneASTNode(node.getType());
-		@SuppressWarnings("unchecked")
-		List<VariableDeclarationFragment> frags = node.fragments();
-		Iterator<VariableDeclarationFragment> fitr = frags.iterator();
-		while (fitr.hasNext()) {
-			VariableDeclarationFragment vd = fitr.next();
-			PostHandleOneASTNode(vd);
-		}
+		PostHandleOneASTNode(node);
+//		PostHandleOneASTNode(node.getType());
+//		@SuppressWarnings("unchecked")
+//		List<VariableDeclarationFragment> frags = node.fragments();
+//		Iterator<VariableDeclarationFragment> fitr = frags.iterator();
+//		while (fitr.hasNext()) {
+//			VariableDeclarationFragment vd = fitr.next();
+//			PostHandleOneASTNode(vd);
+//		}
 	}
 
 	@Override
@@ -416,7 +419,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		PostHandleOneASTNode(expr);
 		HandleBreakContinueInLoopOver(node, over);
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean visit(ForStatement node) {

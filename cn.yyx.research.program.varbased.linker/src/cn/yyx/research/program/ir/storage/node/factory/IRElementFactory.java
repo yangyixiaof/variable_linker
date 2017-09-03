@@ -62,19 +62,24 @@ public class IRElementFactory {
 	}
 	
 	public void RefineSelf() {
-		List<IRJavaElementNode> non_universal_elements_copy = new LinkedList<IRJavaElementNode>();
+		List<String> pkeys = new LinkedList<String>(pool.keySet());
+		Iterator<String> pkitr = pkeys.iterator();
+		while (pkitr.hasNext()) {
+			String pkey = pkitr.next();
+			IRJavaElementNode irjen = pool.get(pkey);
+			if (irjen.IsIsolate()) {
+				pool.remove(pkey);
+			}
+		}
 		Iterator<IRJavaElementNode> nue_itr = non_universal_elements.iterator();
 		while (nue_itr.hasNext()) {
 			IRJavaElementNode irjen = nue_itr.next();
-			if (irjen.IsIsolate()) {
-				pool.remove(GetIJavaElementKey(irjen.getElement()));
-			} else {
-				non_universal_elements_copy.add(irjen);
+			if (!irjen.IsIsolate()) {
+				System.err.println("Strange! non_universal_element is not isolated. The strange node is: " + irjen);
+				System.exit(1);
 			}
 		}
 		non_universal_elements.clear();
-		non_universal_elements.addAll(non_universal_elements_copy);
-		non_universal_elements_copy.clear();
 	}
 	
 }

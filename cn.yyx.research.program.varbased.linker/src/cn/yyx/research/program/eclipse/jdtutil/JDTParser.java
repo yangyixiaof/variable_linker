@@ -36,8 +36,8 @@ public class JDTParser {
 	private JDTParser(IJavaProject javaProject) {// , Set<String> source_classes
 		this.java_project = javaProject;
 		parser = ASTParser.newParser(AST.JLS8);
-		parser.setResolveBindings(true);
 		parser.setBindingsRecovery(true);
+		parser.setResolveBindings(true);
 		parser.setStatementsRecovery(true);
 		Map<String, String> options = JavaCore.getOptions();
 		options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);

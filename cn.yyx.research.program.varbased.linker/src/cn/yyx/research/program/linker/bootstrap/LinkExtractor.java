@@ -78,6 +78,7 @@ public class LinkExtractor implements IApplication {
 						// generate and print all methods connected.
 						IRGeneratorForFullTrace irgft = new IRGeneratorForFullTrace(one_project.GetIRGraphManager());
 						irgft.GenerateFullTraceOnInitialIRGraphs();
+						one_project.RefineSelf();
 						{
 							ConnectionOnlyDotGenerator irproj_global_generation = new ConnectionOnlyDotGenerator(
 									DotMeta.ProjectFullTraceDotDir, DotMeta.ProjectFullTracePicDir, one_project);

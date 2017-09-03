@@ -14,7 +14,6 @@ import cn.yyx.research.program.ir.generation.structure.IRForOneProject;
 import cn.yyx.research.program.ir.storage.graph.IRGraphManager;
 import cn.yyx.research.program.ir.storage.node.factory.IRElementFactory;
 import cn.yyx.research.program.ir.storage.node.factory.IRStatementFactory;
-import cn.yyx.research.program.linker.bootstrap.meta.BootstrapMeta;
 
 public class IRGeneratorForOneProject {
 	
@@ -42,11 +41,6 @@ public class IRGeneratorForOneProject {
 						java_project, graph_manager, ele_factory, stmt_factory, icu, cu);
 				cu.accept(irgfcicu);
 			}
-		}
-		ele_factory.RefineSelf();
-		stmt_factory.RefineSelf();
-		if (BootstrapMeta.check_every_ir_statement) {
-			stmt_factory.CheckEveryStatement();
 		}
 		return new IRForOneProject(graph_manager, ele_factory, stmt_factory);
 	}

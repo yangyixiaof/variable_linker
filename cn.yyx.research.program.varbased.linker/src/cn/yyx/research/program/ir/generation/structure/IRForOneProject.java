@@ -3,6 +3,7 @@ package cn.yyx.research.program.ir.generation.structure;
 import cn.yyx.research.program.ir.storage.graph.IRGraphManager;
 import cn.yyx.research.program.ir.storage.node.factory.IRElementFactory;
 import cn.yyx.research.program.ir.storage.node.factory.IRStatementFactory;
+import cn.yyx.research.program.linker.bootstrap.meta.BootstrapMeta;
 
 public class IRForOneProject {
 	
@@ -26,6 +27,14 @@ public class IRForOneProject {
 	
 	public IRStatementFactory GetIRStatementPool() {
 		return stmt_factory;
+	}
+	
+	public void RefineSelf() {
+		ele_factory.RefineSelf();
+		stmt_factory.RefineSelf();
+		if (BootstrapMeta.check_every_ir_statement) {
+			stmt_factory.CheckEveryStatement();
+		}
 	}
 	
 }
