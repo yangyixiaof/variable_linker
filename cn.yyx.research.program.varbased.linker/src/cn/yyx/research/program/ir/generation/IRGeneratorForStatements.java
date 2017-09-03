@@ -197,9 +197,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	@Override
 	public boolean visit(ExpressionStatement node) {
 		ASTNodeHandledInfo info = PreHandleOneASTNode(node, 0);
-		if (IRGeneratorHelper.IRStatementContentIsValid(info.GetIRStatementNode().GetContent())) {
-			graph.GoForwardAStep(info.GetIRStatementNode());
-		}
+		HandleExpressionAsStatement(info);
 		return false;
 	}
 
@@ -691,9 +689,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	
 	public boolean visit(ConstructorInvocation node) {
 		ASTNodeHandledInfo info = PreHandleOneASTNode(node, 0);
-		if (IRGeneratorHelper.IRStatementContentIsValid(info.GetIRStatementNode().GetContent())) {
-			graph.GoForwardAStep(info.GetIRStatementNode());
-		}
+		HandleExpressionAsStatement(info);
 		return super.visit(node) && false;
 	}
 	
@@ -706,15 +702,21 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	@Override
 	public boolean visit(SuperConstructorInvocation node) {
 		ASTNodeHandledInfo info = PreHandleOneASTNode(node, 0);
-		if (IRGeneratorHelper.IRStatementContentIsValid(info.GetIRStatementNode().GetContent())) {
-			graph.GoForwardAStep(info.GetIRStatementNode());
-		}
+		HandleExpressionAsStatement(info);
 		return super.visit(node) && false;
 	}
 	
 	@Override
 	public void endVisit(SuperConstructorInvocation node) {
 		PostHandleOneASTNode(node);
+	}
+	
+	protected void HandleExpressionAsStatement(ASTNodeHandledInfo info) {
+		if (IRGeneratorHelper.IRStatementContentIsValid(info.GetIRStatementNode().GetContent())) {
+			graph.GoForwardAStep(info.GetIRStatementNode());
+		} else {
+			IRGraph.RemoveConnectionsOfNode(info.GetIRStatementNode());
+		}
 	}
 
 }
