@@ -20,6 +20,7 @@ import org.eclipse.jdt.core.dom.AssertStatement;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.BreakStatement;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.ConstructorInvocation;
 import org.eclipse.jdt.core.dom.ContinueStatement;
 import org.eclipse.jdt.core.dom.DoStatement;
 import org.eclipse.jdt.core.dom.EmptyStatement;
@@ -33,6 +34,7 @@ import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.SuperConstructorInvocation;
 import org.eclipse.jdt.core.dom.SwitchCase;
 import org.eclipse.jdt.core.dom.SwitchStatement;
 import org.eclipse.jdt.core.dom.SynchronizedStatement;
@@ -683,6 +685,30 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	public boolean visit(TypeDeclarationStatement node) {
 		// do nothing.
 		return super.visit(node);
+	}
+	
+	public boolean visit(ConstructorInvocation node) {
+		ASTNodeHandledInfo info = PreHandleOneASTNode(node, 0);
+		graph.GoForwardAStep(info.GetIRStatementNode());
+		return super.visit(node) && false;
+	}
+	
+	@Override
+	public void endVisit(ConstructorInvocation node) {
+		PostHandleOneASTNode(node);
+		super.endVisit(node);
+	}
+
+	@Override
+	public boolean visit(SuperConstructorInvocation node) {
+		ASTNodeHandledInfo info = PreHandleOneASTNode(node, 0);
+		graph.GoForwardAStep(info.GetIRStatementNode());
+		return super.visit(node) && false;
+	}
+	
+	@Override
+	public void endVisit(SuperConstructorInvocation node) {
+		PostHandleOneASTNode(node);
 	}
 
 }

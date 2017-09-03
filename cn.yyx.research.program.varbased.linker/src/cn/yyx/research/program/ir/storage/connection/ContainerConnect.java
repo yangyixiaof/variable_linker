@@ -4,7 +4,7 @@ public class ContainerConnect extends Connect {
 	
 	@Override
 	public String toString() {
-		return "R";
+		return "O";
 	}
 	
 }
