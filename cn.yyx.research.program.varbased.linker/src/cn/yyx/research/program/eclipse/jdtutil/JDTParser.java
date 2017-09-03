@@ -38,6 +38,7 @@ public class JDTParser {
 		parser = ASTParser.newParser(AST.JLS8);
 		parser.setResolveBindings(true);
 		parser.setBindingsRecovery(true);
+		parser.setStatementsRecovery(true);
 		Map<String, String> options = JavaCore.getOptions();
 		options.put(JavaCore.COMPILER_SOURCE, JavaCore.VERSION_1_8);
 		parser.setCompilerOptions(options);
