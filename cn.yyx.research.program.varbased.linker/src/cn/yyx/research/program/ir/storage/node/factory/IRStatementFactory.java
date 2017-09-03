@@ -86,7 +86,7 @@ public class IRStatementFactory {
 			IRStatementNode irsn = sitr.next();
 			IRStatementCheckResult check_result = IRStatementParser.CheckTheStatementContainsRightAmountOfVariables(new IRStatementInfo(irsn.GetVariableIndex(), irsn.GetContent()));
 			if (!check_result.IsStatementValid()) {
-				System.err.println("Wrong content is: " + irsn.GetContent() + ";expected amount:" + irsn.GetVariableIndex() + ";actual amount:" + check_result.GetActualAmountOfVariable());
+				System.err.println("Wrong content is: " + irsn.GetContent() + "#expected amount:" + irsn.GetVariableIndex() + "#actual amount:" + check_result.GetActualAmountOfVariable());
 				System.exit(1);
 			}
 		}
