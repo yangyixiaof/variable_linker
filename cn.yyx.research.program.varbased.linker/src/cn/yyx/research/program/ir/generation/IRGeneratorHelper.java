@@ -69,5 +69,12 @@ public class IRGeneratorHelper {
 			IRGraph.RegistConnection(irjen, imember, new ContainerConnect());
 		}
 	}
+	
+	public static boolean IRStatementContentIsValid(String content) {
+		if (content.trim().equals("V")) {
+			return false;
+		}
+		return true;
+	}
 
 }

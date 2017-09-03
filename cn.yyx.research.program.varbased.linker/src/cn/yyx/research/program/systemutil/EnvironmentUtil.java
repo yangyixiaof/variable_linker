@@ -10,10 +10,6 @@ public class EnvironmentUtil {
 	
 	public EnvironmentUtil() {
 	}
-	
-	public static boolean IsWindows() {
-		return System.getProperty("os.name").toLowerCase().indexOf("windows")>=0;
-	}
 
 	public static void Clear() {
 		File f = null;
