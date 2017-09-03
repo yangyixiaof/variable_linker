@@ -43,7 +43,8 @@ public class BindingManager {
 				}
 				if (ije instanceof IType) {
 					IType it = (IType)ije;
-					is_source_Resolved = IMemberIsSource(it, it.getDeclaringType());
+					is_source_Resolved = !it.isBinary();
+//					IMemberIsSource(it, it.getDeclaringType());
 //					if (!it.getDeclaringType().isBinary()) {
 //						is_source_Resolved = true;
 //					}

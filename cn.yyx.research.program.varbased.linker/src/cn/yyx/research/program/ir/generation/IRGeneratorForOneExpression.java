@@ -331,70 +331,65 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		return super.visit(node) && false;
 	}
 
-	protected void HandleType(ITypeBinding ib, ASTNode node) {
+	protected boolean HandleType(ITypeBinding ib, ASTNode node) {
 		if (BindingManager.SourceResolvedBinding(ib)) {
 			IType it = (IType) ib.getJavaElement();
 			HandleITypeElement(it, node); // it.getElementName(), 
-		} else {
-			String content = node.toString();
-			HandleITypeElement(new UnSourceResolvedTypeElement(content), node); // content, 
+			return false;
 		}
+//		else {
+//			String content = node.toString();
+//			HandleITypeElement(new UnSourceResolvedTypeElement(content), node); // content, 
+//		}
+		return true;
 	}
 
 	@Override
 	public boolean visit(SimpleType node) {
 		ITypeBinding ib = node.resolveBinding();
-		HandleType(ib, node);
-		return super.visit(node) && false;
+		return super.visit(node) && HandleType(ib, node);
 	}
 
 	@Override
 	public boolean visit(QualifiedType node) {
 		ITypeBinding ib = node.resolveBinding();
-		HandleType(ib, node);
-		return super.visit(node) && false;
+		return super.visit(node) && HandleType(ib, node);
 	}
 
 	@Override
 	public boolean visit(NameQualifiedType node) {
 		ITypeBinding ib = node.resolveBinding();
-		HandleType(ib, node);
-		return super.visit(node) && false;
+		return super.visit(node) && HandleType(ib, node);
 	}
 
 	@Override
 	public boolean visit(WildcardType node) {
 		ITypeBinding ib = node.resolveBinding();
-		HandleType(ib, node);
-		return super.visit(node) && false;
+		return super.visit(node) && HandleType(ib, node);
 	}
 
 	@Override
 	public boolean visit(ArrayType node) {
 		ITypeBinding ib = node.resolveBinding();
-		HandleType(ib, node);
-		return super.visit(node) && false;
+		return super.visit(node) && HandleType(ib, node);
 	}
 
 	@Override
 	public boolean visit(ParameterizedType node) {
 		ITypeBinding ib = node.getType().resolveBinding();
-		HandleType(ib, node);
-		return super.visit(node) && false;
+		return super.visit(node) && HandleType(ib, node);
 	}
 
 	@Override
 	public boolean visit(UnionType node) {
 		ITypeBinding ib = node.resolveBinding();
-		HandleType(ib, node);
-		return super.visit(node) && false;
+		return super.visit(node) && HandleType(ib, node);
 	}
 
 	@Override
 	public boolean visit(IntersectionType node) {
 		ITypeBinding ib = node.resolveBinding();
-		HandleType(ib, node);
-		return super.visit(node) && false;
+		return super.visit(node) && HandleType(ib, node);
 	}
 
 	protected void HandleSuperConnect() {
