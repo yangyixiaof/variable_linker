@@ -76,7 +76,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	protected IRASTNodeTask post_visit_task = new IRASTNodeTask();
 	protected IRASTNodeTask pre_visit_task = new IRASTNodeTask();
 	protected IRGraph graph = null;
-	protected List<ASTNode> forbid_visit = new LinkedList<ASTNode>();
+	protected Set<ASTNode> forbid_visit = new HashSet<ASTNode>();
 	protected IType it = null;
 	protected IMethod im = null;
 	protected ICompilationUnit type_declare_resource = null;
@@ -172,19 +172,28 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		@SuppressWarnings("unchecked")
 		List<VariableDeclarationFragment> frags = node.fragments();
 		Iterator<VariableDeclarationFragment> fitr = frags.iterator();
-		int element_idx = 0;
 		while (fitr.hasNext()) {
+			Set<IRStatementNode> wait_merge_nodes = new HashSet<IRStatementNode>();
+			Type tp = node.getType();
+			ASTNodeHandledInfo info_tp = PreHandleOneASTNode(tp, 0);
+			IRStatementNode tp_stmt = info_tp.GetIRStatementNode();
+			wait_merge_nodes.add(tp_stmt);
+			int element_idx = tp_stmt.GetVariableIndex();
 			VariableDeclarationFragment vd = fitr.next();
 			ASTNodeHandledInfo info = PreHandleOneASTNode(vd, element_idx);
 			IRStatementNode irsn = info.GetIRStatementNode();
-			element_idx = irsn.GetVariableIndex();
-			graph.GoForwardAStep(irsn);
+			wait_merge_nodes.add(irsn);
+			IRStatementNode ir_stmt = stmt_factory.CreateIRStatementNode(irsn.GetVariableIndex());
+			ir_stmt.SetContent(tp_stmt.GetContent() + " " + irsn.GetContent() + ";");
+			IRGraph.MergeNodesToOne(wait_merge_nodes, ir_stmt);
+			graph.GoForwardAStep(ir_stmt);
 		}
 		return false;
 	}
 
 	@Override
 	public void endVisit(VariableDeclarationStatement node) {
+		PostHandleOneASTNode(node.getType());
 		@SuppressWarnings("unchecked")
 		List<VariableDeclarationFragment> frags = node.fragments();
 		Iterator<VariableDeclarationFragment> fitr = frags.iterator();
@@ -264,7 +273,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 				none_succeed_nodes = new HashSet<IRNoneSucceedNode>();
 				break_continue_wait_handle.put(break_scope, none_succeed_nodes);
 			}
-			IRNoneSucceedNode iirn = stmt_factory.CreateIRNoneSucceedNode();
+			IRNoneSucceedNode iirn = stmt_factory.CreateIRNoneSucceedNode(code);
 			graph.GoForwardAStep(iirn);
 			none_succeed_nodes.add(iirn);
 		}
@@ -545,6 +554,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	
 	@Override
 	public void endVisit(IfStatement node) {
+		semantic_block_control.remove(node);
 		PostHandleMustTwoBranches(node);
 		Statement then_stmt = node.getThenStatement();
 		if (then_stmt != null) {
@@ -586,7 +596,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		}
 		return scbl;
 	}
-
+	// TODO how to let case V: compilable.
 	@Override
 	public boolean visit(SwitchStatement node) {
 		ASTNodeHandledInfo info = PreHandleOneASTNode(node.getExpression(), 0);
@@ -626,6 +636,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	
 	@Override
 	public void endVisit(SwitchStatement node) {
+		semantic_block_control.remove(node);
 		SwitchCaseBlockList scbl = SearchForBranchBlocks(node);
 		List<SwitchCaseBlock> sbs = scbl.GetSwitchBlocks();
 		{
@@ -650,6 +661,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		// String hdoc = info.GetNodeHandledDoc();
 		// IIRNode branch_root = new IIRNode("synchronized(" + hdoc + ")" + "{}");
 		IRStatementNode iirn = info.GetIRStatementNode();
+		iirn.SetContent("synchronized(" + iirn.GetContent() + ")" + "{}");
 		semantic_block_control.put(node, iirn);
 		graph.GoForwardAStep(iirn);
 		return super.visit(node);
@@ -657,6 +669,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 	
 	@Override
 	public void endVisit(SynchronizedStatement node) {
+		semantic_block_control.remove(node);
 		IRStatementNode over = stmt_factory.CreateIIRBlockOverNode();
 		graph.GoForwardAStep(over);
 	}

@@ -39,8 +39,8 @@ public class IRStatementFactory {
 		return result;
 	}
 	
-	public IRNoneSucceedNode CreateIRNoneSucceedNode() {
-		IRNoneSucceedNode result = new IRNoneSucceedNode(IRStatementMeta.NoneSucceed);
+	public IRNoneSucceedNode CreateIRNoneSucceedNode(String code) {
+		IRNoneSucceedNode result = new IRNoneSucceedNode(code + ";");
 		statements.add(result);
 		return result;
 	}
