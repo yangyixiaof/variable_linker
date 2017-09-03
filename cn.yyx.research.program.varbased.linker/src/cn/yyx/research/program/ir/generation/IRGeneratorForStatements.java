@@ -55,6 +55,7 @@ import cn.yyx.research.program.ir.generation.structure.StatementBranchInfo;
 import cn.yyx.research.program.ir.generation.structure.SwitchCaseBlock;
 import cn.yyx.research.program.ir.generation.structure.SwitchCaseBlockList;
 import cn.yyx.research.program.ir.generation.traversal.task.IRASTNodeTask;
+import cn.yyx.research.program.ir.meta.IRStatementMeta;
 import cn.yyx.research.program.ir.storage.connection.Connect;
 import cn.yyx.research.program.ir.storage.connection.VariableConnect;
 import cn.yyx.research.program.ir.storage.graph.IRGraph;
@@ -596,7 +597,7 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		}
 		return scbl;
 	}
-	// TODO how to let case V: compilable.
+	
 	@Override
 	public boolean visit(SwitchStatement node) {
 		ASTNodeHandledInfo info = PreHandleOneASTNode(node.getExpression(), 0);
@@ -653,6 +654,31 @@ public class IRGeneratorForStatements extends ASTVisitor {
 		}
 		PostHandleOneASTNode(node);
 		PostHandleMultiBranches(node);
+	}
+	// Solved. how to let case V: compilable. translating to special method name c_a_s_e_YYX(...).
+	@Override
+	public boolean visit(SwitchCase node) {
+		Expression expr = node.getExpression();
+		IRStatementNode ir_stmt = null;
+		if (expr != null) {
+			ASTNodeHandledInfo info = PreHandleOneASTNode(expr, 0);
+			ir_stmt = info.GetIRStatementNode();
+			ir_stmt.SetContent(IRStatementMeta.SwitchCaseSubstitute + "(" + ir_stmt.GetContent() + ");");
+		} else {
+			ir_stmt = stmt_factory.CreateIRStatementNode(0);
+			ir_stmt.SetContent(IRStatementMeta.SwitchCaseSubstitute + "();");
+		}
+		graph.GoForwardAStep(ir_stmt);
+		return super.visit(node) && false;
+	}
+	
+	@Override
+	public void endVisit(SwitchCase node) {
+		Expression expr = node.getExpression();
+		if (expr != null) {
+			PostHandleOneASTNode(expr);
+		}
+		super.endVisit(node);
 	}
 
 	@Override

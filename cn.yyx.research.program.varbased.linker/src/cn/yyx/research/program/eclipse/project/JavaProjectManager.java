@@ -1,9 +1,9 @@
 package cn.yyx.research.program.eclipse.project;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.eclipse.core.resources.IFolder;
@@ -85,7 +85,7 @@ public class JavaProjectManager {
 	}
 	
 	public void DeleteAllJavaProject() throws CoreException {
-		Set<String> keys = projects.keySet();
+		List<String> keys = new LinkedList<String>(projects.keySet());
 		Iterator<String> kitr = keys.iterator();
 		while (kitr.hasNext()) {
 			String proj_name = kitr.next();
