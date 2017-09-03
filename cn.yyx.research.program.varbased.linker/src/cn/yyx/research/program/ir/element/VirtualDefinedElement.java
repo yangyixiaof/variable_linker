@@ -10,6 +10,8 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IOpenable;
 import org.eclipse.jdt.core.JavaModelException;
 
+import cn.yyx.research.program.ir.meta.IRElementMeta;
+
 public abstract class VirtualDefinedElement implements IJavaElement {
 	
 	protected String represent = null;
@@ -55,7 +57,7 @@ public abstract class VirtualDefinedElement implements IJavaElement {
 
 	@Override
 	public String getHandleIdentifier() {
-		return represent;
+		return IRElementMeta.HumanMadeHandler;
 	}
 
 	@Override

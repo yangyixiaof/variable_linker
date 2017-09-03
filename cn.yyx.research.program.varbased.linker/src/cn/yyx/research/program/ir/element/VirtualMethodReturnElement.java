@@ -15,7 +15,12 @@ public class VirtualMethodReturnElement extends VirtualDefinedElement implements
 	
 	@Override
 	public String getElementName() {
-		return "%MadeMReturn:" + represent;
+		return "MadeMReturn@" + represent;
+	}
+	
+	@Override
+	public String getHandleIdentifier() {
+		return super.getHandleIdentifier();
 	}
 
 	@Override

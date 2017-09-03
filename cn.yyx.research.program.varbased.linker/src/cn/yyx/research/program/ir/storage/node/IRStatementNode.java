@@ -19,7 +19,7 @@ public class IRStatementNode extends IIRNode {
 	
 	@Override
 	public String toString() {
-		return super.toString() + ";VIndex:" + variable_index;
+		return super.toString() + "#VIndex:" + variable_index;
 	}
 	
 }

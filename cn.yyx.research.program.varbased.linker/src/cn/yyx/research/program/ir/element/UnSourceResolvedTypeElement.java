@@ -23,8 +23,6 @@ import org.eclipse.jdt.core.IWorkingCopy;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.WorkingCopyOwner;
 
-import cn.yyx.research.program.ir.meta.IRElementMeta;
-
 @SuppressWarnings("deprecation")
 public class UnSourceResolvedTypeElement extends VirtualDefinedElement implements IType {
 	
@@ -38,12 +36,6 @@ public class UnSourceResolvedTypeElement extends VirtualDefinedElement implement
 		// IRElementMeta.UnresolvedTypeElement + "#" + 
 	}
 	
-	@Override
-	public String getHandleIdentifier() {
-		return IRElementMeta.HumanMadeHandler;
-		// IRElementMeta.UnresolvedTypeElement + "#" + represent
-	}
-
 	@Override
 	public String[] getCategories() throws JavaModelException {
 		

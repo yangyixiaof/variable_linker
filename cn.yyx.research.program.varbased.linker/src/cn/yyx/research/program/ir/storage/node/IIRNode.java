@@ -82,7 +82,7 @@ public class IIRNode {
 
 	@Override
 	public String toString() {
-		return "Content:" + content + "@" + hashCode();
+		return "Content:" + content;// + "@" + hashCode()
 	}
 	
 }

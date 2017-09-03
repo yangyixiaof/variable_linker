@@ -1,7 +1,5 @@
 package cn.yyx.research.program.ir.element;
 
-import cn.yyx.research.program.ir.meta.IRElementMeta;
-
 public class ConstantUniqueElement extends VirtualDefinedElement {
 		
 	public ConstantUniqueElement(String represent) {
@@ -12,11 +10,6 @@ public class ConstantUniqueElement extends VirtualDefinedElement {
 	public String getElementName() {
 		return represent;
 		// IRElementMeta.ConstantUniqueElement + "#" + 
-	}
-	
-	@Override
-	public String getHandleIdentifier() {
-		return IRElementMeta.HumanMadeHandler;
 	}
 	
 }
