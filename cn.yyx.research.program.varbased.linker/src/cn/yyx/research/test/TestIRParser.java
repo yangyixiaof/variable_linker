@@ -7,7 +7,7 @@ public class TestIRParser {
 	
 	public static void TestParseIRStatement() {
 		// IRStatementParser parser = new IRStatementParser();
-		IRStatementParser.ParseAStatement(new IRStatementInfo(2, "N *= N;"));
+		System.err.println(IRStatementParser.CheckTheStatementContainsRightAmountOfVariables(new IRStatementInfo(2, "N *= N;")));
 	}
 	
 }

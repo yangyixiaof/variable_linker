@@ -70,17 +70,19 @@ public class LinkExtractor implements IApplication {
 						SystemUtil.Delay(1000);
 						IRGeneratorForOneProject irgfop = new IRGeneratorForOneProject(java_project);
 						IRForOneProject one_project = irgfop.GenerateForOneProject();
-						ConnectionOnlyDotGenerator irproj_local_generation = new ConnectionOnlyDotGenerator(
-								DotMeta.ProjectEachMethodDotDir, DotMeta.ProjectEachMethodPicDir, one_project);
-						irproj_local_generation.GenerateDotsAndPrintToPictures();
-
+//						{
+//							ConnectionOnlyDotGenerator irproj_local_generation = new ConnectionOnlyDotGenerator(
+//									DotMeta.ProjectEachMethodDotDir, DotMeta.ProjectEachMethodPicDir, one_project);
+//							irproj_local_generation.GenerateDotsAndPrintToPictures();
+//						}
 						// generate and print all methods connected.
-						IRGeneratorForFullTrace irgft = new IRGeneratorForFullTrace(
-								one_project.GetIRGraphManager());
+						IRGeneratorForFullTrace irgft = new IRGeneratorForFullTrace(one_project.GetIRGraphManager());
 						irgft.GenerateFullTraceOnInitialIRGraphs();
-						ConnectionOnlyDotGenerator irproj_global_generation = new ConnectionOnlyDotGenerator(
-								DotMeta.ProjectFullTraceDotDir, DotMeta.ProjectFullTracePicDir, one_project);
-						irproj_global_generation.GenerateDotsAndPrintToPictures();
+						{
+							ConnectionOnlyDotGenerator irproj_global_generation = new ConnectionOnlyDotGenerator(
+									DotMeta.ProjectFullTraceDotDir, DotMeta.ProjectFullTracePicDir, one_project);
+							irproj_global_generation.GenerateDotsAndPrintToPictures();
+						}
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

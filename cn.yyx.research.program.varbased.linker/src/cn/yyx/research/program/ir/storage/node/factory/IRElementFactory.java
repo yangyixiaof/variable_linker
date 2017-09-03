@@ -1,6 +1,7 @@
 package cn.yyx.research.program.ir.storage.node.factory;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
@@ -58,6 +59,22 @@ public class IRElementFactory {
 		result.addAll(non_universal_elements);
 		result.addAll(pool.values());
 		return result;
+	}
+	
+	public void RefineSelf() {
+		List<IRJavaElementNode> non_universal_elements_copy = new LinkedList<IRJavaElementNode>();
+		Iterator<IRJavaElementNode> nue_itr = non_universal_elements.iterator();
+		while (nue_itr.hasNext()) {
+			IRJavaElementNode irjen = nue_itr.next();
+			if (irjen.IsIsolate()) {
+				pool.remove(GetIJavaElementKey(irjen.getElement()));
+			} else {
+				non_universal_elements_copy.add(irjen);
+			}
+		}
+		non_universal_elements.clear();
+		non_universal_elements.addAll(non_universal_elements_copy);
+		non_universal_elements_copy.clear();
 	}
 	
 }

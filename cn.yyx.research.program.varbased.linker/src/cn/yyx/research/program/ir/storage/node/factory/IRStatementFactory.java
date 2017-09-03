@@ -1,17 +1,20 @@
 package cn.yyx.research.program.ir.storage.node.factory;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.jdt.core.IMethod;
 
 import cn.yyx.research.program.ir.meta.IRStatementMeta;
+import cn.yyx.research.program.ir.parse.IRStatementParser;
 import cn.yyx.research.program.ir.storage.node.IIRBlockOverNode;
 import cn.yyx.research.program.ir.storage.node.IIRBranchOverNode;
 import cn.yyx.research.program.ir.storage.node.IRNoneSucceedNode;
 import cn.yyx.research.program.ir.storage.node.IRSourceMethodStatementNode;
 import cn.yyx.research.program.ir.storage.node.IRStatementNode;
+import cn.yyx.research.program.ir.storage.node.info.IRStatementInfo;
 
 public class IRStatementFactory {
 	
@@ -59,6 +62,33 @@ public class IRStatementFactory {
 		Collection<IRStatementNode> result = new LinkedList<IRStatementNode>();
 		result.addAll(statements);
 		return result;
+	}
+
+	public void RefineSelf() {
+		List<IRStatementNode> statements_copy = new LinkedList<IRStatementNode>();
+		Iterator<IRStatementNode> nue_itr = statements.iterator();
+		while (nue_itr.hasNext()) {
+			IRStatementNode irjen = nue_itr.next();
+			if (irjen.IsIsolate()) {
+			} else {
+				statements_copy.add(irjen);
+			}
+		}
+		statements.clear();
+		statements.addAll(statements_copy);
+		statements_copy.clear();
+	}
+	
+	public void CheckEveryStatement() {
+		Iterator<IRStatementNode> sitr = statements.iterator();
+		while (sitr.hasNext()) {
+			IRStatementNode irsn = sitr.next();
+			boolean right = IRStatementParser.CheckTheStatementContainsRightAmountOfVariables(new IRStatementInfo(irsn.GetVariableIndex(), irsn.GetContent()));
+			if (!right) {
+				System.err.println("Wrong content is: " + irsn.GetContent());
+				System.exit(1);
+			}
+		}
 	}
 	
 }

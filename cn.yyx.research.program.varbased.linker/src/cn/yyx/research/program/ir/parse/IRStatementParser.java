@@ -2,7 +2,6 @@ package cn.yyx.research.program.ir.parse;
 
 import java.util.List;
 
-import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -16,8 +15,8 @@ import cn.yyx.research.program.ir.parse.visitor.VariableResolveCheckVisitor;
 import cn.yyx.research.program.ir.storage.node.info.IRStatementInfo;
 
 public class IRStatementParser {
-
-	public static void ParseAStatement(IRStatementInfo info) {
+	
+	protected static CompilationUnit ParseToCompilationUnit(IRStatementInfo info) {
 		String gap = "	";
 		JDTParser parser = JDTParser.GetUniquePrimitiveParser();
 		StringBuilder build = new StringBuilder("");
@@ -35,23 +34,31 @@ public class IRStatementParser {
 		build.append("}\n");
 		// build.append("V = V = V;\n");
 		// testing.
-		System.err.println("Parse-Content:\n" + build.toString());
-
+		// System.err.println("Parse-Content:\n" + build.toString());
 		CompilationUnit cu = parser.ParseJavaContent("", "ParseEnv", new Document(build.toString()));
-		if (cu != null) {
-			@SuppressWarnings("unchecked")
-			List<AbstractTypeDeclaration> types = cu.types();
-			TypeDeclaration td = (TypeDeclaration) types.get(0);
-			MethodDeclaration[] mds = td.getMethods();
-			Block block = mds[0].getBody();
-			// "int i = 9; \n int j = i+1;"
-			Statement last_stmt = (Statement) block.statements().get(block.statements().size() - 1);
-			// testing.
-			// String str = block.statements().get(0).toString();
-			// System.out.println("First statement:" + str);
-			ASTVisitor visitor = new VariableResolveCheckVisitor(info.GetAmountOfVariables());
-			last_stmt.accept(visitor);
-		}
+		return cu;
+	}
+	
+	protected static Statement ObtainConcernedStatementFromCompilationUnit(CompilationUnit cu) {
+		@SuppressWarnings("unchecked")
+		List<AbstractTypeDeclaration> types = cu.types();
+		TypeDeclaration td = (TypeDeclaration) types.get(0);
+		MethodDeclaration[] mds = td.getMethods();
+		Block block = mds[0].getBody();
+		// "int i = 9; \n int j = i+1;"
+		Statement last_stmt = (Statement) block.statements().get(block.statements().size() - 1);
+		return last_stmt;
+	}
+
+	public static boolean CheckTheStatementContainsRightAmountOfVariables(IRStatementInfo info) {
+		CompilationUnit cu = ParseToCompilationUnit(info);
+		Statement last_stmt = ObtainConcernedStatementFromCompilationUnit(cu);
+		// testing.
+		// String str = block.statements().get(0).toString();
+		// System.out.println("First statement:" + str);
+		VariableResolveCheckVisitor visitor = new VariableResolveCheckVisitor(info.GetAmountOfVariables());
+		last_stmt.accept(visitor);
+		return visitor.IsVariableAmountConsistent();
 	}
 
 }

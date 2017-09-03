@@ -71,6 +71,10 @@ public class IIRNode {
 		}
 		return false;
 	}
+	
+	public boolean IsIsolate() {
+		return ins.isEmpty() && outs.isEmpty();
+	}
 
 	public String GetContent() {
 		return content;
