@@ -15,7 +15,7 @@ public class ConnectHelper {
 		while (citr.hasNext()) {
 			Connect cnct = citr.next();
 			Class<? extends Connect> type = cnct.getClass();
-			if (SuperConnect.class.isAssignableFrom(type) || MethodJumpConnect.class.isAssignableFrom(type) || VariableConnect.class.isAssignableFrom(type)) {
+			if (SuperConnect.class.isAssignableFrom(type) || MethodJumpConnect.class.isAssignableFrom(type) || VariableConnect.class.isAssignableFrom(type) || ContainerConnect.class.isAssignableFrom(type)) {
 				return true;
 			}
 		}

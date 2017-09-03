@@ -132,7 +132,7 @@ public class AnalysisEnvironment {
 			Iterator<File> fitr = fi.EachFileIterator();
 			while (fitr.hasNext()) {
 				File f = fitr.next();
-				String f_norm_path = f.getAbsolutePath().trim(); // .replace('\\', '/')
+				String f_norm_path = f.getAbsolutePath().trim().replace('\\', '/');
 				DebugLogger.Log("f_norm_path:" + f_norm_path);
 				CompilationUnit cu = ASTLexicalParser.GetUniqueParser().ParseJavaFile(f);
 				PackageDeclaration pack = cu.getPackage();
@@ -171,6 +171,9 @@ public class AnalysisEnvironment {
 			// Fill the source folder of the project.
 		}
 		JavaImportOperation.ImportFileSystem(java_project, dir_files_map);
+		
+		// System.err.println("Debugging, import files:" + dir_files_map);
+		
 		PreProcessHelper.EliminateAllParameterizedTypeAndReformAssignment(java_project);
 		return java_project;
 	}
