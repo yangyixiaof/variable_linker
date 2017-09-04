@@ -3,7 +3,6 @@ package cn.yyx.research.program.analysis.prepare;
 import java.util.List;
 
 import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.dom.Comment;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
@@ -30,20 +29,22 @@ public class PreProcessCompilationUnitHelper {
 	// return modified_cu;
 	// }
 
-	public static TextEdit PreProcessTransformer(ICompilationUnit icu, IJavaProject java_project) {
-		CompilationUnit cu = JDTParser.CreateJDTParserWithJavaProject(java_project).ParseICompilationUnit(icu);
+	public static TextEdit PreProcessTransformer(ICompilationUnit icu) { // , IJavaProject java_project
+		// CreateJDTParserWithJavaProject(java_project).
+		CompilationUnit cu = JDTParser.ParseICompilationUnit(icu);
 		IDocument doc = new Document(cu.toString());
 		cu.recordModifications();
 		final ASTRewrite rewrite = ASTRewrite.create(cu.getAST());
 		// cu.accept(new ParameterizedTypeEliminator(rewrite));
 		cu.accept(new AssignmentTransformer(rewrite));
 		// cu.accept(new CommentRemover(rewrite));
-		TextEdit edits = rewrite.rewriteAST(doc, java_project.getOptions(true));
+		TextEdit edits = rewrite.rewriteAST(doc, icu.getJavaProject().getOptions(true));
 		return edits;
 	}
 	
-	public static String PreProcessDeleter(ICompilationUnit icu, IJavaProject java_project) {
-		CompilationUnit cu = JDTParser.CreateJDTParserWithJavaProject(java_project).ParseICompilationUnit(icu);
+	public static String PreProcessDeleter(ICompilationUnit icu) { // , IJavaProject java_project
+		// CreateJDTParserWithJavaProject(java_project).
+		CompilationUnit cu = JDTParser.ParseICompilationUnit(icu);
 		cu.recordModifications();
 		@SuppressWarnings("unchecked")
 		List<Comment> comments = cu.getCommentList();

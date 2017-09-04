@@ -31,7 +31,9 @@ import cn.yyx.research.program.fileutil.FileUtil;
 import cn.yyx.research.program.ir.meta.IRResourceMeta;
 
 public class AnalysisEnvironment {
-	
+
+	protected static IJavaProject default_project = null;
+
 	public static void InitializeClassPathWithDefaultJRE(List<IClasspathEntry> entries) {
 		IVMInstall vmInstall = JavaRuntime.getDefaultVMInstall();
 		LibraryLocation[] locations = JavaRuntime.getLibraryLocations(vmInstall);
@@ -39,19 +41,21 @@ public class AnalysisEnvironment {
 			entries.add(JavaCore.newLibraryEntry(element.getSystemLibraryPath(), null, null));
 		}
 	}
-	
-	public static IJavaProject CreateDefaultAnalysisEnironment() {
-		List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>();
-		InitializeClassPathWithDefaultJRE(entries);
-		IJavaProject java_project = null;
-		try {
-			java_project = JavaProjectManager.UniqueManager().CreateJavaProject(FakedProjectEnvironmentMeta.FakedProject, entries);
-		} catch (ProjectAlreadyExistsException e) {
-			e.printStackTrace();
-		} catch (CoreException e) {
-			e.printStackTrace();
+
+	public static IJavaProject GetDefaultAnalysisEnironment() {
+		if (default_project == null) {
+			List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>();
+			InitializeClassPathWithDefaultJRE(entries);
+			IJavaProject java_project = null;
+			try {
+				java_project = JavaProjectManager.UniqueManager()
+						.CreateJavaProject(FakedProjectEnvironmentMeta.FakedProject, entries);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			default_project = java_project;
 		}
-		return java_project;
+		return default_project;
 	}
 
 	public static IJavaProject CreateAnalysisEnvironment(ProjectInfo pi)
@@ -81,7 +85,7 @@ public class AnalysisEnvironment {
 			FileUtil.DeleteFile(maven_dir);
 		}
 		maven_dir.mkdirs();
-		
+
 		List<IClasspathEntry> entries = new ArrayList<IClasspathEntry>();
 		InitializeClassPathWithDefaultJRE(entries);
 		{
@@ -116,15 +120,15 @@ public class AnalysisEnvironment {
 			IterateAllJarsToFillEntries(maven_dir, entries);
 		}
 		{
-//			Iterator<IClasspathEntry> eitr = entries.iterator();
-//			while (eitr.hasNext()) {
-//				IClasspathEntry ice = eitr.next();
-//				System.err.println(ice.toString());
-//			}
+			// Iterator<IClasspathEntry> eitr = entries.iterator();
+			// while (eitr.hasNext()) {
+			// IClasspathEntry ice = eitr.next();
+			// System.err.println(ice.toString());
+			// }
 			IterateAllJarsToFillEntries(dir, entries);
 		}
 		IJavaProject java_project = JavaProjectManager.UniqueManager().CreateJavaProject(pi.getName(), entries);
-		
+
 		Map<String, TreeMap<String, String>> dir_files_map = new TreeMap<String, TreeMap<String, String>>();
 		{
 			// import legal .java files into IJavaProject.
@@ -171,13 +175,13 @@ public class AnalysisEnvironment {
 			// Fill the source folder of the project.
 		}
 		JavaImportOperation.ImportFileSystem(java_project, dir_files_map);
-		
+
 		// System.err.println("Debugging, import files:" + dir_files_map);
-		
+
 		PreProcessHelper.EliminateAllParameterizedTypeAndReformAssignment(java_project);
 		return java_project;
 	}
-	
+
 	private static void IterateAllJarsToFillEntries(File dir, List<IClasspathEntry> entries) {
 		FileIterator fi = new FileIterator(dir.getAbsolutePath(), ".+\\.jar$");
 		Iterator<File> fitr = fi.EachFileIterator();

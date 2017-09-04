@@ -19,7 +19,6 @@ public class IRStatementParser {
 	
 	protected static CompilationUnit ParseToCompilationUnit(IRStatementInfo info) {
 		String gap = "	";
-		JDTParser parser = JDTParser.GetUniquePrimitiveParser();
 		StringBuilder build = new StringBuilder("");
 		build.append("public class ParseEnv {\n");
 		build.append(gap + "public void test() {\n");
@@ -36,7 +35,7 @@ public class IRStatementParser {
 		// build.append("V = V = V;\n");
 		// testing.
 		// System.err.println("Parse-Content:\n" + build.toString());
-		CompilationUnit cu = parser.ParseJavaContent("", "ParseEnv", new Document(build.toString()));
+		CompilationUnit cu = JDTParser.ParseJavaContent("", "ParseEnv", new Document(build.toString()));
 		return cu;
 	}
 	

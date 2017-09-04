@@ -21,7 +21,8 @@ public class TestJavaSearch {
 		System.out.println("All ICompilationUnit Size:" + units.size());
 		for (ICompilationUnit unit : units)
 		{
-			CompilationUnit cu = JDTParser.CreateJDTParserWithJavaProject(java_project).ParseICompilationUnit(unit);
+			// CreateJDTParserWithJavaProject(java_project).
+			CompilationUnit cu = JDTParser.ParseICompilationUnit(unit);
 			
 			cu.accept(new SearchIMethodVisitor(java_project));
 			

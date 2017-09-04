@@ -22,13 +22,12 @@ public class PreProcessHelper {
 		// System.err.println("unit_size:" + units.size());
 		for (final ICompilationUnit compilation_resource : units) {
 			try {
-				TextEdit edit = PreProcessCompilationUnitHelper.PreProcessTransformer(compilation_resource, java_project);
+				TextEdit edit = PreProcessCompilationUnitHelper.PreProcessTransformer(compilation_resource); // , java_project
 				compilation_resource.applyTextEdit(edit, null);
 				compilation_resource.reconcile(ICompilationUnit.NO_AST, false, compilation_resource.getOwner(), null);
 				compilation_resource.save(null, false);
 
-				String changed_class = PreProcessCompilationUnitHelper.PreProcessDeleter(compilation_resource,
-						java_project);
+				String changed_class = PreProcessCompilationUnitHelper.PreProcessDeleter(compilation_resource); // ,java_project
 				CodeFormatter codeFormatter = ToolFactory.createCodeFormatter(null);
 				TextEdit textEdit = codeFormatter.format(CodeFormatter.K_COMPILATION_UNIT, changed_class, 0,
 						changed_class.length(), 0, null);
