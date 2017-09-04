@@ -58,7 +58,7 @@ public class IRStatementParser {
 		// System.out.println("First statement:" + str);
 		VariableResolveCheckVisitor visitor = new VariableResolveCheckVisitor(info.GetAmountOfVariables());
 		last_stmt.accept(visitor);
-		return new IRStatementCheckResult(visitor.IsVariableAmountConsistent(), visitor.GetCurrentVariableAmount());
+		return new IRStatementCheckResult(visitor.IsVariableAmountConsistent(), info.GetAmountOfVariables(), visitor.GetCurrentVariableAmount());
 	}
 
 }

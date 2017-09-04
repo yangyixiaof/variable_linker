@@ -78,7 +78,7 @@ public class JavaProjectManager {
 			IProject project = null;
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			project = root.getProject(projname);
-			project.delete(true, null);
+			project.delete(true, true, null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

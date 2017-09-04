@@ -1,11 +1,9 @@
 package cn.yyx.research.program.ir.generation;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.core.runtime.CoreException;
@@ -57,7 +55,6 @@ import org.eclipse.jdt.core.dom.SuperMethodInvocation;
 import org.eclipse.jdt.core.dom.SuperMethodReference;
 import org.eclipse.jdt.core.dom.TypeMethodReference;
 import org.eclipse.jdt.core.dom.UnionType;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.WildcardType;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
@@ -101,7 +98,7 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 	protected ICompilationUnit type_declare_resource = null;
 	protected CompilationUnit type_declare = null;
 	
-	protected Set<SimpleName> variable_of_declaration = new HashSet<SimpleName>();
+//	protected Set<SimpleName> variable_of_declaration = new HashSet<SimpleName>();
 
 	public IRGeneratorForOneExpression(IJavaProject java_project, IRGraphManager graph_manager, ASTNode node,
 			ASTRewrite rewrite, IRElementFactory ele_factory, IRStatementFactory stmt_factory, IRGraph graph, IRStatementNode iir_stmt_node,
@@ -227,27 +224,27 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		return super.visit(node) && false;
 	}
 	
-	@Override
-	public boolean visit(SingleVariableDeclaration node) {
-		variable_of_declaration.add(node.getName());
-		return super.visit(node);
-	}
-	
-	@Override
-	public void endVisit(SingleVariableDeclaration node) {
-		variable_of_declaration.remove(node.getName());
-	}
-	
-	@Override
-	public boolean visit(VariableDeclarationFragment node) {
-		variable_of_declaration.add(node.getName());
-		return super.visit(node);
-	}
-	
-	@Override
-	public void endVisit(VariableDeclarationFragment node) {
-		variable_of_declaration.remove(node.getName());
-	}
+//	@Override
+//	public boolean visit(SingleVariableDeclaration node) {
+//		variable_of_declaration.add(node.getName());
+//		return super.visit(node);
+//	}
+//	
+//	@Override
+//	public void endVisit(SingleVariableDeclaration node) {
+//		variable_of_declaration.remove(node.getName());
+//	}
+//	
+//	@Override
+//	public boolean visit(VariableDeclarationFragment node) {
+//		variable_of_declaration.add(node.getName());
+//		return super.visit(node);
+//	}
+//	
+//	@Override
+//	public void endVisit(VariableDeclarationFragment node) {
+//		variable_of_declaration.remove(node.getName());
+//	}
 
 	@Override
 	public boolean visit(QualifiedName node) {
@@ -276,13 +273,13 @@ public class IRGeneratorForOneExpression extends ASTVisitor {
 		if (BindingManager.SourceResolvedBinding(ib)) {
 			IJavaElement ije = ib.getJavaElement();
 			boolean special_handled = false;
-			if (node instanceof SimpleName) {
-				SimpleName sn = (SimpleName)node;
-				if (variable_of_declaration.contains(sn)) {
-					special_handled = true;
-					HandleICommonJavaElement(ije, node, "W" + iir_stmt_node.GetVariableIndex());
-				}
-			}
+//			if (node instanceof SimpleName) {
+//				SimpleName sn = (SimpleName)node;
+//				if (variable_of_declaration.contains(sn)) {
+//					special_handled = true;
+//					HandleICommonJavaElement(ije, node, "W" + iir_stmt_node.GetVariableIndex());
+//				}
+//			}
 			if (!special_handled) {
 				HandleCommonIJavaElementByTypeSpecifically(ije, node); // , IRElementKind.QualifiedName.Value()
 			}
